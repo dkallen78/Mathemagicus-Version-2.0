@@ -1,0 +1,313 @@
+/*
+Styles the play area where the game takes place*/
+#playArea {
+  position: relative;
+  margin: auto;
+  width: 450px;
+  height: 450px;
+  border: 8px solid #996633;
+  border-radius: 5px;
+  background-image: url("tile.png");
+}
+/*
+Styles the Mathemagicus title on the initial screen*/
+#titleDiv {
+  font-size: 3.5em;
+  font-weight: bold;
+  font-family: monospace;
+  padding: 10px;
+  text-align: center;
+  color: red;
+  text-shadow: 2px 0px black,
+               0px 2px black,
+               -2px 0px black,
+               0px -2px black;
+}
+/*
+Styles the <table> that holds my two start buttons*/
+#newGameButtons {
+  margin: auto;
+  margin-top: 20px;
+}
+/*
+Styles my two start buttons: "New Game" and "Continue"*/
+.startButtons {
+  padding: 10px;
+  margin: 20px;
+  color: white;
+  background-color: #555555;
+  border: 1px solid black;
+  border-radius: 5px;
+  box-shadow: 5px 5px 5px black;
+  font-size: 1.5em;
+  font-weight: bold;
+  font-family: monospace;
+  text-shadow: 2px 0px black,
+               0px 2px black,
+               -2px 0px black,
+               0px -2px black;
+}
+/*
+Changes the background color of the buttons when hovered*/
+.startButtons:hover {
+  background-color: #777777;
+}
+/*
+Styles the text windows for the game*/
+.textBox {
+  margin: auto;
+  margin-top: 15px;
+  padding: 10px;
+  width: 350px;
+  color: white;
+  background-color: #555555;
+  border: 2px solid black;
+  border-radius: 5px;
+  box-shadow: 5px 5px 5px black;
+  font-size: 1.5em;
+  font-weight: bold;
+  font-family: monospace;
+  text-align: center;
+  text-shadow: 2px 0px black,
+               0px 2px black,
+               -2px 0px black,
+               0px -2px black;
+}
+
+#enterNameDiv {
+
+}
+/*
+Styles the text input for the player's name*/
+#nameTextBox {
+  font-size: 1.25em;
+  font-family: monospace;
+  text-align: center;
+  border: 3px solid #996633;
+  border-radius: 5px;
+  box-shadow: 5px 5px 5px black;
+  margin: 5px;
+  width: 200px;
+  height: 40px;
+}
+/*
+Styles the <div> that my NPC cameo image is in*/
+#cameo {
+  margin-top: 15px;
+  margin-left: 306px;
+  width: 102px;
+  height: 102px;
+  background-color: #555555;
+  border: 2px solid black;
+  border-radius: 5px;
+  box-shadow: 5px 5px 5px black;
+}
+/*
+I think this is temporary until I resize my cameo image*/
+#cameoImg {
+  width: 100px;
+  height: 100px;
+}
+/*
+The table that holds the choices of character at the start of the game*/
+#characterTable {
+  position: absolute;
+  left: 73.5px;
+  bottom: 15px;
+  border-spacing: 45px 10px;
+  font-size: 1.5em;
+  font-weight: bold;
+  font-family: monospace;
+  color: white;
+  text-shadow: 2px 0px black,
+               0px 2px black,
+               -2px 0px black,
+               0px -2px black;
+}
+/*
+Styles the <td>s to look like buttons*/
+#characterTable td {
+  padding: 5px;
+  background-color: #555555;
+  border: 2px solid black;
+  border-radius: 5px;
+  box-shadow: 5px 5px 5px black;
+}
+/*
+To make it clear that these are "buttons" to be pressed*/
+#characterTable td:hover {
+  background-color: #777777;
+  border: 2px solid #996633;
+}
+/*
+This handles the animation for my blinking "next" button*/
+@keyframes nextButtonBlink {
+  from {border: 1px solid black;}
+  to {border: 1px solid white;}
+}
+/*
+This styles the "next" button I use to advance long text blocks*/
+#nextButton {
+  color: white;
+  font-family: monospace;
+  background-color: #777777;
+  border: 1px solid black;
+  border-radius: 5px;
+  animation-name: nextButtonBlink;
+  animation-duration: 500ms;
+  animation-iteration-count: infinite;
+}
+/*
+The basic styling of my dungeon select <table>*/
+#dungeonTable {
+  margin: auto;
+  border-spacing: 50px 40px;
+}
+/*
+Hilights the individual dungeon entrances when the mouse hovers over them*/
+#dungeonTable img:hover {
+  filter: brightness(140%);
+}
+/*
+This styles the box that tells the player what level of the dungeon they're on*/
+#levelDiv {
+  margin: auto;
+  margin-top: 5px;
+  /*padding: 5px;*/
+  width: 80px;
+  color: white;
+  background-color: #555555;
+  border: 2px solid black;
+  border-radius: 5px;
+  box-shadow: 5px 5px 5px black;
+  font-size: 1.25em;
+  font-weight: bold;
+  font-family: monospace;
+  text-align: center;
+  text-shadow: 2px 0px black,
+               0px 2px black,
+               -2px 0px black,
+               0px -2px black;
+}
+/*
+This adjusts the width of these <div>s from the class to which the belong: .textBox
+I might get rid of this later, still not sure...*/
+#problemDiv, #hintDiv {
+  width: 324px;
+}
+/*
+This styles the area where the spells are displayed*/
+#spellBar {
+  position: absolute;
+  bottom: 140px;
+  left: 53px;
+  width: 340px;
+  height: 30px;
+  background-color: grey;
+  margin-top: 5px;
+  border: 2px solid black;
+  border-radius: 5px;
+}
+/*
+This styles the images for the spells*/
+#spellBar img {
+  border: 1px solid black;
+  border-radius: 5px;
+  margin: 2px;
+  padding: 2px;
+  width: 20px;
+  filter: opacity(10%);
+}
+/*
+This controls the behavior of the <div>s inside of the spellBar*/
+#spellBar div {
+  display: inline-block;
+  vertical-align: top;
+  font-size: 1em;
+  font-family: monospace;
+}
+/*
+This is the grey bar behind my green countdown timer */
+#countdownBarBack {
+  position: absolute;
+  bottom: 180px;
+  left: 53px;
+  width: 340px;
+  height: 30px;
+  background-color: grey;
+  margin-top: 5px;
+  border: 2px solid black;
+  border-radius: 5px;
+}
+/*
+This is the green countdown timer bar */
+#countdownBarFront {
+  position: absolute;
+  width: 200px;
+  height: 30px;
+  background-color: #66ff33;
+  border-radius: 5px;
+}
+/*
+This formats the invisible <div> that holds the player and monster health
+and the player and monster images*/
+#combatDiv {
+  left: 55px;
+  position: absolute;
+  bottom: 4px;
+}
+/*
+The grey background container for the player and computer health bar */
+#healthBarBack, #monsterHealthBarBack {
+  display: inline-block;
+  width: 30px;
+  height: 110px;
+  margin-top: 11px;
+  background-color: grey;
+  vertical-align: top;
+  border: 2px solid black;
+  border-radius: 5px;
+  position: relative;
+}
+/*
+Styles the red health bar for the player and computer */
+#healthBarFront, #monsterHealthBarFront {
+  vertical-align: bottom;
+  width: 30px;
+  height: 110px;
+  background-color: red;
+  border-radius: 5px;
+  position: absolute;
+  bottom: 0;
+  transition: height 1s;
+}
+/*
+This styles the <div>s that contain the player and monster images*/
+#playerDiv, #monsterDiv {
+  display: inline-block;
+  position: relative;
+  background-color: grey;
+  margin: 11px;
+  padding: 5px;
+  height: 100px;
+  width: 100px;
+  border: 3px solid black;
+  border-radius: 5px;
+}
+/*
+This ensures that the player and monster images are centered
+and flush to the bottom of their containers*/
+#playerDiv img, #monsterDiv img {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2;
+  margin: auto;
+}
+/*
+This sets the size of the answerInput <input> box
+and makes sure the numbers are centered in the box*/
+#answerInput {
+  width: 50px;
+  text-align: center;
+}
