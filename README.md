@@ -17,7 +17,9 @@ Update 2
 11/16/17
 
 Added basic boss monster functionality
+
 Added transition effects for the character select screen and the dungeon select screen
+
 Moved the getLevel() function to the global scope
 
 Up next: spells and unlocking other dungeons
