@@ -8,6 +8,16 @@ Right now, I just have a simple engine that can advance levels of addition and r
 
 Included in this project are the html, css, and js files.
 
-Update 11/16/17
+Update 
+11/16/17
 
 Added animations for when the player or the enemy takes damage
+
+Update 2 
+11/16/17
+
+Added basic boss monster functionality
+Added transition effects for the character select screen and the dungeon select screen
+Moved the getLevel() function to the global scope
+
+Up next: spells and unlocking other dungeons
