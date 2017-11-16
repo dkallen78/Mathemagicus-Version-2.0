@@ -1,12 +1,17 @@
 var playArea = document.getElementById("playArea");
 var playerName = "";
 var playerHealth = 10;
-var operator = 1;
+var operator = "+";
+var timer;
 var additionLevel = 1;
 //var addend1, addend2;
 var subtractionLevel, multiplicationLevel, divisionLevel = 0;
 var mage, mageFight, mageHurt, mageDead = 0;
 mage = "whiteMage.gif";
+mageFight = "whiteMageFight.gif";
+mageHurt = "whiteMageHurt.gif";
+mageDead = "whiteMageDead.gif";
+var damagePlayer, damageMonster;
 var fibonacciSpells = 0;
 var fibonacciNumbers = [2, 3, 5, 8, 13, 21, 34, 55, 89, 144];
 var triangleSpells = 0;
@@ -24,7 +29,7 @@ var starNumbers = [13, 37, 73, 121];
 var octagonSpells = 0;
 var octagonNumbers = [9, 25, 49, 81, 121]
 var monster = {};
-var monstersKilled = 0;
+var monstersKilled = 9;
 //
 //The source of all the image files for the
 //monsters in the addition dungeon
@@ -252,6 +257,7 @@ function dungeonEntrance() {
   //
   //This block sets up the <table> elements for the dungeon screen
   playArea.innerHTML = "";
+
   let dungeonTable = document.createElement("table");
   dungeonTable.id = "dungeonTable";
   let firstRow = document.createElement("tr");
@@ -285,8 +291,8 @@ function dungeonEntrance() {
   //and assigns an onclick function to open doors
   if (additionLevel) {
     additionDoor = "additionDoorOpen.gif";
-    operator = 1;
-    additionDoorImg.onclick = dungeon(additionLevel);
+    operator = "+";
+    additionDoorImg.onclick = function() {dungeon(additionLevel);}
   } else {
     additionDoor = "additionDoorClosed.gif";
   }
@@ -419,7 +425,9 @@ function checkKeyPress(event, answer) {
       }*/
   }
 }
-
+//
+//I'm not sure I need this but I think I do, I'll come back to it
+//later and figure out if it stays or if it goes
 function dungeon(playerLevel) {
   makeDungeonScreen();
   monster = new newMonster(playerLevel);
@@ -449,17 +457,34 @@ function dungeon(playerLevel) {
 
 
 }
-
+//
+//This is the function that I return to as the "base" of all
+//the combat/math
 function battle() {
-
-
-
-  let terms = getTerms();
-
-  problemDiv.innerHTML = terms[0] + " + <span style=\"color:#ffbaba\">" + terms[1] + "</span> =\
+  var terms = getTerms();
+  var width = 340;
+  var countdownBarFront = document.getElementById("countdownBarFront");
+  var countdownTimer = document.getElementById("countdownTimer");
+  problemDiv.innerHTML = terms[0] + " " + operator + " <span style=\"color:#ffbaba\">" + terms[1] + "</span> =\
     <input id=\"answerInput\" type=\"number\" onKeyPress=\"checkKeyPress(event, " + terms[2] + ")\"/>";
   let answerInput = document.getElementById("answerInput");
   answerInput.focus();
+
+  timer = setInterval(timeDown, 10);
+  //
+  //This function handles the countdown bar
+  function timeDown() {
+    if (width < 1) {          //When the countdown ends, the setInterval is stopped
+      clearInterval(timer);   //and a wrong answer is passed to checkAnswer()
+      countdownTimer.innerHTML = "0.00";
+      checkAnswer(-terms[2]);
+    } else {
+      width -= .34;   //How much the countdown bar decreases in size every 10 milliseconds
+      countdownBarFront.style.width = width + "px";
+      let timeLeft = (width / 34);
+      countdownTimer.innerHTML = timeLeft.toFixed(2);
+    }
+  }
 
 }
 //
@@ -467,22 +492,33 @@ function battle() {
 //based on which operation the player is solving for
 function getTerms() {
   switch (operator) {
-    case 1: //Addition
+    case "+": //Addition
       var constant1 = getRandomNumber(0, (additionLevel * 10));
       var constant2 = getRandomNumber(0, (additionLevel * 10));
       var answer = constant1 + constant2;
       break;
-    case 2: //Subtraction
+    case "-": //Subtraction
 
-    case 3: //Multiplication
+    case "*": //Multiplication
 
-    case 4: //Division
+    case "/": //Division
 
   }
   return [constant1, constant2, answer];
 }
-
+//
+//This function will become a lot bigger, but it handles all the logic
+//that goes into checking answers and progressing the game
 function checkAnswer(answer) {
+  clearInterval(timer);
+
+  var playerImg = document.getElementById("playerImg");
+  var playerDiv = document.getElementById("playerDiv");
+  var slash = document.getElementById("slash");
+  var monsterImg = document.getElementById("monsterImg");
+  var monsterDiv = document.getElementById("monsterDiv");
+  var blast = document.getElementById("blast");
+
   let problemDiv = document.getElementById("problemDiv");
   let answerInput = document.getElementById("answerInput");
   //
@@ -493,19 +529,26 @@ function checkAnswer(answer) {
 
     var monsterHealthBarFront = document.getElementById("monsterHealthBarFront");
     monsterHealthBarFront.style.height = ((monster.hp / monster.maxHp) * 110) + "px";
+
+    var damageFlash = 6;
+    damageMonster = setInterval(monsterDamage, 100);
+
     //
     //This if checks to see if the monster is killed or not
     if (monster.hp == 0) {
       monstersKilled++;
-      problemDiv.innerHTML = "Great job, you defeated the " + monster.name + "!<br />";
-      if (monstersKilled == 10) {
-        insertNextButton(levelUp);
+      problemDiv.innerHTML = "Great job, you defeated the " + monster.name + "!<br /><br />";
+      //
+      //This if checks to see if you've killed enough monsters
+      //to clear the level
+      if (monstersKilled >= 10) {
+        insertNextButton("Next", levelUp);
       } else {
-        insertNextButton(nextMonster);
+        insertNextButton("Next Problem", nextMonster);
       }
     } else {
-      problemDiv.innerHTML = "Great job!<br />";
-      insertNextButton(battle);
+      problemDiv.innerHTML = "Great job!<br /><br />";
+      insertNextButton("Next Problem", battle);
     }
   //
   //The second half of this if statement controls the stuff
@@ -516,17 +559,65 @@ function checkAnswer(answer) {
     var healthBarFront = document.getElementById("healthBarFront");
     healthBarFront.style.height = (playerHealth * 11) + "px";
 
-    problemDiv.innerHTML = "The answer was " + answer + " ";
-    insertNextButton(battle);
+    var damageFlash = 6;
+    damagePlayer = setInterval(playerDamage, 100);
+
+    problemDiv.innerHTML = "The answer was " + Math.abs(answer) + "<br /><br />";
+    insertNextButton("Next Problem", battle);
+  }
+
+  function monsterDamage() {
+
+    playerImg.src = mageFight;
+    monsterImg.style.filter = "brightness(50%)";
+
+    if (damageFlash <= 0) {
+      playerImg.src = mage;
+      if (monster.hp > 0) {
+        monsterImg.style.filter = "brightness(100%)";
+      }
+      clearInterval(damageMonster);
+    } else {
+      if ((damageFlash % 2) == 0) {
+        monsterDiv.style.backgroundColor = "red";
+        blast.style.visibility = "visible";
+      } else {
+        monsterDiv.style.backgroundColor = "grey";
+        blast.style.visibility = "hidden";
+      }
+      damageFlash--; //One less time to run the function
+    }
+  }
+
+  function playerDamage() {
+    playerImg.src = mageHurt;
+
+    if (damageFlash <= 0) {
+      if (playerHealth < 1) {
+        playerImg.src = mageDead;
+      } else {
+        playerImg.src = mage;
+      }
+      clearInterval(damagePlayer);
+    } else {
+      if ((damageFlash % 2) == 0) {
+        playerDiv.style.backgroundColor = "red";
+        slash.style.visibility = "visible";
+      } else {
+        playerDiv.style.backgroundColor = "grey";
+        slash.style.visibility = "hidden";
+      }
+      damageFlash--;
+    }
   }
 
   //
   //This function creates and inserts the next button
   //into my answer response text
-  function insertNextButton(nextFunction) {
+  function insertNextButton(buttonString, nextFunction) {
     let nextButton = document.createElement("input");
     nextButton.setAttribute("type", "button");
-    nextButton.setAttribute("value", "Next Problem");
+    nextButton.setAttribute("value", buttonString);
     nextButton.setAttribute("id", "nextButton");
     nextButton.onclick = nextFunction;
     problemDiv.appendChild(nextButton);
@@ -537,29 +628,53 @@ function checkAnswer(answer) {
   //It gets the next monster and sends the player
   //back to the battle() function
   function nextMonster() {
-    switch (operator) {
-      case 1:
-        var playerLevel = additionLevel;
-        break;
-      case 2:
-        var playerLevel = subtractionLevel;
-        break;
-      case 3:
-        var playerLevel = multiplicationLevel;
-        break;
-      case 4:
-        var playerLevel = divisionLevel;
-        break;
-    }
+    playerLevel = getLevel();
     monster = new newMonster(playerLevel);
     monsterHealthBarFront.style.height = ((monster.hp / monster.maxHp) * 110) + "px";
     battle();
   }
-
+  //
+  //This function does all the stuff associated with levelling
+  //up and then tosses the player out of the dungeon
   function levelUp() {
-
+    playerLevel = getLevel();
+    switch (operator) {
+      case "+":
+        additionLevel++;
+        break;
+      case "-":
+        subtractionLevel++;
+        break;
+      case "*":
+        multiplicationLevel++;
+        break;
+      case "/":
+        divisionLevel++;
+        break;
+    }
+    monstersKilled = 0;
+    problemDiv.innerHTML = "You cleared level " + playerLevel + "!<br /><br />";
+    insertNextButton("Next", dungeonEntrance);
   }
-
+  //
+  //I use this function to assign the proper level
+  //based on the current operator variable
+  function getLevel() {
+    switch (operator) {
+      case "+":
+        return additionLevel;
+        break;
+      case "-":
+        return subtractionLevel;
+        break;
+      case "*":
+        return multiplicationLevel;
+        break;
+      case "/":
+        return divisionLevel;
+        break;
+    }
+  }
 }
 //
 //This beast of a function creates the dungeon screen
@@ -599,7 +714,10 @@ function makeDungeonScreen() {
   countdownBarBack.setAttribute("id", "countdownBarBack");
   let countdownBarFront = document.createElement("div");
   countdownBarFront.setAttribute("id", "countdownBarFront");
+  let countdownTimer = document.createElement("div");
+  countdownTimer.setAttribute("id", "countdownTimer");
   countdownBarBack.appendChild(countdownBarFront);
+  countdownBarBack.appendChild(countdownTimer);
   playArea.appendChild(countdownBarBack);
   //
   //The next block of code is massive and creates
@@ -687,6 +805,7 @@ function makeDungeonScreen() {
   healthBarBack.setAttribute("id", "healthBarBack");
   let healthBarFront = document.createElement("div");
   healthBarFront.setAttribute("id", "healthBarFront");
+  healthBarFront.style.height = (playerHealth * 11) + "px";
   healthBarBack.appendChild(healthBarFront);
   combatDiv.appendChild(healthBarBack);
   //
@@ -694,8 +813,14 @@ function makeDungeonScreen() {
   let playerDiv = document.createElement("div");
   playerDiv.setAttribute("id", "playerDiv");
   let playerImg = document.createElement("img");
+  playerImg.setAttribute("id", "playerImg");
   playerImg.src = mage;
   playerDiv.appendChild(playerImg);
+  let slash = document.createElement("img");
+  slash.setAttribute("id", "slash");
+  slash.src = "slash.gif";
+  slash.style.visibility = "hidden";
+  playerDiv.appendChild(slash);
   combatDiv.appendChild(playerDiv);
   //
   //The monster's image
@@ -703,8 +828,12 @@ function makeDungeonScreen() {
   monsterDiv.setAttribute("id", "monsterDiv");
   let monsterImg = document.createElement("img");
   monsterImg.setAttribute("id", "monsterImg");
-  //monsterImg.src = "imp.gif";
   monsterDiv.appendChild(monsterImg);
+  let blast = document.createElement("img");
+  blast.setAttribute("id", "blast");
+  blast.src = "blast.gif";
+  blast.style.visibility = "hidden";
+  monsterDiv.appendChild(blast);
   combatDiv.appendChild(monsterDiv);
   //
   //The monster health bar
@@ -716,25 +845,26 @@ function makeDungeonScreen() {
   combatDiv.appendChild(monsterHealthBarBack);
   playArea.appendChild(combatDiv);
 }
-
+//
+//This function gets a new monster object and puts it on the screen
 function newMonster(playerLevel) {
   this.index = getRandomNumber(0, ((playerLevel * 3) - 1));
   this.hp = Math.ceil(((this.index + 1) / 3) + 1);
   this.maxHp = this.hp;
   switch (operator) {
-    case 1:
+    case "+":
       this.src = "./monsters/addition/" + additionMonsters[this.index];
       this.name = additionMonsterNames[this.index];
       break;
-    case 2:
+    case "-":
       this.src = "./monsters/subtraction/" + subtractionMonsters[this.index];
       this.name = subtractionMonsterNames[this.index];
       break;
-    case 3:
+    case "*":
       this.src = "./monsters/multiplication/" + multiplicationMonsters[this.index];
       this.name = multiplicationMonsterNames[this.index];
       break;
-    case 4:
+    case "/":
       this.src = "./monsters/division/" + divisionMonsters[this.index];
       this.name = divisionMonsterNames[this.index];
       break;

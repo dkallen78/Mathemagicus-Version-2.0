@@ -243,10 +243,25 @@ This is the grey bar behind my green countdown timer */
 This is the green countdown timer bar */
 #countdownBarFront {
   position: absolute;
-  width: 200px;
+  width: 340px;
   height: 30px;
   background-color: #66ff33;
   border-radius: 5px;
+}
+/*
+This displays the time remaining for the countdown timer*/
+#countdownTimer {
+  position: absolute;
+  top: 3px;
+  width: 100%;
+  color: white;
+  text-align: center;
+  text-shadow: 2px 0px 2px black,
+               0px 2px 2px black,
+               -2px 0px 2px black,
+               0px -2px 2px black;
+  font-size: 20px;
+  font-family: monospace;
 }
 /*
 This formats the invisible <div> that holds the player and monster health
@@ -297,12 +312,31 @@ This styles the <div>s that contain the player and monster images*/
 /*
 This ensures that the player and monster images are centered
 and flush to the bottom of their containers*/
-#playerDiv img, #monsterDiv img {
+#playerImg, #monsterImg {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 2;
+  bottom: 2px;
   margin: auto;
+  z-index: 1;
+}
+
+#blast {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 15px;
+  margin: auto;
+  z-index: 2;
+}
+
+#slash {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 5px;
+  margin: auto;
+  z-index: 2;
 }
 /*
 This sets the size of the answerInput <input> box
