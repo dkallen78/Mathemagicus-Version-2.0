@@ -484,12 +484,46 @@ function battle() {
   var width = 340;
   var countdownBarFront = document.getElementById("countdownBarFront");
   var countdownTimer = document.getElementById("countdownTimer");
-  problemDiv.innerHTML = terms[0] + " " + operator + " <span style=\"color:#ffbaba\">" + terms[1] + "</span> =\
-    <input id=\"answerInput\" type=\"number\" onKeyPress=\"checkKeyPress(event, " + terms[2] + ")\"/>";
-  let answerInput = document.getElementById("answerInput");
-  answerInput.focus();
 
-  timer = setInterval(timeDown, 10);
+  if (getRandomNumber(0, 60) <= monster.index) {
+    problemDiv.innerHTML = "The " + monster.name + " used Algebra!";
+    let algebraFlash = 10;
+    let algebraMagic = setInterval(castAlgebra, 100);
+    //
+    //This function flashes the screen and displays
+    //the modified problem for the player
+    function castAlgebra() {
+      //
+      //This if statement runs once the flash counter algebraFlash
+      //has finished. It displays the modified problem and starts the timer
+      if (algebraFlash < 1) {
+        problemDiv.innerHTML = terms[0] + " " + operator +
+          " <input id=\"answerInput\" type=\"number\" onKeyPress=\"checkKeyPress(event, " + terms[1] + ")\"/> = " +
+          terms[2];
+        clearInterval(algebraMagic);
+        timer = setInterval(timeDown, 10);
+        var answerInput = document.getElementById("answerInput");
+        answerInput.focus();
+      //
+      //This runs while algebraFlash is counting down.
+      //It changes the brightness of the screen to
+      //create a flash effect
+      } else {
+        if ((algebraFlash % 2) == 0) {
+          playArea.style.filter = "brightness(50%)";
+        } else {
+          playArea.style.filter = "brightness(100%)";
+        }
+        algebraFlash--; //One less time to run the function
+      }
+    }
+  } else {
+    problemDiv.innerHTML = terms[0] + " " + operator + " <span style=\"color:#ffbaba\">" + terms[1] + "</span> =\
+      <input id=\"answerInput\" type=\"number\" onKeyPress=\"checkKeyPress(event, " + terms[2] + ")\"/>";
+    timer = setInterval(timeDown, 10);
+    var answerInput = document.getElementById("answerInput");
+    answerInput.focus();
+  }
   //
   //This function handles the countdown bar
   function timeDown() {
@@ -499,6 +533,9 @@ function battle() {
       checkAnswer(-terms[2]);
     } else {
       width -= .34;   //How much the countdown bar decreases in size every 10 milliseconds
+      //
+      //These three lines display the time left on top of the
+      //countdown timer
       countdownBarFront.style.width = width + "px";
       let timeLeft = (width / 34);
       countdownTimer.innerHTML = timeLeft.toFixed(2);
