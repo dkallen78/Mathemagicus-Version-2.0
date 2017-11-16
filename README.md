@@ -7,3 +7,7 @@ As it stands now, the game has almost all of the code in it to start the game an
 Right now, I just have a simple engine that can advance levels of addition and randomly get a monster based on the players level in that operation (addition, subtraction, multiplication, and division). 
 
 Included in this project are the html, css, and js files.
+
+Update 11/16/17
+
+Added animations for when the player or the enemy takes damage
