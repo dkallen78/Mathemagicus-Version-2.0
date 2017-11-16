@@ -1,1 +1,9 @@
 # Mathemagicus-Version-2.0
+
+This is a more advanced version of my original Mathemagicus game (will be uploaded later). 
+
+As it stands now, the game has almost all of the code in it to start the game and create and display all of the elements for the game. 
+
+Right now, I just have a simple engine that can advance levels of addition and randomly get a monster based on the players level in that operation (addition, subtraction, multiplication, and division). 
+
+Included in this project are the html, css, and js files.
