@@ -132,6 +132,8 @@ Styles the <td>s to look like buttons*/
   border: 2px solid black;
   border-radius: 5px;
   box-shadow: 5px 5px 5px black;
+  transition: background-color 500ms;
+  transition: border 500ms;
 }
 /*
 To make it clear that these are "buttons" to be pressed*/
@@ -162,6 +164,12 @@ The basic styling of my dungeon select <table>*/
 #dungeonTable {
   margin: auto;
   border-spacing: 50px 40px;
+}
+/*
+Adds a transition effect to the change in the dungeon
+door's brightness*/
+#dungeonTable img {
+  transition: filter 500ms;
 }
 /*
 Hilights the individual dungeon entrances when the mouse hovers over them*/
@@ -320,7 +328,9 @@ and flush to the bottom of their containers*/
   margin: auto;
   z-index: 1;
 }
-
+/*
+This controls the look and position of the blast sprite
+that flashes when an enemy is hit*/
 #blast {
   position: absolute;
   left: 0;
@@ -329,7 +339,9 @@ and flush to the bottom of their containers*/
   margin: auto;
   z-index: 2;
 }
-
+/*
+This controls the look and position of the slash sprite
+that flashes when the player is hit*/
 #slash {
   position: absolute;
   left: 0;

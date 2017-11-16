@@ -29,7 +29,7 @@ var starNumbers = [13, 37, 73, 121];
 var octagonSpells = 0;
 var octagonNumbers = [9, 25, 49, 81, 121]
 var monster = {};
-var monstersKilled = 9;
+var monstersKilled = 0;
 //
 //The source of all the image files for the
 //monsters in the addition dungeon
@@ -103,8 +103,27 @@ function getRandomNumber(floor, ceiling) {
   return Math.floor((Math.random() * range) + floor);
 }
 //
+//This function resets the variables for new games
+//It also provides an easy place to change their
+//values for easier debugging
+function resetStartVariables() {
+  playerHealth = 1;
+  additionLevel = 1;
+  subtractionLevel = 0;
+  multiplicationLevel = 0;
+  divisionLevel = 0;
+  fibonacciSpells = 0;
+  triangleSpells = 0;
+  squareSpells = 0;
+  pyramidSpells = 0;
+  cubeSpells = 0;
+  monstersKilled = 9;
+}
+//
 //Sets up the title screen
 function gameStart() {
+  resetStartVariables();
+  playArea.innerHTML = "";
   //
   //These five lines put the title on the screen
   let titleDiv = document.createElement("div");
@@ -562,10 +581,18 @@ function checkAnswer(answer) {
     var damageFlash = 6;
     damagePlayer = setInterval(playerDamage, 100);
 
-    problemDiv.innerHTML = "The answer was " + Math.abs(answer) + "<br /><br />";
-    insertNextButton("Next Problem", battle);
-  }
+    if (playerHealth < 1) {
+      problemDiv.innerHTML = "You have succumbed to the " + monster.name + "'s attack!<br /><br />";
+      insertNextButton("Continue", gameStart);
+    } else {
+      problemDiv.innerHTML = "The answer was " + Math.abs(answer) + "<br /><br />";
+      insertNextButton("Next Problem", battle);
+    }
 
+
+  }
+  //
+  //This function handles the animation for monster damage
   function monsterDamage() {
 
     playerImg.src = mageFight;
@@ -588,7 +615,8 @@ function checkAnswer(answer) {
       damageFlash--; //One less time to run the function
     }
   }
-
+  //
+  //This function handles the animation for player damage
   function playerDamage() {
     playerImg.src = mageHurt;
 
@@ -610,7 +638,6 @@ function checkAnswer(answer) {
       damageFlash--;
     }
   }
-
   //
   //This function creates and inserts the next button
   //into my answer response text
@@ -638,42 +665,57 @@ function checkAnswer(answer) {
   //up and then tosses the player out of the dungeon
   function levelUp() {
     playerLevel = getLevel();
-    switch (operator) {
-      case "+":
-        additionLevel++;
-        break;
-      case "-":
-        subtractionLevel++;
-        break;
-      case "*":
-        multiplicationLevel++;
-        break;
-      case "/":
-        divisionLevel++;
-        break;
-    }
-    monstersKilled = 0;
+
     problemDiv.innerHTML = "You cleared level " + playerLevel + "!<br /><br />";
-    insertNextButton("Next", dungeonEntrance);
-  }
-  //
-  //I use this function to assign the proper level
-  //based on the current operator variable
-  function getLevel() {
-    switch (operator) {
-      case "+":
-        return additionLevel;
-        break;
-      case "-":
-        return subtractionLevel;
-        break;
-      case "*":
-        return multiplicationLevel;
-        break;
-      case "/":
-        return divisionLevel;
-        break;
+    if (((playerLevel % 2)  == 0) && (monstersKilled == 10)) {
+      insertNextButton("Next", bossEncounter);
+    } else {
+      switch (operator) {
+        case "+":
+          additionLevel++;
+          break;
+        case "-":
+          subtractionLevel++;
+          break;
+        case "*":
+          multiplicationLevel++;
+          break;
+        case "/":
+          divisionLevel++;
+          break;
+      }
+      monstersKilled = 9;
+      insertNextButton("Next", dungeonEntrance);
+
     }
+  }
+
+  function bossEncounter() {
+    problemDiv.innerHTML = "There's a monster blocking your path out of the dungeon. \
+      It looks stronger than the others...<br /><br />"
+    monster = new newBoss();
+    monsterImg.style.filter = "brightness(100%)";
+    monsterHealthBarFront.style.height = ((monster.hp / monster.maxHp) * 110) + "px";
+    insertNextButton("Next", battle);
+  }
+}
+//
+//I use this function to assign the proper level
+//based on the current operator variable
+function getLevel() {
+  switch (operator) {
+    case "+":
+      return additionLevel;
+      break;
+    case "-":
+      return subtractionLevel;
+      break;
+    case "*":
+      return multiplicationLevel;
+      break;
+    case "/":
+      return divisionLevel;
+      break;
   }
 }
 //
@@ -851,6 +893,37 @@ function newMonster(playerLevel) {
   this.index = getRandomNumber(0, ((playerLevel * 3) - 1));
   this.hp = Math.ceil(((this.index + 1) / 3) + 1);
   this.maxHp = this.hp;
+  switch (operator) {
+    case "+":
+      this.src = "./monsters/addition/" + additionMonsters[this.index];
+      this.name = additionMonsterNames[this.index];
+      break;
+    case "-":
+      this.src = "./monsters/subtraction/" + subtractionMonsters[this.index];
+      this.name = subtractionMonsterNames[this.index];
+      break;
+    case "*":
+      this.src = "./monsters/multiplication/" + multiplicationMonsters[this.index];
+      this.name = multiplicationMonsterNames[this.index];
+      break;
+    case "/":
+      this.src = "./monsters/division/" + divisionMonsters[this.index];
+      this.name = divisionMonsterNames[this.index];
+      break;
+  }
+
+  let monsterImg = document.getElementById("monsterImg");
+  monsterImg.src = this.src;
+  monsterImg.title = this.name;
+}
+//
+//This function gets a new boss monster object and puts it on the screen
+function newBoss() {
+  playerLevel = getLevel();
+  this.index = (playerLevel / 2) + 29;
+  this.hp = (playerLevel * 2) + (playerLevel / 2) + 5;
+  this.maxHp = this.hp;
+
   switch (operator) {
     case "+":
       this.src = "./monsters/addition/" + additionMonsters[this.index];
