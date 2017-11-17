@@ -46,6 +46,7 @@ Styles my two start buttons: "New Game" and "Continue"*/
                0px 2px black,
                -2px 0px black,
                0px -2px black;
+  transition: background-color 250ms;
 }
 /*
 Changes the background color of the buttons when hovered*/
@@ -72,10 +73,6 @@ Styles the text windows for the game*/
                0px 2px black,
                -2px 0px black,
                0px -2px black;
-}
-
-#enterNameDiv {
-
 }
 /*
 Styles the text input for the player's name*/
@@ -356,4 +353,28 @@ and makes sure the numbers are centered in the box*/
 #answerInput {
   width: 50px;
   text-align: center;
+}
+
+#scrollDiv {
+  position: absolute;
+  top: 25px;
+  left: 66px;
+  z-index: 2;
+}
+
+#scrollImg {
+  transition: filter 1000ms;
+}
+
+#scrollNextButton {
+  position: absolute;
+  left: 131px;
+  bottom: 50px;
+  /*background-color: #c0883d;*/
+  background-color: rgba(0,0,0,0.125);
+  border-radius: 5px;
+  border: 1px solid black;
+  animation-name: nextButtonBlink;
+  animation-duration: 500ms;
+  animation-iteration-count: infinite;
 }

@@ -12,6 +12,9 @@ mageFight = "whiteMageFight.gif";
 mageHurt = "whiteMageHurt.gif";
 mageDead = "whiteMageDead.gif";
 var damagePlayer, damageMonster;
+var terms = [];
+var algebra = false;
+var spellsOff = false;
 var fibonacciSpells = 0;
 var fibonacciNumbers = [2, 3, 5, 8, 13, 21, 34, 55, 89, 144];
 var triangleSpells = 0;
@@ -107,12 +110,12 @@ function getRandomNumber(floor, ceiling) {
 //It also provides an easy place to change their
 //values for easier debugging
 function resetStartVariables() {
-  playerHealth = 1;
-  additionLevel = 1;
+  playerHealth = 10;
+  additionLevel = 3;
   subtractionLevel = 0;
   multiplicationLevel = 0;
   divisionLevel = 0;
-  fibonacciSpells = 0;
+  fibonacciSpells = 4;
   triangleSpells = 0;
   squareSpells = 0;
   pyramidSpells = 0;
@@ -138,20 +141,27 @@ function gameStart() {
   let tableRow = document.createElement("tr");
   let newGameTD = document.createElement("td");//The <td>s for the two buttons
   let continueTD = document.createElement("td");
-  let newGameButton = document.createElement("input");//These seven lines put the New Game button in the table
-  newGameButton.setAttribute("type", "button");       //and define its attributes
+  //
+  //These seven lines put the New Game button in the table
+  //and define its attributes
+  let newGameButton = document.createElement("input");
+  newGameButton.setAttribute("type", "button");
   newGameButton.setAttribute("value", "New Game");
   newGameButton.setAttribute("class", "startButtons");
   newGameButton.onclick = newGame;
   newGameTD.appendChild(newGameButton);
   tableRow.appendChild(newGameTD);
-  let continueButton = document.createElement("input");//These six lines put the Continue button in the table
-  continueButton.setAttribute("type", "button");       //and define its attributes
+  //
+  //These seven lines put the Continue button in the table
+  //and define its attributes
+  let continueButton = document.createElement("input");
+  continueButton.setAttribute("type", "button");
   continueButton.setAttribute("value", "Continue");
   continueButton.setAttribute("class", "startButtons");
   continueButton.onclick = function() {dungeon(additionLevel);}
   continueTD.appendChild(continueButton);
   tableRow.appendChild(continueTD);
+
   newGameButtons.appendChild(tableRow);//This puts the <tr> with my buttons into the table
   playArea.appendChild(newGameButtons);//This puts the <table> onto the screen
 }
@@ -411,13 +421,16 @@ function checkKeyPress(event, answer) {
         checkAnswer(sum);
       }*/
       break;
-    /*case 97: //"a" key, Fibonacci Spell
+    case 97: //"a" key, Fibonacci Spell
       event.preventDefault(); //prevents the writing of the "a" key
-      if (playerLevel > 1) {
+      if (document.getElementById("hintDiv").innerHTML) {
+        break;
+      }
+      if (additionLevel > 2) {
         castFibonacci();
         break;
       }
-    case 115: //"s" key, Triangle Spell
+    /*case 115: //"s" key, Triangle Spell
       event.preventDefault(); //prevents the writing of the "s" key
       if (playerLevel > 2) {
         if (!algebraTest) {
@@ -451,42 +464,21 @@ function dungeon(playerLevel) {
   makeDungeonScreen();
   monster = new newMonster(playerLevel);
   battle();
-
-  /*var addend1 = getRandomNumber(0, (additionLevel * 10));
-  var addend2 = getRandomNumber(0, (additionLevel * 10));
-  let sum = addend1 + addend2;
-  let problemDiv = document.getElementById("problemDiv");
-  //
-  // I'm not sure if I should stick to using innerHTML since it's cleaner
-  //or create three appendChild calls to get addend2 to be red...
-  //let additionProblem = document.createTextNode(addend1 + " + " + addend2 + " = ");
-  //problemDiv.appendChild(additionProblem);
-  problemDiv.innerHTML = addend1 + " + <span style=\"color:#ffbaba\">" + addend2 + "</span> =\
-    <input id=\"answerInput\" type=\"number\" onKeyPress=\"checkKeyPress(event, " + sum + ")\"/>";*/
-  //
-  //The above code does what I want it to, but I want to find a way to do it through the DOM
-  //like I was trying to do below...
-  //
-  /*let answerInput = document.createElement("input");
-  answerInput.setAttribute("type", "number");
-  answerInput.setAttribute("id", "answerInput");
-  problemDiv.appendChild(answerInput);*/
-  //answerInput.addEventListener("keypress", checkKeyPress(event));
-  //answerInput.onkeypress = checkKeyPress(evt);
-
-
 }
 //
 //This is the function that I return to as the "base" of all
 //the combat/math
 function battle() {
-  var terms = getTerms();
+  terms = getTerms();
   var width = 340;
   var countdownBarFront = document.getElementById("countdownBarFront");
   var countdownTimer = document.getElementById("countdownTimer");
 
-  if (getRandomNumber(0, 60) <= monster.index) {
+  spellsOn();
+
+  if (getRandomNumber(0, 0) <= monster.index) {
     problemDiv.innerHTML = "The " + monster.name + " used Algebra!";
+    algebra = true;
     let algebraFlash = 10;
     let algebraMagic = setInterval(castAlgebra, 100);
     //
@@ -567,6 +559,7 @@ function getTerms() {
 //that goes into checking answers and progressing the game
 function checkAnswer(answer) {
   clearInterval(timer);
+  //learnFibonacci();
 
   var playerImg = document.getElementById("playerImg");
   var playerDiv = document.getElementById("playerDiv");
@@ -577,18 +570,20 @@ function checkAnswer(answer) {
 
   let problemDiv = document.getElementById("problemDiv");
   let answerInput = document.getElementById("answerInput");
+  let hintDiv = document.getElementById("hintDiv");
+  hintDiv.style.visibility = "hidden";
+  hintDiv.innerHTML = "";
+
   //
   //The first half of this if statement handles the stuff that
   //happens when an answer is correct
   if (answerInput.value == answer) {
     monster.hp--;
-
     var monsterHealthBarFront = document.getElementById("monsterHealthBarFront");
     monsterHealthBarFront.style.height = ((monster.hp / monster.maxHp) * 110) + "px";
 
     var damageFlash = 6;
     damageMonster = setInterval(monsterDamage, 100);
-
     //
     //This if checks to see if the monster is killed or not
     if (monster.hp == 0) {
@@ -625,8 +620,6 @@ function checkAnswer(answer) {
       problemDiv.innerHTML = "The answer was " + Math.abs(answer) + "<br /><br />";
       insertNextButton("Next Problem", battle);
     }
-
-
   }
   //
   //This function handles the animation for monster damage
@@ -707,6 +700,34 @@ function checkAnswer(answer) {
     if (((playerLevel % 2)  == 0) && (monstersKilled == 10)) {
       insertNextButton("Next", bossEncounter);
     } else {
+      if (monstersKilled == 11) {
+        switch (operator) {
+          case "+":
+            if (playerLevel == 2) {
+              problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
+              progressLevel();
+              insertNextButton("Next", learnFibonacci);
+            }
+            break;
+          case "-":
+
+          case "*":
+
+          case "/":
+
+        }
+      } else {
+        progressLevel();
+        insertNextButton("Next", dungeonEntrance);
+      }
+
+      monstersKilled = 9;
+    }
+    //
+    //This function progresses the players level.
+    //I made it a function because there are two
+    //places I want it to run
+    function progressLevel() {
       switch (operator) {
         case "+":
           additionLevel++;
@@ -721,19 +742,67 @@ function checkAnswer(answer) {
           divisionLevel++;
           break;
       }
-      monstersKilled = 9;
-      insertNextButton("Next", dungeonEntrance);
-
     }
   }
-
+  //
+  //This function introduces the boss encounters
   function bossEncounter() {
-    problemDiv.innerHTML = "There's a monster blocking your path out of the dungeon. \
-      It looks stronger than the others...<br /><br />"
-    monster = new newBoss();
-    monsterImg.style.filter = "brightness(100%)";
-    monsterHealthBarFront.style.height = ((monster.hp / monster.maxHp) * 110) + "px";
-    insertNextButton("Next", battle);
+    let encounterFlash = 10;
+    let encounterBoss = setInterval(bossEncounter, 100);
+    function bossEncounter() {
+      if (encounterFlash < 1) {
+        problemDiv.innerHTML = "There's a monster blocking your path out of the dungeon. \
+          It looks stronger than the others...<br /><br />"
+        monster = new newBoss();
+        monsterImg.style.filter = "brightness(100%)";
+        monsterHealthBarFront.style.height = ((monster.hp / monster.maxHp) * 110) + "px";
+        insertNextButton("Next", battle);
+        clearInterval(encounterBoss);
+      } else {
+        if ((encounterFlash % 2) == 0) {
+          playArea.style.filter = "brightness(50%)";
+        } else {
+          playArea.style.filter = "brightness(100%)";
+        }
+        encounterFlash--; //One less time to run the function
+      }
+    }
+
+
+  }
+  //
+  //This function runs the first time the player learns the
+  //Fibonacci Spell
+  function learnFibonacci() {
+    //
+    //These three lines set up the container that
+    //holds the scroll image
+    let scrollDiv = document.createElement("div");
+    scrollDiv.setAttribute("id", "scrollDiv");
+    scrollDiv.style.filter = "opacity(0%)";
+    //
+    //These three lines set up the scroll image
+    let scrollImg = document.createElement("img");
+    scrollImg.setAttribute("id", "scrollImg");
+    scrollImg.src = "fibonacciScroll.gif";
+    //
+    //These five lines set up the next button that appears
+    //at the bottom of the scroll
+    let scrollNextButton = document.createElement("input");
+    scrollNextButton.setAttribute("type", "button");
+    scrollNextButton.setAttribute("value", "Next");
+    scrollNextButton.setAttribute("id", "scrollNextButton");
+    scrollNextButton.onclick = dungeonEntrance;
+    //
+    //These three lines put all of the previous elements that
+    //were set up into the play area
+    scrollDiv.appendChild(scrollImg);
+    scrollDiv.appendChild(scrollNextButton);
+    playArea.appendChild(scrollDiv);
+    //
+    //The setTimeout function ensures that the scroll appears
+    //on screen with the intended transition effect
+    setTimeout(function() {scrollDiv.style.filter = "opacity(100%)";}, 10);
   }
 }
 //
@@ -813,6 +882,7 @@ function makeDungeonScreen() {
   let fibonacciImg = document.createElement("img");
   fibonacciImg.src = "fibonacci.gif";
   fibonacciImg.setAttribute("id", "fibonacciImg");
+  fibonacciImg.style.filter = "opacity(10%)";
   fibonacciDiv.appendChild(fibonacciImg);
   let fibonacciCount = document.createElement("div");
   fibonacciCount.setAttribute("id", "fibonacciCount");
@@ -826,6 +896,7 @@ function makeDungeonScreen() {
   let triangleImg = document.createElement("img");
   triangleImg.src = "triangle.gif";
   triangleImg.setAttribute("id", "triangleImg");
+  triangleImg.style.filter = "opacity(10%)";
   triangleDiv.appendChild(triangleImg);
   let triangleCount = document.createElement("div");
   triangleCount.setAttribute("id", "triangleCount");
@@ -839,6 +910,7 @@ function makeDungeonScreen() {
   let squareImg = document.createElement("img");
   squareImg.src = "square.gif";
   squareImg.setAttribute("id", "squareImg");
+  squareImg.style.filter = "opacity(10%)";
   squareDiv.appendChild(squareImg);
   let squareCount = document.createElement("div");
   squareCount.setAttribute("id", "squareCount");
@@ -852,6 +924,7 @@ function makeDungeonScreen() {
   let pyramidImg = document.createElement("img");
   pyramidImg.src = "pyramid.gif";
   pyramidImg.setAttribute("id", "pyramidImg");
+  pyramidImg.style.filter = "opacity(10%)";
   pyramidDiv.appendChild(pyramidImg);
   let pyramidCount = document.createElement("div");
   pyramidCount.setAttribute("id", "pyramidCount");
@@ -865,6 +938,7 @@ function makeDungeonScreen() {
   let cubeImg = document.createElement("img");
   cubeImg.src = "cube.gif";
   cubeImg.setAttribute("id", "cubeImg");
+  cubeImg.style.filter = "opacity(10%)";
   cubeDiv.appendChild(cubeImg);
   let cubeCount = document.createElement("div");
   cubeCount.setAttribute("id", "cubeCount");
@@ -958,7 +1032,8 @@ function newMonster(playerLevel) {
 function newBoss() {
   playerLevel = getLevel();
   this.index = (playerLevel / 2) + 29;
-  this.hp = (playerLevel * 2) + (playerLevel / 2) + 5;
+  //this.hp = (playerLevel * 2) + (playerLevel / 2) + 5;
+  this.hp = 1; //I only use this for testing and debugging
   this.maxHp = this.hp;
 
   switch (operator) {
@@ -983,4 +1058,120 @@ function newBoss() {
   let monsterImg = document.getElementById("monsterImg");
   monsterImg.src = this.src;
   monsterImg.title = this.name;
+}
+//
+//This function turns my spells "on" at the beginning of the battle
+function spellsOn() {
+  spellsOff = false;
+  if (additionLevel > 2) {
+    fibonacciImg = document.getElementById("fibonacciImg");
+    fibonacciImg.style.filter = "opacity(100%)";
+    fibonacciImg.onclick = function(){castFibonacci()};
+  }
+}
+//
+//I'm not sure if I need this function yet but it turns the spells "off"
+/*function spellsOff() {
+  fibonacciImg = document.getElementById("fibonacciImg");
+  fibonacciImg.style.filter = "opacity(10%)";
+  fibonacciImg.onclick = "";
+
+  /*document.getElementById("triangle").onclick = "";
+  document.getElementById("square").onclick = "";
+  document.getElementById("pyramid").onclick = "";
+  document.getElementById("cube").onclick = "";
+}*/
+//
+//This is my long and complicated-looking hint spell: Fibonacci.
+//It determines whether the player has enough spells to cast and
+//what form the problem is in: algebraic or not.
+function castFibonacci() {
+  fibonacciImg = document.getElementById("fibonacciImg");
+  fibonacciImg.onclick = "";
+  hintDiv = document.getElementById("hintDiv");
+  fibonacciCount = document.getElementById("fibonacciCount");
+
+  //
+  //If the player has no magic, then no hint is shown
+  if (!fibonacciSpells) {
+    hintDiv.innerHTML = "You don't have any Fibonacci Magic!";
+    return;
+  }
+  //
+  //If the enemy cast Algebra, then this small hint code runs.
+  //I will probably update it with better hints as I develop
+  //subtraction problems and hints.
+  if (algebra) {
+    algebra = false;
+    hintDiv.style.visibility = "visible"; //This displays the hint area
+    hintDiv.innerHTML = terms[2] + " - " + terms[0] + " = ?";
+    fibonacciSpells--;
+    fibonacciCount.innerHTML = fibonacciSpells;
+    return;
+  }
+  hintDiv.style.visibility = "visible"; //This displays the hint area
+  //
+  //This is here so I can reuse old code w/out changing
+  //every instance of addend1 and addend2 to terms[0 and 1]
+  addend1 = terms[0];
+  addend2 = terms[1];
+  //
+  //This will hold the string that will become the hint
+  var hintString = "";
+  //
+  //These operations seperate the two addends into expanded notation
+  var newAddend1 = addend1 % 10;
+  var newAddend2 = addend2 % 10;
+  addend1 -= newAddend1;
+  addend2 -= newAddend2;
+  //
+  //These two if statements only execute if one of the addends is 0
+  if (!addend2 && !newAddend2 && addend1) {
+    addend1 += newAddend1;
+    newAddend1 = 0;
+  }
+  if (!addend1 && !newAddend1 && addend2) {
+    addend2 += newAddend2;
+    newAddend2 = 0;
+  }
+  //
+  //This if statement handles the 10s
+  if (addend1 && addend2) {
+    hintString += "(" + addend1 + " + <span style=\"color:#ffbaba\">" + addend2 + "</span>)";
+  } else if (addend1) { //If there is only one 10s number, then that is the only one output to the string
+    hintString += addend1;
+  } else if (addend2) {
+    hintString += "<span style=\"color:#ffbaba\">" + addend2 + "</span>";
+  }
+  //
+  //This if statement only runs if there is at least one 10s number
+  if ((addend1 || addend2) && (newAddend1 || newAddend2)) {
+    hintString += " + ";
+  }
+  //
+  //This if statement handles the 1s numbers
+  if (newAddend1 && newAddend2) {
+    //
+    //This if statement regroups the addends for more intuitive addition
+    if ((newAddend1 + newAddend2) > 10) {
+      let newAddend4 = 10 - newAddend1;
+      let newAddend3 = newAddend2 - newAddend4;
+      hintString += "(" + newAddend1 + " + <span style=\"color:#ffbaba\">" + newAddend4 +
+        "</span>) + <span style=\"color:#ffbaba\">" + newAddend3 + "</span> = ?";
+    } else { //No regrouping needed here
+      hintString += "(" + newAddend1 + " + <span style=\"color:#ffbaba\">" + newAddend2 + "</span>) = ?";
+    }
+  } else if (newAddend1) { //These two else ifs handle the output if there's only one 1s number
+    hintString += newAddend1 + " = ?";
+  } else if (newAddend2) {
+    hintString += "<span style=\"color:#ffbaba\">" + newAddend2 + "</span> = ?";
+  }
+  //
+  //If there are no 1s numbers, then this puts the " = ?" on the end
+  if (!newAddend1 && !newAddend2) {
+    hintString += " = ?";
+  }
+  hintDiv.innerHTML = hintString; //Outputs the string to the html
+  fibonacciSpells--;
+  fibonacciCount.innerHTML = fibonacciSpells;
 }
