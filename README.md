@@ -26,6 +26,12 @@ Moved the getLevel() function to the global scope
 
 Added the Algebra spell to the game. It lets the monster randomly change a simple addition problem into a basic missing term problem. The higher the level of the monster, the more likely it is to cast Algebra.
 
-I also included all of the .gif assets for the game in .rar file
+I also included all of the .gif assets for the game in a .rar file
 
-### Up next: spells and unlocking other dungeons
+## 11/17/17
+
+### Update
+
+Added lots of stuff for learning the first spell and making sure it works properly. Short on time, more details later...
+
+### Up next: more spells and unlocking other dungeons
