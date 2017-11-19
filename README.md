@@ -42,4 +42,10 @@ I added the subtraction functionality in and got it working properly.
 
 I also put in the triangle/fireball spell and some flashing animations for that. I had to modify my checkAnswers() function to accept an additional argument that determines how much damage an attack does.
 
+## 11/19/17
+
+## Update
+
+I updated the hint functionality to cover subtraction problems. Since I did that, I could also improve the hints for the algebra/missing term problems. 
+
 ### Up next: more spells, determining boss rewards, and unlocking other dungeons
