@@ -4,7 +4,6 @@ var playerHealth = 10;
 var operator = "+";
 var timer;
 var additionLevel = 1;
-//var addend1, addend2;
 var subtractionLevel, multiplicationLevel, divisionLevel = 0;
 var mage, mageFight, mageHurt, mageDead = 0;
 mage = "whiteMage.gif";
@@ -30,7 +29,7 @@ var hexagonNumbers = [6, 15, 28, 45, 66, 91, 120];
 var starSpells = 0;
 var starNumbers = [13, 37, 73, 121];
 var octagonSpells = 0;
-var octagonNumbers = [9, 25, 49, 81, 121]
+var octagonNumbers = [9, 25, 49, 81, 121];
 var monster = {};
 var monstersKilled = 0;
 //
@@ -469,7 +468,7 @@ function battle() {
 
   spellsOn();
 
-  if (getRandomNumber(0, 100) <= monster.index) {
+  if (getRandomNumber(0, 0) <= monster.index) {
     problemDiv.innerHTML = "The " + monster.name + " used Algebra!";
     algebra = true;
     answer = terms[1];
@@ -519,7 +518,7 @@ function battle() {
       countdownTimer.innerHTML = "0.00";
       checkAnswer(-answer);
     } else {
-      width -= .34;   //How much the countdown bar decreases in size every 10 milliseconds
+      width -= 0.34;   //How much the countdown bar decreases in size every 10 milliseconds
       //
       //These three lines display the time left on top of the
       //countdown timer
@@ -1134,11 +1133,12 @@ function spellsOn() {
   fibonacciImg.style.filter = "opacity(10%)";
   fibonacciImg.onclick = "";
 
-  /*document.getElementById("triangle").onclick = "";
+  document.getElementById("triangle").onclick = "";
   document.getElementById("square").onclick = "";
   document.getElementById("pyramid").onclick = "";
   document.getElementById("cube").onclick = "";
 }*/
+
 //
 //This is my long and complicated-looking hint spell: Fibonacci.
 //It determines whether the player has enough spells to cast and
@@ -1148,98 +1148,163 @@ function castFibonacci() {
   fibonacciImg.onclick = "";
   hintDiv = document.getElementById("hintDiv");
   fibonacciCount = document.getElementById("fibonacciCount");
-
   //
   //If the player has no magic, then no hint is shown
   if (!fibonacciSpells) {
     hintDiv.innerHTML = "You don't have any Fibonacci Magic!";
+    hintDiv.style.visibility = "visible"; //This displays the hint area
     return;
   }
+  //
+  //This holds the string that will become the hint
+  var hintString = "";
   //
   //If the enemy cast Algebra, then this small hint code runs.
   //I will probably update it with better hints as I develop
   //subtraction problems and hints.
   if (algebra) {
     algebra = false;
-    hintDiv.style.visibility = "visible"; //This displays the hint area
-    hintDiv.innerHTML = terms[2] + " - " + terms[0] + " = ?";
+    //
+    //Determines what the hint will be based on what
+    //the current operator is
+    switch (operator) {
+      case "+":
+        hintString += terms[2] + " - " + terms[0] + " = ? <br />";
+        subtractionHint(terms[2], terms[0]);
+        break;
+      case "-":
+        hintString += terms[0] + " - " + terms[2] + " = ? <br />";
+        subtractionHint(terms[0], terms[2]);
+        break;
+      case "*":
+
+      case "/":
+
+    }
+    //
+    //These five lines display the final hint to the hintDiv,
+    //update the count of Fibonacci Spells, and end the function
+    hintDiv.innerHTML = hintString;
+    hintDiv.style.visibility = "visible";
     fibonacciSpells--;
     fibonacciCount.innerHTML = fibonacciSpells;
     return;
   }
-  hintDiv.style.visibility = "visible"; //This displays the hint area
   //
-  //This is here so I can reuse old code w/out changing
-  //every instance of addend1 and addend2 to terms[0 and 1]
-  addend1 = terms[0];
-  addend2 = terms[1];
-  //
-  //This will hold the string that will become the hint
-  var hintString = "";
-  //
-  //These operations seperate the two addends into expanded notation
-  var newAddend1 = addend1 % 10;
-  var newAddend2 = addend2 % 10;
-  addend1 -= newAddend1;
-  addend2 -= newAddend2;
-  //
-  //These two if statements only execute if one of the addends is 0
-  if (!addend2 && !newAddend2 && addend1) {
-    addend1 += newAddend1;
-    newAddend1 = 0;
-  }
-  if (!addend1 && !newAddend1 && addend2) {
-    addend2 += newAddend2;
-    newAddend2 = 0;
+  //This switch determines which hint to display
+  switch (operator) {
+    case "+":
+      additionHint(terms[0], terms[1]);
+      break;
+    case "-":
+      subtractionHint(terms[0], terms[1]);
+      break;
+    case "*":
+
+    case "/":
+
   }
   //
-  //This if statement handles the 10s
-  if (addend1 && addend2) {
-    hintString += "(" + addend1 + " + <span style=\"color:#ffbaba\">" + addend2 + "</span>)";
-  } else if (addend1) { //If there is only one 10s number, then that is the only one output to the string
-    hintString += addend1;
-  } else if (addend2) {
-    hintString += "<span style=\"color:#ffbaba\">" + addend2 + "</span>";
-  }
-  //
-  //This if statement only runs if there is at least one 10s number
-  if ((addend1 || addend2) && (newAddend1 || newAddend2)) {
-    hintString += " + ";
-  }
-  //
-  //This if statement handles the 1s numbers
-  if (newAddend1 && newAddend2) {
-    //
-    //This if statement regroups the addends for more intuitive addition
-    if ((newAddend1 + newAddend2) > 10) {
-      let newAddend4 = 10 - newAddend1;
-      let newAddend3 = newAddend2 - newAddend4;
-      hintString += "(" + newAddend1 + " + <span style=\"color:#ffbaba\">" + newAddend4 +
-        "</span>) + <span style=\"color:#ffbaba\">" + newAddend3 + "</span> = ?";
-    } else { //No regrouping needed here
-      hintString += "(" + newAddend1 + " + <span style=\"color:#ffbaba\">" + newAddend2 + "</span>) = ?";
-    }
-  } else if (newAddend1) { //These two else ifs handle the output if there's only one 1s number
-    hintString += newAddend1 + " = ?";
-  } else if (newAddend2) {
-    hintString += "<span style=\"color:#ffbaba\">" + newAddend2 + "</span> = ?";
-  }
-  //
-  //If there are no 1s numbers, then this puts the " = ?" on the end
-  if (!newAddend1 && !newAddend2) {
-    hintString += " = ?";
-  }
-  hintDiv.innerHTML = hintString; //Outputs the string to the html
+  //These last four lines display the final hint to the hintDiv
+  //and update the count of Fibonacci Spells
+  hintDiv.innerHTML = hintString;
+  hintDiv.style.visibility = "visible";
   fibonacciSpells--;
   fibonacciCount.innerHTML = fibonacciSpells;
+  //
+  //This is the logic that handles the addition hints
+  function additionHint(addend1, addend2) {
+
+    //
+    //These operations seperate the two addends into expanded notation
+    var newAddend1 = addend1 % 10;
+    var newAddend2 = addend2 % 10;
+    addend1 -= newAddend1;
+    addend2 -= newAddend2;
+    //
+    //These two if statements only execute if one of the addends is 0
+    if (!addend2 && !newAddend2 && addend1) {
+      addend1 += newAddend1;
+      newAddend1 = 0;
+    }
+    if (!addend1 && !newAddend1 && addend2) {
+      addend2 += newAddend2;
+      newAddend2 = 0;
+    }
+    //
+    //This if statement handles the 10s
+    if (addend1 && addend2) {
+      hintString += "(" + addend1 + " + <span style=\"color:#ffbaba\">" + addend2 + "</span>)";
+    } else if (addend1) { //If there is only one 10s number, then that is the only one output to the string
+      hintString += addend1;
+    } else if (addend2) {
+      hintString += "<span style=\"color:#ffbaba\">" + addend2 + "</span>";
+    }
+    //
+    //This if statement only runs if there is at least one 10s number
+    if ((addend1 || addend2) && (newAddend1 || newAddend2)) {
+      hintString += " + ";
+    }
+    //
+    //This if statement handles the 1s numbers
+    if (newAddend1 && newAddend2) {
+      //
+      //This if statement regroups the addends for more intuitive addition
+      if ((newAddend1 + newAddend2) > 10) {
+        let newAddend4 = 10 - newAddend1;
+        let newAddend3 = newAddend2 - newAddend4;
+        hintString += "(" + newAddend1 + " + <span style=\"color:#ffbaba\">" + newAddend4 +
+          "</span>) + <span style=\"color:#ffbaba\">" + newAddend3 + "</span> = ?";
+      } else { //No regrouping needed here
+        hintString += "(" + newAddend1 + " + <span style=\"color:#ffbaba\">" + newAddend2 + "</span>) = ?";
+      }
+    } else if (newAddend1) { //These two else ifs handle the output if there's only one 1s number
+      hintString += newAddend1 + " = ?";
+    } else if (newAddend2) {
+      hintString += "<span style=\"color:#ffbaba\">" + newAddend2 + "</span> = ?";
+    }
+    //
+    //If there are no 1s numbers, then this puts the " = ?" on the end
+    if (!newAddend1 && !newAddend2) {
+      hintString += " = ?";
+    }
+  }
+  //
+  //This is the logic that handles the subtraction hints
+  function subtractionHint(minuend1, subtrahend1) {
+
+    var minuend2 = minuend1 % 10;
+    var subtrahend2 = subtrahend1 % 10;
+    minuend1 -= minuend2;
+    subtrahend1 -= subtrahend2;
+
+    if (subtrahend2 > minuend2) {
+      subtrahend1 += subtrahend2;
+      subtrahend2 = 0;
+    }
+
+    if (!subtrahend1) {
+      hintString += minuend1 + " + ";
+    } else if (!minuend2 && !subtrahend2) {
+      hintString += minuend1 + " - ";
+    } else {
+      hintString += "(" + minuend1 + " - <span style=\"color:#ffbaba\">" + subtrahend1 + "</span>) + ";
+    }
+
+    if (!subtrahend2 && !minuend2) {
+      hintString += "<span style=\"color:#ffbaba\">" + subtrahend1 + "</span> = ?";
+    } else if (!subtrahend2) {
+      hintString += minuend2 + " = ?";
+    } else {
+      hintString += "(" + minuend2 + " - <span style=\"color:#ffbaba\">" + subtrahend2 + "</span>) = ?";
+    }
+  }
 }
 //
-//This function handles the fireball spell. I'm not
-//sure I like how the animation works/looks but it's
-//close to what I want so I'm keeping it for now.
+//This function handles my triangle/fireball spell
+//I may want to play with the animation a bit...
 function castTriangle() {
   hintDiv = document.getElementById("hintDiv");
-  clearInterval(timer);
   //
   //If the player has no magic, then no fireball is cast
   if (!triangleSpells) {
@@ -1248,8 +1313,8 @@ function castTriangle() {
     setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
     return;
   }
-  //
-  //This little chunk of code determines how much damage the spell does
+  clearInterval(timer);
+
   let damage = 1;
   let i = 0;
   let totalLevels = additionLevel + subtractionLevel + multiplicationLevel + divisionLevel;
@@ -1257,12 +1322,10 @@ function castTriangle() {
     damage++;
     i++
   }
-  //
-  //The code below flashes the playArea red before the checkAnswer()
-  //function does its business.
+
   hintDiv.innerHTML = "You cast Euclid's Fireball!";
   hintDiv.style.visibility = "visible";
-  let spellFlash = 16;
+  let spellFlash = 10;
   let spellCast = setInterval(castSpell, 75);
 
   function castSpell() {
@@ -1280,9 +1343,8 @@ function castTriangle() {
     spellFlash--;
   }
 
-  hintDiv.innerHTML = "You cast Euclid's Fireball!";
-  hintDiv.style.visibility = "visible";
 
   triangleSpells--;
   document.getElementById("triangleCount").innerHTML = triangleSpells;
+
 }
