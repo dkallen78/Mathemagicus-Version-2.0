@@ -13,7 +13,7 @@ mageDead = "whiteMageDead.gif";
 var damagePlayer, damageMonster;
 var terms = [];
 var algebra = false;
-var spellsOff = false;
+//var spellsOff = false;
 var fibonacciSpells = 0;
 var fibonacciNumbers = [2, 3, 5, 8, 13, 21, 34, 55, 89, 144];
 var triangleSpells = 0;
@@ -112,10 +112,10 @@ function resetStartVariables() {
   playerHealth = 10;
   additionLevel = 5;
   subtractionLevel = 3;
-  multiplicationLevel = 0;
+  multiplicationLevel = 3;
   divisionLevel = 0;
-  fibonacciSpells = 4;
-  triangleSpells = 4;
+  fibonacciSpells = 10;
+  triangleSpells = 10;
   squareSpells = 0;
   pyramidSpells = 0;
   cubeSpells = 0;
@@ -331,7 +331,7 @@ function dungeonEntrance() {
   }
   if (multiplicationLevel) {
     multiplicationDoor = "multiplicationDoorOpen.gif";
-    multiplicationDoorImg.onclick = multiplicationDungeon;
+    multiplicationDoorImg.onclick = function() {dungeon("*");}
   } else {
     multiplicationDoor = "multiplicationDoorClosed.gif";
   }
@@ -468,7 +468,7 @@ function battle() {
 
   spellsOn();
 
-  if (getRandomNumber(0, 0) <= monster.index) {
+  if (getRandomNumber(0, 100) <= monster.index) {
     problemDiv.innerHTML = "The " + monster.name + " used Algebra!";
     algebra = true;
     answer = terms[1];
@@ -548,7 +548,18 @@ function getTerms() {
       var answer = constant1 - constant2;
       break;
     case "*": //Multiplication
-
+      //
+      //This variable declaration is just to shorten the name
+      //temporarily to make the constant2 formula take up
+      //less space
+      var lvl = multiplicationLevel;
+      var constant1 = getRandomNumber(0, (lvl + 5));
+      //
+      //There might be a better formula for getting this
+      //progression of products but this works for now
+      var constant2 = getRandomNumber(0, ((lvl + 5) - ((((lvl % 2) + lvl) / 2) - 1)));
+      var answer = constant1 * constant2;
+      break;
     case "/": //Division
 
   }
@@ -559,6 +570,7 @@ function getTerms() {
 //that goes into checking answers and progressing the game
 function checkAnswer(answer, damage) {
   clearInterval(timer);
+  spellsOff();
 
   var playerImg = document.getElementById("playerImg");
   var playerDiv = document.getElementById("playerDiv");
@@ -714,6 +726,7 @@ function checkAnswer(answer, damage) {
             if (playerLevel == 4) {
               problemDiv.innerHTML += "Something seems to be happening...<br /><br />";
               subtractionLevel++;
+              progressLevel();
               var shakeCount = 12;
               var dungeonShake = setInterval(shakeDungeon, 100);
               insertNextButton("Next", dungeonEntrance)
@@ -725,8 +738,22 @@ function checkAnswer(answer, damage) {
               progressLevel();
               insertNextButton("Next", function() {dropScroll("triangleScroll.gif");});
             }
+            if (playerLevel == 4) {
+              problemDiv.innerHTML += "Something seems to be happening...<br /><br />";
+              multiplicationLevel++;
+              progressLevel();
+              var shakeCount = 12;
+              var dungeonShake = setInterval(shakeDungeon, 100);
+              insertNextButton("Next", dungeonEntrance)
+            }
+            break;
           case "*":
-
+            if (playerLevel == 2) {
+              problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
+              progressLevel();
+              insertNextButton("Next", function() {dropScroll("fibonacciScroll2.gif");});
+            }
+            break;
           case "/":
 
         }
@@ -839,7 +866,7 @@ function checkAnswer(answer, damage) {
     //
     //Checks for Fibonacci Numbers
     if ((additionLevel > 2) && (fibonacciNumbers.includes(answer))) {
-      if (fibonacciSpells < 10) {
+      if (fibonacciSpells < 9) {
         fibonacciSpells++;
         document.getElementById("fibonacciCount").innerHTML = fibonacciSpells;
       }
@@ -847,7 +874,7 @@ function checkAnswer(answer, damage) {
     //
     //Checks for Triangle Numbers
     if ((subtractionLevel > 2) && (triangleNumbers.includes(answer))) {
-      if (triangleSpells < 10) {
+      if (triangleSpells < 9) {
         triangleSpells++;
         document.getElementById("triangleCount").innerHTML = triangleSpells;
       }
@@ -1128,16 +1155,19 @@ function spellsOn() {
 }
 //
 //I'm not sure if I need this function yet but it turns the spells "off"
-/*function spellsOff() {
+function spellsOff() {
   fibonacciImg = document.getElementById("fibonacciImg");
-  fibonacciImg.style.filter = "opacity(10%)";
+  fibonacciImg.style.filter = "opacity(30%)";
   fibonacciImg.onclick = "";
 
-  document.getElementById("triangle").onclick = "";
-  document.getElementById("square").onclick = "";
+  triangleImg = document.getElementById("triangleImg");
+  triangleImg.style.filter = "opacity(30%)";
+  triangleImg.onclick = "";
+
+  /*document.getElementById("square").onclick = "";
   document.getElementById("pyramid").onclick = "";
-  document.getElementById("cube").onclick = "";
-}*/
+  document.getElementById("cube").onclick = "";*/
+}
 
 //
 //This is my long and complicated-looking hint spell: Fibonacci.
@@ -1177,7 +1207,11 @@ function castFibonacci() {
         subtractionHint(terms[0], terms[2]);
         break;
       case "*":
-
+        hintString += terms[2] + " / " + terms[0] + " = ?";
+        if (divisionLevel > 2) {
+          hintString += "<br />";
+        }
+        break;
       case "/":
 
     }
@@ -1200,7 +1234,12 @@ function castFibonacci() {
       subtractionHint(terms[0], terms[1]);
       break;
     case "*":
-
+      if (multiplicationLevel < 3) {
+        hintString = "Your magic doesn't seem to be working!";
+      } else {
+        multiplicationHint(terms[0], terms[1]);
+      }
+      break;
     case "/":
 
   }
@@ -1299,6 +1338,71 @@ function castFibonacci() {
       hintString += "(" + minuend2 + " - <span style=\"color:#ffbaba\">" + subtrahend2 + "</span>) = ?";
     }
   }
+  //
+  //This is the logic that handles the multiplication hints
+  //There's a bit of redundancy here that I want to come back
+  //to, to try and make the code more consise
+  function multiplicationHint(multiplicand, multiplier1) {
+
+    if (multiplicand == 1) {
+      hintString += multiplier1 + " + 0 = ?";
+    } else if (multiplier1 == 1) {
+      hintString += multiplicand + " + 0 = ?";
+    } else if (multiplicand == 2) {
+      hintString += multiplier1 + " + " + multiplier1 + " = ?";
+    } else if (multiplier1 == 2) {
+      hintString += multiplicand + " + " + multiplicand + " = ?";
+    } else if ((multiplicand == 10) || (multiplier1 == 10)) {
+      hintString += multiplicand + " * <span style=\"color:#ffbaba\">" + multiplier1 + "</span> = ?";
+    } else {
+      //
+      //I type the same bit of code more than a few times here...
+      //I bet I can remove one line from each if statement...
+      if (multiplier1 < 5) {
+        var multiplier2 = multiplier1 - 2;
+        hintString += multiplicand + " * (<span style=\"color:#ffbaba\">2</span> + <span style=\"color:#ffbaba\">";
+        hintString += multiplier2 + "</span>) = ?<br />";
+      } else if (multiplier1 == 5) {
+        var multiplier2 = 5;
+        hintString += multiplicand + " * (<span style=\"color:#ffbaba\">10</span> - <span style=\"color:#ffbaba\">";
+        hintString += multiplier2 + "</span>) = ?<br />";
+      } else if (multiplier1 < 8) {
+        var multiplier2 = multiplier1 - 5;
+        hintString += multiplicand + " * (<span style=\"color:#ffbaba\">5</span> + <span style=\"color:#ffbaba\">";
+        hintString += multiplier2 + "</span>) = ?<br />";
+      } else if (multiplier1 < 10) {
+        var multiplier2 = 10 - multiplier1;
+        hintString += multiplicand + " * (<span style=\"color:#ffbaba\">10</span> - <span style=\"color:#ffbaba\">";
+        hintString += multiplier2 + "</span>) = ?<br />";
+      } else if (multiplier1 > 10) {
+        var multiplier2 = multiplier1 - 10;
+        hintString += multiplicand + " * (<span style=\"color:#ffbaba\">10</span> + <span style=\"color:#ffbaba\">";
+        hintString += multiplier2 + "</span>) = ?<br />";
+      }
+      //
+      //Here is the redundancy. I use the same if statement twice...
+      hintString += "(" + multiplicand + " * <span style=\"color:#ffbaba\">";
+      if (multiplier1 < 5) {
+        var multiplier2 = multiplier1 - 2;
+        hintString += "2</span>) + ";
+      } else if (multiplier1 == 5) {
+        var multiplier2 = 5;
+        hintString += "10</span>) - ";
+      } else if (multiplier1 < 8) {
+        var multiplier2 = multiplier1 - 5;
+        hintString += "5</span>) + ";
+      } else if (multiplier1 < 10) {
+        var multiplier2 = 10 - multiplier1;
+        hintString += "10</span>) - ";
+      } else if (multiplier1 > 10) {
+        var multiplier2 = multiplier1 - 10;
+        hintString += "10</span>) + ";
+      }
+
+      hintString += "(" + multiplicand + " * <span style=\"color:#ffbaba\">" + multiplier2 + "</span>) = ?";
+    }
+  }
+
 }
 //
 //This function handles my triangle/fireball spell
