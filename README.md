@@ -34,4 +34,12 @@ I also included all of the .gif assets for the game in a .rar file
 
 Added lots of stuff for learning the first spell and making sure it works properly. Short on time, more details later...
 
-### Up next: more spells and unlocking other dungeons
+## 11/18/17
+
+### Update
+
+I added the subtraction functionality in and got it working properly.
+
+I also put in the triangle/fireball spell and some flashing animations for that. I had to modify my checkAnswers() function to accept an additional argument that determines how much damage an attack does.
+
+### Up next: more spells, determining boss rewards, and unlocking other dungeons
