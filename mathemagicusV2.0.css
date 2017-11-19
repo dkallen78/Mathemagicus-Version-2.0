@@ -8,6 +8,20 @@ Styles the play area where the game takes place*/
   border: 8px solid #996633;
   border-radius: 5px;
   background-image: url("tile.png");
+  transition: margin 100ms;
+}
+/*
+I use this class to put a red overlay on top of
+the playArea for a flashing visual effect I have*/
+.playAreaRed::after {
+  position: absolute;
+  content: " ";
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background-color: rgba(255, 0, 0, 0.5);
 }
 /*
 Styles the Mathemagicus title on the initial screen*/
@@ -221,7 +235,7 @@ This styles the images for the spells*/
   margin: 2px;
   padding: 2px;
   width: 20px;
-  filter: opacity(10%);
+  /*filter: opacity(10%);*/
 }
 /*
 This controls the behavior of the <div>s inside of the spellBar*/
@@ -354,23 +368,32 @@ and makes sure the numbers are centered in the box*/
   width: 50px;
   text-align: center;
 }
-
+/*
+This styles the scroll that pops up when a player
+learns a new spell*/
 #scrollDiv {
   position: absolute;
   top: 25px;
   left: 66px;
   z-index: 2;
-}
-
-#scrollImg {
   transition: filter 1000ms;
 }
+/*
+This handles the fade in for when the scroll appears
+on screen
+#scrollImg {
+  transition: filter 1000ms;
+}*/
 
+/*
+This handles the positioning and style of
+the button that shows up on the scrolls.
+It borrows the animations from my other
+next buttons*/
 #scrollNextButton {
   position: absolute;
   left: 131px;
   bottom: 50px;
-  /*background-color: #c0883d;*/
   background-color: rgba(0,0,0,0.125);
   border-radius: 5px;
   border: 1px solid black;

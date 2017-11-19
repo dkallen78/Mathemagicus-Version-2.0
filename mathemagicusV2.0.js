@@ -111,12 +111,12 @@ function getRandomNumber(floor, ceiling) {
 //values for easier debugging
 function resetStartVariables() {
   playerHealth = 10;
-  additionLevel = 3;
-  subtractionLevel = 0;
+  additionLevel = 5;
+  subtractionLevel = 3;
   multiplicationLevel = 0;
   divisionLevel = 0;
   fibonacciSpells = 4;
-  triangleSpells = 0;
+  triangleSpells = 4;
   squareSpells = 0;
   pyramidSpells = 0;
   cubeSpells = 0;
@@ -158,7 +158,7 @@ function gameStart() {
   continueButton.setAttribute("type", "button");
   continueButton.setAttribute("value", "Continue");
   continueButton.setAttribute("class", "startButtons");
-  continueButton.onclick = function() {dungeon(additionLevel);}
+  continueButton.onclick = dungeonEntrance;
   continueTD.appendChild(continueButton);
   tableRow.appendChild(continueTD);
 
@@ -320,14 +320,13 @@ function dungeonEntrance() {
   //and assigns an onclick function to open doors
   if (additionLevel) {
     additionDoor = "additionDoorOpen.gif";
-    operator = "+";
-    additionDoorImg.onclick = function() {dungeon(additionLevel);}
+    additionDoorImg.onclick = function() {dungeon("+");}
   } else {
     additionDoor = "additionDoorClosed.gif";
   }
   if (subtractionLevel) {
     subtractionDoor = "subtractionDoorOpen.gif";
-    subtractionDoorImg.onclick = subtractionDungeon;
+    subtractionDoorImg.onclick = function() {dungeon("-");}
   } else {
     subtractionDoor = "subtractionDoorClosed.gif";
   }
@@ -414,12 +413,7 @@ function checkKeyPress(event, answer) {
   var key = event.which;
   switch(key) {
     case 13: //Enter key, check answer
-      checkAnswer(answer);
-      /*if (!algebraTest) {
-        checkAnswer(addend2);
-      } else {
-        checkAnswer(sum);
-      }*/
+      checkAnswer(answer, 1);
       break;
     case 97: //"a" key, Fibonacci Spell
       event.preventDefault(); //prevents the writing of the "a" key
@@ -428,19 +422,15 @@ function checkKeyPress(event, answer) {
       }
       if (additionLevel > 2) {
         castFibonacci();
-        break;
-      }
-    /*case 115: //"s" key, Triangle Spell
-      event.preventDefault(); //prevents the writing of the "s" key
-      if (playerLevel > 2) {
-        if (!algebraTest) {
-          algebraHint(addend1, sum);
-        } else {
-          getHint(addend1, addend2);
-        }
       }
       break;
-    case 100: //"d" key, Square Spell
+    case 115: //"s" key, Triangle Spell
+      event.preventDefault(); //prevents the writing of the "s" key
+      if (subtractionLevel > 2) {
+        castTriangle();
+      }
+      break;
+    /*case 100: //"d" key, Square Spell
       if (playerLevel > 3) {
         castSquare();
         break;
@@ -460,8 +450,10 @@ function checkKeyPress(event, answer) {
 //
 //I'm not sure I need this but I think I do, I'll come back to it
 //later and figure out if it stays or if it goes
-function dungeon(playerLevel) {
+function dungeon(operation) {
   makeDungeonScreen();
+  operator = operation;
+  var playerLevel = getLevel();
   monster = new newMonster(playerLevel);
   battle();
 }
@@ -471,14 +463,16 @@ function dungeon(playerLevel) {
 function battle() {
   terms = getTerms();
   var width = 340;
+  var answer;
   var countdownBarFront = document.getElementById("countdownBarFront");
   var countdownTimer = document.getElementById("countdownTimer");
 
   spellsOn();
 
-  if (getRandomNumber(0, 0) <= monster.index) {
+  if (getRandomNumber(0, 100) <= monster.index) {
     problemDiv.innerHTML = "The " + monster.name + " used Algebra!";
     algebra = true;
+    answer = terms[1];
     let algebraFlash = 10;
     let algebraMagic = setInterval(castAlgebra, 100);
     //
@@ -510,6 +504,7 @@ function battle() {
       }
     }
   } else {
+    answer = terms[2];
     problemDiv.innerHTML = terms[0] + " " + operator + " <span style=\"color:#ffbaba\">" + terms[1] + "</span> =\
       <input id=\"answerInput\" type=\"number\" onKeyPress=\"checkKeyPress(event, " + terms[2] + ")\"/>";
     timer = setInterval(timeDown, 10);
@@ -522,7 +517,7 @@ function battle() {
     if (width < 1) {          //When the countdown ends, the setInterval is stopped
       clearInterval(timer);   //and a wrong answer is passed to checkAnswer()
       countdownTimer.innerHTML = "0.00";
-      checkAnswer(-terms[2]);
+      checkAnswer(-answer);
     } else {
       width -= .34;   //How much the countdown bar decreases in size every 10 milliseconds
       //
@@ -546,7 +541,13 @@ function getTerms() {
       var answer = constant1 + constant2;
       break;
     case "-": //Subtraction
-
+      var constant1 = getRandomNumber(0, (subtractionLevel * 10));
+      var constant2 = getRandomNumber(0, (subtractionLevel * 10));
+      while (constant2 > constant1) {
+        constant2 = getRandomNumber(0, (subtractionLevel * 10));
+      }
+      var answer = constant1 - constant2;
+      break;
     case "*": //Multiplication
 
     case "/": //Division
@@ -557,9 +558,8 @@ function getTerms() {
 //
 //This function will become a lot bigger, but it handles all the logic
 //that goes into checking answers and progressing the game
-function checkAnswer(answer) {
+function checkAnswer(answer, damage) {
   clearInterval(timer);
-  //learnFibonacci();
 
   var playerImg = document.getElementById("playerImg");
   var playerDiv = document.getElementById("playerDiv");
@@ -577,8 +577,12 @@ function checkAnswer(answer) {
   //
   //The first half of this if statement handles the stuff that
   //happens when an answer is correct
-  if (answerInput.value == answer) {
-    monster.hp--;
+  if ((answerInput.value == answer) || (answer == "spell")) {
+    checkForSpells();
+    monster.hp -= damage;
+    if (monster.hp < 1) {
+      monster.hp = 0;
+    }
     var monsterHealthBarFront = document.getElementById("monsterHealthBarFront");
     monsterHealthBarFront.style.height = ((monster.hp / monster.maxHp) * 110) + "px";
 
@@ -586,7 +590,7 @@ function checkAnswer(answer) {
     damageMonster = setInterval(monsterDamage, 100);
     //
     //This if checks to see if the monster is killed or not
-    if (monster.hp == 0) {
+    if (monster.hp < 1) {
       monstersKilled++;
       problemDiv.innerHTML = "Great job, you defeated the " + monster.name + "!<br /><br />";
       //
@@ -700,21 +704,45 @@ function checkAnswer(answer) {
     if (((playerLevel % 2)  == 0) && (monstersKilled == 10)) {
       insertNextButton("Next", bossEncounter);
     } else {
-      if (monstersKilled == 11) {
+      if (monstersKilled > 10) {
         switch (operator) {
           case "+":
             if (playerLevel == 2) {
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
-              insertNextButton("Next", learnFibonacci);
+              insertNextButton("Next", function() {dropScroll("fibonacciScroll.gif");});
+            }
+            if (playerLevel == 4) {
+              problemDiv.innerHTML += "Something seems to be happening...<br /><br />";
+              subtractionLevel++;
+              var shakeCount = 12;
+              var dungeonShake = setInterval(shakeDungeon, 100);
+              insertNextButton("Next", dungeonEntrance)
             }
             break;
           case "-":
-
+            if (playerLevel == 2) {
+              problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
+              progressLevel();
+              insertNextButton("Next", function() {dropScroll("triangleScroll.gif");});
+            }
           case "*":
 
           case "/":
 
+        }
+
+        function shakeDungeon() {
+          if (shakeCount < 1) {
+            clearInterval(dungeonShake);
+          } else {
+            if ((shakeCount % 2) == 0) {
+              playArea.style.marginTop = "20px";
+            } else {
+              playArea.style.marginTop = "0px";
+            }
+          }
+          shakeCount--;
         }
       } else {
         progressLevel();
@@ -773,7 +801,7 @@ function checkAnswer(answer) {
   //
   //This function runs the first time the player learns the
   //Fibonacci Spell
-  function learnFibonacci() {
+  function dropScroll(scrollGif) {
     //
     //These three lines set up the container that
     //holds the scroll image
@@ -784,7 +812,7 @@ function checkAnswer(answer) {
     //These three lines set up the scroll image
     let scrollImg = document.createElement("img");
     scrollImg.setAttribute("id", "scrollImg");
-    scrollImg.src = "fibonacciScroll.gif";
+    scrollImg.src = scrollGif;
     //
     //These five lines set up the next button that appears
     //at the bottom of the scroll
@@ -803,7 +831,32 @@ function checkAnswer(answer) {
     //The setTimeout function ensures that the scroll appears
     //on screen with the intended transition effect
     setTimeout(function() {scrollDiv.style.filter = "opacity(100%)";}, 10);
+    scrollNextButton.focus();
   }
+  //
+  //This function checks the correct answers to see if they
+  //are in one of my sets of special numbers
+  function checkForSpells() {
+    //
+    //Checks for Fibonacci Numbers
+    if ((additionLevel > 2) && (fibonacciNumbers.includes(answer))) {
+      if (fibonacciSpells < 10) {
+        fibonacciSpells++;
+        document.getElementById("fibonacciCount").innerHTML = fibonacciSpells;
+      }
+    }
+    //
+    //Checks for Triangle Numbers
+    if ((subtractionLevel > 2) && (triangleNumbers.includes(answer))) {
+      if (triangleSpells < 10) {
+        triangleSpells++;
+        document.getElementById("triangleCount").innerHTML = triangleSpells;
+      }
+    }
+  }
+
+
+
 }
 //
 //I use this function to assign the proper level
@@ -1062,11 +1115,16 @@ function newBoss() {
 //
 //This function turns my spells "on" at the beginning of the battle
 function spellsOn() {
-  spellsOff = false;
+  //spellsOff = false;
   if (additionLevel > 2) {
     fibonacciImg = document.getElementById("fibonacciImg");
     fibonacciImg.style.filter = "opacity(100%)";
     fibonacciImg.onclick = function(){castFibonacci()};
+  }
+  if (subtractionLevel > 2) {
+    triangleImg = document.getElementById("triangleImg");
+    triangleImg.style.filter = "opacity(100%)";
+    triangleImg.onclick = function(){castTriangle()};
   }
 }
 //
@@ -1174,4 +1232,57 @@ function castFibonacci() {
   hintDiv.innerHTML = hintString; //Outputs the string to the html
   fibonacciSpells--;
   fibonacciCount.innerHTML = fibonacciSpells;
+}
+//
+//This function handles the fireball spell. I'm not
+//sure I like how the animation works/looks but it's
+//close to what I want so I'm keeping it for now.
+function castTriangle() {
+  hintDiv = document.getElementById("hintDiv");
+  clearInterval(timer);
+  //
+  //If the player has no magic, then no fireball is cast
+  if (!triangleSpells) {
+    hintDiv.innerHTML = "You don't have any Triangle Magic!";
+    hintDiv.style.visibility = "visible"; //This displays the hint area
+    setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
+    return;
+  }
+  //
+  //This little chunk of code determines how much damage the spell does
+  let damage = 1;
+  let i = 0;
+  let totalLevels = additionLevel + subtractionLevel + multiplicationLevel + divisionLevel;
+  while (totalLevels >= triangleNumbers[i]) {
+    damage++;
+    i++
+  }
+  //
+  //The code below flashes the playArea red before the checkAnswer()
+  //function does its business.
+  hintDiv.innerHTML = "You cast Euclid's Fireball!";
+  hintDiv.style.visibility = "visible";
+  let spellFlash = 16;
+  let spellCast = setInterval(castSpell, 75);
+
+  function castSpell() {
+    if (spellFlash < 1) {
+      clearInterval(spellCast);
+      playArea.classList.remove("playAreaRed");
+      checkAnswer("spell", damage);
+    } else {
+      if ((spellFlash % 2) == 0) {
+        playArea.classList.remove("playAreaRed");
+      } else {
+        playArea.classList.add("playAreaRed");
+      }
+    }
+    spellFlash--;
+  }
+
+  hintDiv.innerHTML = "You cast Euclid's Fireball!";
+  hintDiv.style.visibility = "visible";
+
+  triangleSpells--;
+  document.getElementById("triangleCount").innerHTML = triangleSpells;
 }
