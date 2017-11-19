@@ -48,4 +48,10 @@ I also put in the triangle/fireball spell and some flashing animations for that.
 
 I updated the hint functionality to cover subtraction problems. Since I did that, I could also improve the hints for the algebra/missing term problems. 
 
-### Up next: more spells, determining boss rewards, and unlocking other dungeons
+## Update 2
+
+I added functionality to generate multiplication problems. The formula to determine the multiplier is a bit ugly but it does what I want it to.
+
+I added hint functionality for multiplication problems. There's more redundancy than I would like in the code so I need to go back to it and find a way to remove that.
+
+### Up next: more spells, determining boss rewards, and making the Division Dungeon
