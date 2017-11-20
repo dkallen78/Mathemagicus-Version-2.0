@@ -44,20 +44,28 @@ I also put in the triangle/fireball spell and some flashing animations for that.
 
 ## 11/19/17
 
-## Update
+### Update
 
 I updated the hint functionality to cover subtraction problems. Since I did that, I could also improve the hints for the algebra/missing term problems. 
 
-## Update 2
+### Update 2
 
 I added functionality to generate multiplication problems. The formula to determine the multiplier is a bit ugly but it does what I want it to.
 
 I added hint functionality for multiplication problems. There's more redundancy than I would like in the code so I need to go back to it and find a way to remove that.
 
-## Update 3
+### Update 3
 
-I added functionality to generate multiplication problems. I used the same formula to get terms as I did for the multiplication problems so it would have the same progression of difficulty.
+I added functionality to generate division problems. I used the same formula to get terms as I did for the multiplication problems so it would have the same progression of difficulty.
+
+## 11/20/17
+
+### Update
+
+I added functionality for healing spells and nova spells. I haven't made the nova spells accessible yet but since the function was virtually identical to the fireball spell it was easy to add. 
+
+One problem I have with the healing spell is that it invokes checkAnswer() which automatically generates a damage animation on the enemy when I cast it... I need to find a way to keep that from happening...
 
 ### Up next: more spells, determining boss rewards, and making division hints
 
-I've figured out some of the boss rewards that I have yet to put in. At levels 6 the player will get a health boost. At addition level 6 they will learn a healing spell. After clearing the 10th level of a dungeon they will get an upgrade to their damage. I'm going to include a polymorph monster spell, a nova (damage) spell, either a slow or stop time spell, a spell to reduce the dificulty of the problem, and I'm torn between a strength spell (more damage per attack for one encounter) and a confuse spell (making the monster attack itself). We'll see how much of this I can fit in tomorrow =P
+I've figured out some of the boss rewards that I have yet to put in. After clearing the 10th level of a dungeon they will get an upgrade to their damage. I'm going to include a polymorph monster spell, either a slow or stop time spell, a spell to reduce the dificulty of the problem, and I'm torn between a strength spell (more damage per attack for one encounter) and a confuse spell (making the monster attack itself). We'll see how much of this I can fit in tomorrow =P
