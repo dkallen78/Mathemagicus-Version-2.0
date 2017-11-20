@@ -1,6 +1,8 @@
 var playArea = document.getElementById("playArea");
 var playerName = "";
 var playerHealth = 10;
+var maxHealth = 10;
+var playerDamage = 1;
 var operator = "+";
 var timer;
 var additionLevel = 1;
@@ -13,23 +15,28 @@ mageDead = "whiteMageDead.gif";
 var damagePlayer, damageMonster;
 var terms = [];
 var algebra = false;
-//var spellsOff = false;
 var fibonacciSpells = 0;
 var fibonacciNumbers = [2, 3, 5, 8, 13, 21, 34, 55, 89, 144];
 var triangleSpells = 0;
 var triangleNumbers = [3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 91, 105, 120, 136];
 var squareSpells = 0;
 var squareNumbers = [4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144];
+var pentagonSpells = 0;
+var pentagonNumbers = [5, 12, 22, 35, 51, 70, 92, 117, 145, 176];
+var tetrahedralSpells = 0;
+var tetrahedraNumbers = [4, 10, 20, 35, 56, 84, 120, 165];
 var pyramidSpells = 0;
 var pyramidNumbers = [5, 14, 30, 55, 91, 140];
 var cubeSpells = 0;
 var cubeNumbers = [8, 27, 64, 125];
 var hexagonSpells = 0;
-var hexagonNumbers = [6, 15, 28, 45, 66, 91, 120];
+var hexagonNumbers = [7, 19, 37, 61, 91, 127, 169];
 var starSpells = 0;
 var starNumbers = [13, 37, 73, 121];
 var octagonSpells = 0;
 var octagonNumbers = [9, 25, 49, 81, 121];
+var octahedronSpells = 0;
+var octahedronNumbers = [6, 19, 44, 85, 146];
 var monster = {};
 var monstersKilled = 0;
 //
@@ -110,10 +117,12 @@ function getRandomNumber(floor, ceiling) {
 //values for easier debugging
 function resetStartVariables() {
   playerHealth = 10;
+  maxHealth = 10;
+  playerDamage = 1;
   additionLevel = 5;
   subtractionLevel = 3;
   multiplicationLevel = 3;
-  divisionLevel = 0;
+  divisionLevel = 5;
   fibonacciSpells = 10;
   triangleSpells = 10;
   squareSpells = 0;
@@ -337,7 +346,7 @@ function dungeonEntrance() {
   }
   if (divisionLevel) {
     divisionDoor = "divisionDoorOpen.gif";
-    divisionDoorImg.onclick = divisionDungeon;
+    divisionDoorImg.onclick = function() {dungeon("/");}
   } else {
     divisionDoor = "divisionDoorClosed.gif";
   }
@@ -412,7 +421,7 @@ function checkKeyPress(event, answer) {
   var key = event.which;
   switch(key) {
     case 13: //Enter key, check answer
-      checkAnswer(answer, 1);
+      checkAnswer(answer, playerDamage);
       break;
     case 97: //"a" key, Fibonacci Spell
       event.preventDefault(); //prevents the writing of the "a" key
@@ -540,7 +549,12 @@ function getTerms() {
       var answer = constant1 + constant2;
       break;
     case "-": //Subtraction
-      var constant1 = getRandomNumber(0, (subtractionLevel * 10));
+      //
+      //I could use the same trick I did with
+      //generating the division terms here with
+      //the subtraction terms to lose the while
+      //loop...
+      var constant1 = getRandomNumber(1, (subtractionLevel * 10));
       var constant2 = getRandomNumber(0, (subtractionLevel * 10));
       while (constant2 > constant1) {
         constant2 = getRandomNumber(0, (subtractionLevel * 10));
@@ -561,7 +575,24 @@ function getTerms() {
       var answer = constant1 * constant2;
       break;
     case "/": //Division
-
+      //
+      //This logic is essentially the same as that for the
+      //multiplication problems but I changed the names of the
+      //variables to suit a division problem. I like the multiplication
+      //progression and I wanted to keep the division progression
+      //the same
+      //
+      //This variable declaration is just to shorten the name
+      //temporarily to make the answer formula take up
+      //less space
+      var lvl = divisionLevel;
+      var constant2 = getRandomNumber(0, (lvl + 5));
+      //
+      //There might be a better formula for getting this
+      //progression of products but this works for now
+      var answer = getRandomNumber(0, ((lvl + 5) - ((((lvl % 2) + lvl) / 2) - 1)));
+      var constant1 = constant2 * answer;
+      break;
   }
   return [constant1, constant2, answer];
 }
@@ -620,10 +651,13 @@ function checkAnswer(answer, damage) {
   //The second half of this if statement controls the stuff
   //that happens when an answer is wrong
   } else {
-    playerHealth--;
+    playerHealth -= monster.damage;
+    if (playerHealth < 1) {
+      playerHealth = 0;
+    }
 
     var healthBarFront = document.getElementById("healthBarFront");
-    healthBarFront.style.height = (playerHealth * 11) + "px";
+    healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
 
     var damageFlash = 6;
     damagePlayer = setInterval(playerDamage, 100);
@@ -712,7 +746,7 @@ function checkAnswer(answer, damage) {
     playerLevel = getLevel();
 
     problemDiv.innerHTML = "You cleared level " + playerLevel + "!<br /><br />";
-    if (((playerLevel % 2)  == 0) && (monstersKilled == 10)) {
+    if (((playerLevel % 2)  == 0) && (monstersKilled == 10) && (playerLevel < 11)) {
       insertNextButton("Next", bossEncounter);
     } else {
       if (monstersKilled > 10) {
@@ -752,6 +786,14 @@ function checkAnswer(answer, damage) {
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
               insertNextButton("Next", function() {dropScroll("fibonacciScroll2.gif");});
+            }
+            if (playerLevel == 4) {
+              problemDiv.innerHTML += "Something seems to be happening...<br /><br />";
+              divisionLevel++;
+              progressLevel();
+              var shakeCount = 12;
+              var dungeonShake = setInterval(shakeDungeon, 100);
+              insertNextButton("Next", dungeonEntrance)
             }
             break;
           case "/":
@@ -909,12 +951,13 @@ function getLevel() {
 //work to be done...
 function makeDungeonScreen() {
   playArea.innerHTML = "";
+  var playerLevel = getLevel();
   //
   //This block creates the box that shows the
   //level at the top of the screen
   let levelDiv = document.createElement("div");
   levelDiv.setAttribute("id", "levelDiv");
-  let levelDisplay = document.createTextNode("Level " + additionLevel); //This will have to be added in-dungeon
+  let levelDisplay = document.createTextNode("Level " + playerLevel);
   levelDiv.appendChild(levelDisplay);
   playArea.appendChild(levelDiv);
   //
@@ -1037,7 +1080,7 @@ function makeDungeonScreen() {
   healthBarBack.setAttribute("id", "healthBarBack");
   let healthBarFront = document.createElement("div");
   healthBarFront.setAttribute("id", "healthBarFront");
-  healthBarFront.style.height = (playerHealth * 11) + "px";
+  healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
   healthBarBack.appendChild(healthBarFront);
   combatDiv.appendChild(healthBarBack);
   //
@@ -1081,8 +1124,20 @@ function makeDungeonScreen() {
 //This function gets a new monster object and puts it on the screen
 function newMonster(playerLevel) {
   this.index = getRandomNumber(0, ((playerLevel * 3) - 1));
+  //
+  //Level 1   2 HP   1 dmg
+  //Level 2   3 HP   1 dmg
+  //Level 3   4 HP   1 dmg
+  //Level 4   5 HP   2 dmg
+  //Level 5   6 HP   2 dmg
+  //Level 6   7 HP   2 dmg
+  //Level 7   8 HP   3 dmg
+  //Level 8   9 HP   3 dmg
+  //Level 9   10 HP  3 dmg
+  //Level 10  11 HP  4 dmg
   this.hp = Math.ceil(((this.index + 1) / 3) + 1);
   this.maxHp = this.hp;
+  this.damage = Math.ceil(playerLevel / 3);
   switch (operator) {
     case "+":
       this.src = "./monsters/addition/" + additionMonsters[this.index];
@@ -1111,10 +1166,17 @@ function newMonster(playerLevel) {
 function newBoss() {
   playerLevel = getLevel();
   this.index = (playerLevel / 2) + 29;
+  //
+  //Boss 1  Level 2   10 HP   3 dmg
+  //Boss 2  Level 4   15 HP   3 dmg
+  //Boss 3  Level 6   20 HP   4 dmg
+  //Boss 4  Level 8   25 HP   4 dmg
+  //Boss 5  Level 10  30 HP   5 dmg
+
   //this.hp = (playerLevel * 2) + (playerLevel / 2) + 5;
   this.hp = 1; //I only use this for testing and debugging
   this.maxHp = this.hp;
-
+  this.damage = (Math.floor(this.hp / 10) + 2);
   switch (operator) {
     case "+":
       this.src = "./monsters/addition/" + additionMonsters[this.index];
@@ -1168,7 +1230,6 @@ function spellsOff() {
   document.getElementById("pyramid").onclick = "";
   document.getElementById("cube").onclick = "";*/
 }
-
 //
 //This is my long and complicated-looking hint spell: Fibonacci.
 //It determines whether the player has enough spells to cast and
