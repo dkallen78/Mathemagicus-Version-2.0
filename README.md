@@ -62,10 +62,26 @@ I added functionality to generate division problems. I used the same formula to 
 
 ### Update
 
-I added functionality for healing spells and nova spells. I haven't made the nova spells accessible yet but since the function was virtually identical to the fireball spell it was easy to add. 
+I added functionality for healing spells and nova spells. I haven't made the nova spells accessible yet, but since the function was virtually identical to the fireball spell it was easy to add. 
 
 One problem I have with the healing spell is that it invokes checkAnswer() which automatically generates a damage animation on the enemy when I cast it... I need to find a way to keep that from happening...
 
-### Up next: more spells, determining boss rewards, and making division hints
+### Update 2
 
-I've figured out some of the boss rewards that I have yet to put in. After clearing the 10th level of a dungeon they will get an upgrade to their damage. I'm going to include a polymorph monster spell, either a slow or stop time spell, a spell to reduce the dificulty of the problem, and I'm torn between a strength spell (more damage per attack for one encounter) and a confuse spell (making the monster attack itself). We'll see how much of this I can fit in tomorrow =P
+I finished putting all of the spells into the game.
+
+I fixed the issue I was having with the healing spell, I just put in an if statement and passed a special value to one of my checkAnswer() arguments.
+
+The Nova Spell does a ton of damage and kills most normal monsters w/ one go.
+
+The Polymorph Monster Spell changes the monster to a very low level one. I need to make that a bit more dynamic so it doesn't always generate a level one monster, but rather a monster lower than the level it already is. I also need to make sure that the spell doesn't work on Boss Monsters.
+
+The Strength Spell ups the damage dealt by the player for one round. I haven't actually tested this yet but it was really simple in theory. It is stackable so the player can cast it more than once and get a bigger boost.
+
+The Time Spell doesn't do anything else other than stop the timer from counting down. It works, it was pretty simple.
+
+The Reduce Terms Spell was kind of tricky but it works well. For everything but division I just divided the terms by 2 and calculated a new answer and put those value into the terms[] array. Then I copied the two lines of code that put the problem onto the screen.
+
+### Up next: making division hints, cleaning up the file structure, finishing up boss rewards
+
+After clearing the 10th level of a dungeon the player will get an upgrade to their damage. Division hints is going to be a few hours. My file structure is UGLY, I need to clean it up. After I do that, I need to update my .rar file.
