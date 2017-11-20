@@ -54,4 +54,10 @@ I added functionality to generate multiplication problems. The formula to determ
 
 I added hint functionality for multiplication problems. There's more redundancy than I would like in the code so I need to go back to it and find a way to remove that.
 
-### Up next: more spells, determining boss rewards, and making the Division Dungeon
+## Update 3
+
+I added functionality to generate multiplication problems. I used the same formula to get terms as I did for the multiplication problems so it would have the same progression of difficulty.
+
+### Up next: more spells, determining boss rewards, and making division hints
+
+I've figured out some of the boss rewards that I have yet to put in. At levels 6 the player will get a health boost. At addition level 6 they will learn a healing spell. After clearing the 10th level of a dungeon they will get an upgrade to their damage. I'm going to include a polymorph monster spell, a nova (damage) spell, either a slow or stop time spell, a spell to reduce the dificulty of the problem, and I'm torn between a strength spell (more damage per attack for one encounter) and a confuse spell (making the monster attack itself). We'll see how much of this I can fit in tomorrow =P
