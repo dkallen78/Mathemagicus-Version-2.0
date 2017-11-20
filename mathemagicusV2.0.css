@@ -50,6 +50,58 @@ the playArea for a flashing visual effect I have*/
   background-color: rgba(10, 250, 250, 0.5);
 }
 /*
+I use this class to put a green overlay on top of
+the playArea for a flashing visual effect I have*/
+.playAreaGreen::after {
+  position: absolute;
+  content: " ";
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background-color: rgba(10, 250, 34, 0.5);
+}
+/*
+I use this class to put a orange overlay on top of
+the playArea for a flashing visual effect I have*/
+.playAreaOrange::after {
+  position: absolute;
+  content: " ";
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background-color: rgba(249, 141, 0, 0.5);
+}
+/*
+I use this class to put a yellow overlay on top of
+the playArea for a flashing visual effect I have*/
+.playAreaYellow::after {
+  position: absolute;
+  content: " ";
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background-color: rgba(233, 249, 0, 0.5);
+}
+/*
+I use this class to put a purple overlay on top of
+the playArea for a flashing visual effect I have*/
+.playAreaPurple::after {
+  position: absolute;
+  content: " ";
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background-color: rgba(141, 0, 249, 0.5);
+}
+/*
 Styles the Mathemagicus title on the initial screen*/
 #titleDiv {
   font-size: 3.5em;
@@ -260,7 +312,7 @@ This styles the images for the spells*/
   border-radius: 5px;
   margin: 2px;
   padding: 2px;
-  width: 20px;
+  width: 17px;
   /*filter: opacity(10%);*/
 }
 /*
@@ -268,8 +320,13 @@ This controls the behavior of the <div>s inside of the spellBar*/
 #spellBar div {
   display: inline-block;
   vertical-align: top;
+  margin: auto;
+  width: 42px;
   font-size: 1em;
   font-family: monospace;
+}
+#spellBar div div {
+  width: 15px;
 }
 /*
 This is the grey bar behind my green countdown timer */

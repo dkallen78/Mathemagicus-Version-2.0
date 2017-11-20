@@ -1,42 +1,73 @@
 var playArea = document.getElementById("playArea");
+
 var playerName = "";
 var playerHealth = 10;
 var maxHealth = 10;
 var playerDamage = 1;
+var damageBoost = 0;
+
 var operator = "+";
 var timer;
 var additionLevel = 1;
 var subtractionLevel, multiplicationLevel, divisionLevel = 0;
+
 var mage, mageFight, mageHurt, mageDead = 0;
 mage = "whiteMage.gif";
 mageFight = "whiteMageFight.gif";
 mageHurt = "whiteMageHurt.gif";
 mageDead = "whiteMageDead.gif";
+//
+//I don't know if these two need to be global...
 var damagePlayer, damageMonster;
+
 var terms = [];
 var algebra = false;
+//
+//Hint spells
 var fibonacciSpells = 0;
+var fibonacciCast = false;
 var fibonacciNumbers = [2, 3, 5, 8, 13, 21, 34, 55, 89, 144];
+//
+//Fireball spells
 var triangleSpells = 0;
 var triangleNumbers = [3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 91, 105, 120, 136];
+//
+//Health spells
 var squareSpells = 0;
 var squareNumbers = [4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144];
+//
+//Reduce terms spells
 var pentagonSpells = 0;
+var pentagonCast = false;
 var pentagonNumbers = [5, 12, 22, 35, 51, 70, 92, 117, 145, 176];
+
 var tetrahedralSpells = 0;
 var tetrahedraNumbers = [4, 10, 20, 35, 56, 84, 120, 165];
+//
+//Time spells
 var pyramidSpells = 0;
+var pyramidCast = false;
 var pyramidNumbers = [5, 14, 30, 55, 91, 140];
+//
+//Polymorph monster spells
 var cubeSpells = 0;
+var cubeCast = false;
 var cubeNumbers = [8, 27, 64, 125];
+//
+//Strength spells
 var hexagonSpells = 0;
 var hexagonNumbers = [7, 19, 37, 61, 91, 127, 169];
+//
+//Nova spells
 var starSpells = 0;
 var starNumbers = [13, 37, 73, 121];
+
 var octagonSpells = 0;
 var octagonNumbers = [9, 25, 49, 81, 121];
+
 var octahedronSpells = 0;
 var octahedronNumbers = [6, 19, 44, 85, 146];
+
 var monster = {};
 var monstersKilled = 0;
 //
@@ -116,18 +147,21 @@ function getRandomNumber(floor, ceiling) {
 //It also provides an easy place to change their
 //values for easier debugging
 function resetStartVariables() {
-  playerHealth = 4;
+  playerHealth = 10;
   maxHealth = 10;
   playerDamage = 1;
-  additionLevel = 7;
-  subtractionLevel = 3;
-  multiplicationLevel = 3;
-  divisionLevel = 5;
+  additionLevel = 9;
+  subtractionLevel = 9;
+  multiplicationLevel = 9;
+  divisionLevel = 9;
   fibonacciSpells = 10;
   triangleSpells = 10;
   squareSpells = 10;
-  pyramidSpells = 0;
-  cubeSpells = 0;
+  pentagonSpells = 10;
+  hexagonSpells = 10;
+  pyramidSpells = 10;
+  cubeSpells = 10;
+  starSpells = 10;
   monstersKilled = 9;
 }
 //
@@ -425,7 +459,7 @@ function checkKeyPress(event, answer) {
       break;
     case 97: //"a" key, Fibonacci Spell
       event.preventDefault(); //prevents the writing of the "a" key
-      if (document.getElementById("hintDiv").innerHTML) {
+      if (fibonacciCast) {
         break;
       }
       if (additionLevel > 2) {
@@ -442,26 +476,55 @@ function checkKeyPress(event, answer) {
       event.preventDefault(); //prevents the writing of the "d" key
       if (additionLevel > 6) {
         castSquare();
+      }
+      break;
+    case 101: //"e" key, Pentagon Spell
+      event.preventDefault(); //prevents the writing of the "e" key
+      if (pentagonCast) {
         break;
       }
-    /*case 102: //"f" key, Pyramid Spell
-      if (playerLevel > 4) {
+      if (subtractionLevel > 8) {
+        castPentagon();
+      }
+      break;
+    case 102: //"f" key, Pyramid Spell
+      event.preventDefault(); //prevents the writing of the key
+      if (pyramidCast) {
+        break;
+      }
+      if (additionLevel > 8) {
         castPyramid();
+      }
+      break;
+    case 113: //"q" key, Cube Spell
+      event.preventDefault(); //prevents the writing of the key
+      if (cubeCast) {
         break;
       }
-    case 103: //"g" key, Cube Spell
-      if (playerLevel > 7) {
+      if (divisionLevel > 2) {
         castCube();
-        break;
-      }*/
+      }
+      break;
+    case 114: //"r" key, Hexagon Spell
+      event.preventDefault(); //prevents the writing of the key
+      if (multiplicationLevel > 8) {
+        castHexagon();
+      }
+      break;
+    case 119: //"w" key, Nova Spell
+      event.preventDefault(); //prevents the writing of the key
+      if (divisionLevel > 8) {
+        castStar();
+      }
+      break;
   }
 }
 //
 //I'm not sure I need this but I think I do, I'll come back to it
 //later and figure out if it stays or if it goes
 function dungeon(operation) {
-  makeDungeonScreen();
   operator = operation;
+  makeDungeonScreen();
   var playerLevel = getLevel();
   monster = new newMonster(playerLevel);
   battle();
@@ -471,6 +534,7 @@ function dungeon(operation) {
 //the combat/math
 function battle() {
   terms = getTerms();
+  algebra = false;
   var width = 340;
   var answer;
   var countdownBarFront = document.getElementById("countdownBarFront");
@@ -620,17 +684,20 @@ function checkAnswer(answer, damage) {
   //
   //The first half of this if statement handles the stuff that
   //happens when an answer is correct
-  if ((answerInput.value == answer) || (answer == "spell")) {
+  if ((answerInput.value == answer) || (answer == "spell") || (answer == "heal")) {
     checkForSpells();
-    monster.hp -= damage;
+    monster.hp -= (damage + damageBoost);
     if (monster.hp < 1) {
       monster.hp = 0;
     }
     var monsterHealthBarFront = document.getElementById("monsterHealthBarFront");
     monsterHealthBarFront.style.height = ((monster.hp / monster.maxHp) * 110) + "px";
 
-    var damageFlash = 6;
-    damageMonster = setInterval(monsterDamage, 100);
+    if (answer != "heal") {
+      var damageFlash = 6;
+      damageMonster = setInterval(monsterDamage, 100);
+    }
+
     //
     //This if checks to see if the monster is killed or not
     if (monster.hp < 1) {
@@ -735,7 +802,7 @@ function checkAnswer(answer, damage) {
   //It gets the next monster and sends the player
   //back to the battle() function
   function nextMonster() {
-    playerLevel = getLevel();
+    var playerLevel = getLevel();
     monster = new newMonster(playerLevel);
     monsterHealthBarFront.style.height = ((monster.hp / monster.maxHp) * 110) + "px";
     battle();
@@ -753,50 +820,70 @@ function checkAnswer(answer, damage) {
       if (monstersKilled > 10) {
         switch (operator) {
           case "+":
-            if (playerLevel == 2) {
+            if (playerLevel == 2) { //Fibonacci Spell
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
               insertNextButton("Next", function() {dropScroll("fibonacciScroll.gif");});
             }
-            if (playerLevel == 4) {
+            if (playerLevel == 4) { //Subtraction Dungeon
               problemDiv.innerHTML += "Something seems to be happening...<br /><br />";
               subtractionLevel++;
               progressLevel();
               var shakeCount = 12;
               var dungeonShake = setInterval(shakeDungeon, 100);
-              insertNextButton("Next", dungeonEntrance)
+              insertNextButton("Next", dungeonEntrance);
             }
-            if (playerLevel == 6) {
+            if (playerLevel == 6) { //Health Spell
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               maxHealth += 2;
+              playerHealth += 2;
               var healthBarFront = document.getElementById("healthBarFront");
               healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
               progressLevel();
               insertNextButton("Next", function() {dropScroll("squareScroll.gif");});
             }
+            if (playerLevel == 8) { //Pyramid/Time Spell
+              problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
+              progressLevel();
+              insertNextButton("Next", function() {dropScroll("pyramidScroll.gif");});
+            }
             break;
           case "-":
-            if (playerLevel == 2) {
+            if (playerLevel == 2) { //Triangle/Fireball Spell
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
               insertNextButton("Next", function() {dropScroll("triangleScroll.gif");});
             }
-            if (playerLevel == 4) {
+            if (playerLevel == 4) { //Multiplication Dungeon
               problemDiv.innerHTML += "Something seems to be happening...<br /><br />";
               multiplicationLevel++;
               progressLevel();
               var shakeCount = 12;
               var dungeonShake = setInterval(shakeDungeon, 100);
-              insertNextButton("Next", dungeonEntrance)
+              insertNextButton("Next", dungeonEntrance);
+            }
+            if (playerLevel == 6) { //Health Boost
+              problemDiv.innerHTML += "You feel healthier than you did before...<br />Max Health +2!<br /><br />";
+              maxHealth += 2;
+              playerHealth += 2;
+              progressLevel();
+              var healthBarFront = document.getElementById("healthBarFront");
+              healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
+              insertNextButton("Next", dungeonEntrance);
+            }
+            if (playerLevel == 8) { //Pentagon/Reduce Terms Spell
+              problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
+              progressLevel();
+              insertNextButton("Next", function() {dropScroll("pentagonScroll.gif");});
             }
             break;
           case "*":
-            if (playerLevel == 2) {
+            if (playerLevel == 2) { //Upgraded Hints
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
               insertNextButton("Next", function() {dropScroll("fibonacciScroll2.gif");});
             }
-            if (playerLevel == 4) {
+            if (playerLevel == 4) { //Division Dungeon
               problemDiv.innerHTML += "Something seems to be happening...<br /><br />";
               divisionLevel++;
               progressLevel();
@@ -804,9 +891,41 @@ function checkAnswer(answer, damage) {
               var dungeonShake = setInterval(shakeDungeon, 100);
               insertNextButton("Next", dungeonEntrance)
             }
+            if (playerLevel == 6) { //Health Boost
+              problemDiv.innerHTML += "You feel healthier than you did before...<br />Max Health +2!<br /><br />";
+              maxHealth += 2;
+              playerHealth += 2;
+              progressLevel();
+              var healthBarFront = document.getElementById("healthBarFront");
+              healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
+              insertNextButton("Next", dungeonEntrance);
+            }
+            if (playerLevel == 8) { //Hexagon/Strength Spell
+              problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
+              progressLevel();
+              insertNextButton("Next", function() {dropScroll("hexagonScroll.gif");});
+            }
             break;
           case "/":
-
+            if (playerLevel == 4) { //Cube Spell
+              problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
+              progressLevel();
+              insertNextButton("Next", function() {dropScroll("cubeScroll.gif");});
+            }
+            if (playerLevel == 6) { //Health Boost
+              problemDiv.innerHTML += "You feel healthier than you did before...<br />Max Health +2!<br /><br />";
+              maxHealth += 2;
+              playerHealth += 2;
+              progressLevel();
+              var healthBarFront = document.getElementById("healthBarFront");
+              healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
+              insertNextButton("Next", dungeonEntrance);
+            }
+            if (playerLevel == 8) { //Star Spell
+              problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
+              progressLevel();
+              insertNextButton("Next", function() {dropScroll("starScroll.gif");});
+            }
         }
 
         function shakeDungeon() {
@@ -938,9 +1057,47 @@ function checkAnswer(answer, damage) {
         document.getElementById("triangleCount").innerHTML = triangleSpells;
       }
     }
+    //
+    //Checks for Pentagon Numbers
+    if ((subtractionLevel > 8) && (pentagonNumbers.includes(answer))) {
+      if (pentagonSpells < 9) {
+        pentagonSpells++;
+        document.getElementById("pentagonCount").innerHTML = pentagonSpells;
+      }
+    }
+    //
+    //Checks for Hexagon Numbers
+    if ((multiplicationLevel > 8) && (hexagonNumbers.includes(answer))) {
+      if (hexagonSpells < 9) {
+        hexagonSpells++;
+        document.getElementById("hexagonCount").innerHTML = hexagonSpells;
+      }
+    }
+    //
+    //Checks for Pyramid Numbers
+    if ((additionLevel > 8) && (pyramidNumbers.includes(answer))) {
+      if (pyramidSpells < 9) {
+        pyramidSpells++;
+        document.getElementById("pyramidCount").innerHTML = pyramidSpells;
+      }
+    }
+    //
+    //Checks for Cube Numbers
+    if ((divisionLevel > 2) && (cubeNumbers.includes(answer))) {
+      if (cubeSpells < 9) {
+        cubeSpells++;
+        document.getElementById("cubeCount").innerHTML = cubeSpells;
+      }
+    }
+    //
+    //Checks for Star Numbers
+    if ((divisionLevel > 8) && (starNumbers.includes(answer))) {
+      if (starSpells < 9) {
+        starSpells++;
+        document.getElementById("starCount").innerHTML = starSpells;
+      }
+    }
   }
-
-
 
 }
 //
@@ -1058,6 +1215,34 @@ function makeDungeonScreen() {
   spellBar.appendChild(squareDiv);
   //
   //This block creates everything needed for the
+  //pentagon spell
+  let pentagonDiv = document.createElement("div");
+  let pentagonImg = document.createElement("img");
+  pentagonImg.src = "pentagon.gif";
+  pentagonImg.setAttribute("id", "pentagonImg");
+  pentagonImg.style.filter = "opacity(10%)";
+  pentagonDiv.appendChild(pentagonImg);
+  let pentagonCount = document.createElement("div");
+  pentagonCount.setAttribute("id", "pentagonCount");
+  pentagonCount.innerHTML = pentagonSpells;
+  pentagonDiv.appendChild(pentagonCount);
+  spellBar.appendChild(pentagonDiv);
+  //
+  //This block creates everything needed for the
+  //hexagon spell
+  let hexagonDiv = document.createElement("div");
+  let hexagonImg = document.createElement("img");
+  hexagonImg.src = "hexagon.gif";
+  hexagonImg.setAttribute("id", "hexagonImg");
+  hexagonImg.style.filter = "opacity(10%)";
+  hexagonDiv.appendChild(hexagonImg);
+  let hexagonCount = document.createElement("div");
+  hexagonCount.setAttribute("id", "hexagonCount");
+  hexagonCount.innerHTML = hexagonSpells;
+  hexagonDiv.appendChild(hexagonCount);
+  spellBar.appendChild(hexagonDiv);
+  //
+  //This block creates everything needed for the
   //pyramid spell
   let pyramidDiv = document.createElement("div");
   let pyramidImg = document.createElement("img");
@@ -1084,7 +1269,23 @@ function makeDungeonScreen() {
   cubeCount.innerHTML = cubeSpells;
   cubeDiv.appendChild(cubeCount);
   spellBar.appendChild(cubeDiv);
+  //
+  //This block creates everything needed for the
+  //star spell
+  let starDiv = document.createElement("div");
+  let starImg = document.createElement("img");
+  starImg.src = "star.gif";
+  starImg.setAttribute("id", "starImg");
+  starImg.style.filter = "opacity(10%)";
+  starDiv.appendChild(starImg);
+  let starCount = document.createElement("div");
+  starCount.setAttribute("id", "starCount");
+  starCount.innerHTML = starSpells;
+  starDiv.appendChild(starCount);
+  spellBar.appendChild(starDiv);
+
   playArea.appendChild(spellBar);
+
   //
   //The combatDiv holds the player and monster
   //health bars as well as the images for the
@@ -1140,6 +1341,8 @@ function makeDungeonScreen() {
 //
 //This function gets a new monster object and puts it on the screen
 function newMonster(playerLevel) {
+  damageBoost = 0;
+
   this.index = getRandomNumber(0, ((playerLevel * 3) - 1));
   //
   //Level 1   2 HP   1 dmg
@@ -1182,6 +1385,7 @@ function newMonster(playerLevel) {
 //This function gets a new boss monster object and puts it on the screen
 function newBoss() {
   playerLevel = getLevel();
+  damageBoost = 0;
   this.index = (playerLevel / 2) + 29;
   //
   //Boss 1  Level 2   10 HP   3 dmg
@@ -1220,20 +1424,48 @@ function newBoss() {
 //
 //This function turns my spells "on" at the beginning of the battle
 function spellsOn() {
-  if (additionLevel > 2) {
+  if (additionLevel > 2) {        //Fibonacci Spell
     fibonacciImg = document.getElementById("fibonacciImg");
     fibonacciImg.style.filter = "opacity(100%)";
     fibonacciImg.onclick = function(){castFibonacci();}
+    fibonacciCast = false;
   }
-  if (subtractionLevel > 2) {
+  if (subtractionLevel > 2) {     //Triangle Spells
     triangleImg = document.getElementById("triangleImg");
     triangleImg.style.filter = "opacity(100%)";
     triangleImg.onclick = function(){castTriangle();}
   }
-  if (additionLevel > 6) {
+  if (additionLevel > 6) {        //Square Spells
     squareImg = document.getElementById("squareImg");
     squareImg.style.filter = "opacity(100%)";
     squareImg.onclick = function(){castSquare();}
+  }
+  if (subtractionLevel > 8) {     //Pentagon Spells
+    pentagonImg = document.getElementById("pentagonImg");
+    pentagonImg.style.filter = "opacity(100%)";
+    pentagonImg.onclick = function(){castPentagon();}
+    pentagonCast = false;
+  }
+  if (multiplicationLevel > 8) {  //Hexagon Spells
+    hexagonImg = document.getElementById("hexagonImg");
+    hexagonImg.style.filter = "opacity(100%)";
+    hexagonImg.onclick = function(){castHexagon();}
+  }
+  if (additionLevel > 8) {        //Pyramid Spells
+    pyramidImg = document.getElementById("pyramidImg");
+    pyramidImg.style.filter = "opacity(100%)";
+    pyramidImg.onclick = function(){castPyramid();}
+    pyramidCast = false;
+  }
+  if (divisionLevel > 2) {        //Cube Spells
+    cubeImg = document.getElementById("cubeImg");
+    cubeImg.style.filter = "opacity(100%)";
+    cubeImg.onclick = function(){castCube();}
+  }
+  if (divisionLevel > 8) {        //Star Spells
+    starImg = document.getElementById("starImg");
+    starImg.style.filter = "opacity(100%)";
+    starImg.onclick = function(){castStar();}
   }
 }
 //
@@ -1251,9 +1483,25 @@ function spellsOff() {
   squareImg.style.filter = "opacity(30%)";
   squareImg.onclick = "";
 
-  /*document.getElementById("square").onclick = "";
-  document.getElementById("pyramid").onclick = "";
-  document.getElementById("cube").onclick = "";*/
+  pentagonImg = document.getElementById("pentagonImg");
+  pentagonImg.style.filter = "opacity(30%)";
+  pentagonImg.onclick = "";
+
+  hexagonImg = document.getElementById("hexagonImg");
+  hexagonImg.style.filter = "opacity(30%)";
+  hexagonImg.onclick = "";
+
+  pyramidImg = document.getElementById("pyramidImg");
+  pyramidImg.style.filter = "opacity(30%)";
+  pyramidImg.onclick = "";
+
+  cubeImg = document.getElementById("cubeImg");
+  cubeImg.style.filter = "opacity(30%)";
+  cubeImg.onclick = "";
+
+  starImg = document.getElementById("starImg");
+  starImg.style.filter = "opacity(30%)";
+  starImg.onclick = "";
 }
 //
 //This is my long and complicated-looking hint spell: Fibonacci.
@@ -1336,6 +1584,10 @@ function castFibonacci() {
   hintDiv.style.visibility = "visible";
   fibonacciSpells--;
   fibonacciCount.innerHTML = fibonacciSpells;
+  fibonacciCast = true;
+  fibonacciImg = document.getElementById("fibonacciImg");
+  fibonacciImg.style.filter = "opacity(30%)";
+  fibonacciImg.onclick = "";
   //
   //This is the logic that handles the addition hints
   function additionHint(addend1, addend2) {
@@ -1516,6 +1768,7 @@ function castTriangle() {
   hintDiv.innerHTML = "You cast Euclid's Fireball!";
   hintDiv.style.visibility = "visible";
   let spellFlash = 10;
+  //playArea.classList.add("playAreaRed");
   let spellCast = setInterval(castSpell, 75);
 
   function castSpell() {
@@ -1533,18 +1786,25 @@ function castTriangle() {
     spellFlash--;
   }
 
-
   triangleSpells--;
   document.getElementById("triangleCount").innerHTML = triangleSpells;
-
 }
-
+//
+//This function handles my square/healing spell
 function castSquare() {
   hintDiv = document.getElementById("hintDiv");
   //
-  //If the player has no magic, then no fireball is cast
+  //If the player has no magic, then no magic is cast
   if (!squareSpells) {
     hintDiv.innerHTML = "You don't have any Square Magic!";
+    hintDiv.style.visibility = "visible"; //This displays the hint area
+    setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
+    return;
+  }
+  //
+  //If the player has full health, no magic is cast
+  if (playerHealth == maxHealth) {
+    hintDiv.innerHTML = "You already have full health!";
     hintDiv.style.visibility = "visible"; //This displays the hint area
     setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
     return;
@@ -1570,7 +1830,6 @@ function castSquare() {
   let spellFlash = 10;
   let spellCast = setInterval(castSpell, 75);
 
-
   function castSpell() {
     if (spellFlash < 1) {
       clearInterval(spellCast);
@@ -1580,7 +1839,7 @@ function castSquare() {
       var healthBarFront = document.getElementById("healthBarFront");
       healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
 
-      checkAnswer("spell", 0);
+      checkAnswer("heal", 0);
     } else {
       if ((spellFlash % 2) == 0) {
         playArea.classList.remove("playAreaBlue");
@@ -1593,8 +1852,186 @@ function castSquare() {
   squareSpells--;
   document.getElementById("squareCount").innerHTML = squareSpells;
 }
+//
+//This function handles my pentagon/reduce terms spell
+function castPentagon() {
+  hintDiv = document.getElementById("hintDiv");
+  //
+  //If the player has no magic, then no magic is cast
+  if (!pentagonSpells) {
+    hintDiv.innerHTML = "You don't have any Pentagon Magic!";
+    hintDiv.style.visibility = "visible"; //This displays the hint area
+    setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
+    return;
+  }
 
+  hintDiv.innerHTML = "You cast Lovelace's Reduction!";
+  hintDiv.style.visibility = "visible";
+  let spellFlash = 10;
+  let spellCast = setInterval(castSpell, 75);
 
+  terms[0] = Math.ceil(terms[0] / 2);
+  terms[1] = Math.ceil(terms[1] / 2);
+
+  switch (operator) {
+    case "+":
+      terms[2] = terms[0] + terms[1];
+      break;
+    case "-":
+      terms[2] = terms[0] - terms[1];
+      break;
+    case "*":
+      terms[2] = terms[0] * terms[1];
+      break;
+    case "/":
+      terms[1] = getRandomNumber(0, 6);
+      terms[2] = getRandomNumber(0, 3);
+      terms[0] = terms[1] * terms[2];
+      break;
+  }
+
+  let problemDiv = document.getElementById("problemDiv");
+  problemDiv.innerHTML = terms[0] + " " + operator + " <span style=\"color:#ffbaba\">" + terms[1] + "</span> =\
+    <input id=\"answerInput\" type=\"number\" onKeyPress=\"checkKeyPress(event, " + terms[2] + ")\"/>";
+  var answerInput = document.getElementById("answerInput");
+  answerInput.focus();
+
+  function castSpell() {
+    if (spellFlash < 1) {
+      clearInterval(spellCast);
+      playArea.classList.remove("playAreaOrange");
+    } else {
+      if ((spellFlash % 2) == 0) {
+        playArea.classList.remove("playAreaOrange");
+      } else {
+        playArea.classList.add("playAreaOrange");
+      }
+    }
+    spellFlash--;
+  }
+  pentagonSpells--;
+  document.getElementById("pentagonCount").innerHTML = pentagonSpells;
+
+  pentagonCast = true;
+  pentagonImg = document.getElementById("pentagonImg");
+  pentagonImg.style.filter = "opacity(30%)";
+  pentagonImg.onclick = "";
+}
+
+function castHexagon() {
+  hintDiv = document.getElementById("hintDiv");
+  //
+  //If the player has no magic, then no magic is cast
+  if (!hexagonSpells) {
+    hintDiv.innerHTML = "You don't have any Hexagon Magic!";
+    hintDiv.style.visibility = "visible"; //This displays the hint area
+    setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
+    return;
+  }
+
+  hintDiv.innerHTML = "You cast Hercules' Strength!";
+  hintDiv.style.visibility = "visible";
+  let spellFlash = 10;
+  let spellCast = setInterval(castSpell, 75);
+  damageBoost++;
+
+  function castSpell() {
+    if (spellFlash < 1) {
+      clearInterval(spellCast);
+      playArea.classList.remove("playAreaWhite");
+    } else {
+      if ((spellFlash % 2) == 0) {
+        playArea.classList.remove("playAreaWhite");
+      } else {
+        playArea.classList.add("playAreaWhite");
+      }
+    }
+    spellFlash--;
+  }
+  hexagonSpells--;
+  document.getElementById("hexagonCount").innerHTML = hexagonSpells;
+}
+//
+//This function handles my pyramid/time spell
+function castPyramid() {
+  hintDiv = document.getElementById("hintDiv");
+  clearInterval(timer);
+  //
+  //If the player has no magic, then no magic is cast
+  if (!pyramidSpells) {
+    hintDiv.innerHTML = "You don't have any Pyramid Magic!";
+    hintDiv.style.visibility = "visible"; //This displays the hint area
+    setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
+    return;
+  }
+
+  hintDiv.innerHTML = "You cast Huygen's Stop Time!";
+  hintDiv.style.visibility = "visible";
+  setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
+  let spellFlash = 10;
+  let spellCast = setInterval(castSpell, 75);
+
+  function castSpell() {
+    if (spellFlash < 1) {
+      clearInterval(spellCast);
+      playArea.classList.remove("playAreaGreen");
+    } else {
+      if ((spellFlash % 2) == 0) {
+        playArea.classList.remove("playAreaGreen");
+      } else {
+        playArea.classList.add("playAreaGreen");
+      }
+    }
+    spellFlash--;
+  }
+  pyramidSpells--;
+  document.getElementById("pyramidCount").innerHTML = pyramidSpells;
+
+  pyramidCast = true;
+  pyramidImg = document.getElementById("pyramidImg");
+  pyramidImg.style.filter = "opacity(30%)";
+  pyramidImg.onclick = "";
+}
+
+function castCube() {
+  hintDiv = document.getElementById("hintDiv");
+  clearInterval(timer);
+  //
+  //If the player has no magic, then no magic is cast
+  if (!cubeSpells) {
+    hintDiv.innerHTML = "You don't have any Cube Magic!";
+    hintDiv.style.visibility = "visible"; //This displays the hint area
+    setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
+    return;
+  }
+
+  hintDiv.innerHTML = "You cast Fermet's Polymorph Monster!";
+  hintDiv.style.visibility = "visible";
+  //setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
+  let spellFlash = 10;
+  let spellCast = setInterval(castSpell, 75);
+
+  function castSpell() {
+    if (spellFlash < 1) {
+      clearInterval(spellCast);
+      playArea.classList.remove("playAreaPurple");
+      monster = new newMonster(1);
+      battle();
+
+    } else {
+      if ((spellFlash % 2) == 0) {
+        playArea.classList.remove("playAreaPurple");
+      } else {
+        playArea.classList.add("playAreaPurple");
+      }
+    }
+    spellFlash--;
+  }
+  cubeSpells--;
+  document.getElementById("cubeCount").innerHTML = cubeSpells;
+}
+//
+//This function handles my star/nova spell
 function castStar() {
   hintDiv = document.getElementById("hintDiv");
   //
@@ -1615,13 +2052,13 @@ function castStar() {
   function castSpell() {
     if (spellFlash < 1) {
       clearInterval(spellCast);
-      playArea.classList.remove("playAreaWhite");
+      playArea.classList.remove("playAreaYellow");
       checkAnswer("spell", 10);
     } else {
       if ((spellFlash % 2) == 0) {
-        playArea.classList.remove("playAreaWhite");
+        playArea.classList.remove("playAreaYellow");
       } else {
-        playArea.classList.add("playAreaWhite");
+        playArea.classList.add("playAreaYellow");
       }
     }
     spellFlash--;
