@@ -24,6 +24,32 @@ the playArea for a flashing visual effect I have*/
   background-color: rgba(255, 0, 0, 0.5);
 }
 /*
+I use this class to put a white overlay on top of
+the playArea for a flashing visual effect I have*/
+.playAreaWhite::after {
+  position: absolute;
+  content: " ";
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+/*
+I use this class to put a blue overlay on top of
+the playArea for a flashing visual effect I have*/
+.playAreaBlue::after {
+  position: absolute;
+  content: " ";
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background-color: rgba(10, 250, 250, 0.5);
+}
+/*
 Styles the Mathemagicus title on the initial screen*/
 #titleDiv {
   font-size: 3.5em;

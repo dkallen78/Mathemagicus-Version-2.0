@@ -116,16 +116,16 @@ function getRandomNumber(floor, ceiling) {
 //It also provides an easy place to change their
 //values for easier debugging
 function resetStartVariables() {
-  playerHealth = 10;
+  playerHealth = 4;
   maxHealth = 10;
   playerDamage = 1;
-  additionLevel = 5;
+  additionLevel = 7;
   subtractionLevel = 3;
   multiplicationLevel = 3;
   divisionLevel = 5;
   fibonacciSpells = 10;
   triangleSpells = 10;
-  squareSpells = 0;
+  squareSpells = 10;
   pyramidSpells = 0;
   cubeSpells = 0;
   monstersKilled = 9;
@@ -438,12 +438,13 @@ function checkKeyPress(event, answer) {
         castTriangle();
       }
       break;
-    /*case 100: //"d" key, Square Spell
-      if (playerLevel > 3) {
+    case 100: //"d" key, Square Spell
+      event.preventDefault(); //prevents the writing of the "d" key
+      if (additionLevel > 6) {
         castSquare();
         break;
       }
-    case 102: //"f" key, Pyramid Spell
+    /*case 102: //"f" key, Pyramid Spell
       if (playerLevel > 4) {
         castPyramid();
         break;
@@ -765,6 +766,14 @@ function checkAnswer(answer, damage) {
               var dungeonShake = setInterval(shakeDungeon, 100);
               insertNextButton("Next", dungeonEntrance)
             }
+            if (playerLevel == 6) {
+              problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
+              maxHealth += 2;
+              var healthBarFront = document.getElementById("healthBarFront");
+              healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
+              progressLevel();
+              insertNextButton("Next", function() {dropScroll("squareScroll.gif");});
+            }
             break;
           case "-":
             if (playerLevel == 2) {
@@ -918,6 +927,14 @@ function checkAnswer(answer, damage) {
     if ((subtractionLevel > 2) && (triangleNumbers.includes(answer))) {
       if (triangleSpells < 9) {
         triangleSpells++;
+        document.getElementById("triangleCount").innerHTML = triangleSpells;
+      }
+    }
+    //
+    //Checks for Square Numbers
+    if ((additionLevel > 6) && (squareNumbers.includes(answer))) {
+      if (squareSpells < 9) {
+        squareSpells++;
         document.getElementById("triangleCount").innerHTML = triangleSpells;
       }
     }
@@ -1203,16 +1220,20 @@ function newBoss() {
 //
 //This function turns my spells "on" at the beginning of the battle
 function spellsOn() {
-  //spellsOff = false;
   if (additionLevel > 2) {
     fibonacciImg = document.getElementById("fibonacciImg");
     fibonacciImg.style.filter = "opacity(100%)";
-    fibonacciImg.onclick = function(){castFibonacci()};
+    fibonacciImg.onclick = function(){castFibonacci();}
   }
   if (subtractionLevel > 2) {
     triangleImg = document.getElementById("triangleImg");
     triangleImg.style.filter = "opacity(100%)";
-    triangleImg.onclick = function(){castTriangle()};
+    triangleImg.onclick = function(){castTriangle();}
+  }
+  if (additionLevel > 6) {
+    squareImg = document.getElementById("squareImg");
+    squareImg.style.filter = "opacity(100%)";
+    squareImg.onclick = function(){castSquare();}
   }
 }
 //
@@ -1225,6 +1246,10 @@ function spellsOff() {
   triangleImg = document.getElementById("triangleImg");
   triangleImg.style.filter = "opacity(30%)";
   triangleImg.onclick = "";
+
+  squareImg = document.getElementById("squareImg");
+  squareImg.style.filter = "opacity(30%)";
+  squareImg.onclick = "";
 
   /*document.getElementById("square").onclick = "";
   document.getElementById("pyramid").onclick = "";
@@ -1512,4 +1537,95 @@ function castTriangle() {
   triangleSpells--;
   document.getElementById("triangleCount").innerHTML = triangleSpells;
 
+}
+
+function castSquare() {
+  hintDiv = document.getElementById("hintDiv");
+  //
+  //If the player has no magic, then no fireball is cast
+  if (!squareSpells) {
+    hintDiv.innerHTML = "You don't have any Square Magic!";
+    hintDiv.style.visibility = "visible"; //This displays the hint area
+    setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
+    return;
+  }
+  clearInterval(timer);
+  //
+  //I think I can make the heal variable global and give it a boost
+  //whenever the player progresses past a certain point. It's
+  //staying here for now...
+  var heal = 2;
+  if (subtractionLevel > 6) {
+    heal++;
+  }
+  if (multiplicationLevel > 6) {
+    heal++;
+  }
+  if (divisionLevel > 6) {
+    heal++;
+  }
+
+  hintDiv.innerHTML = "You cast Nightengale's Health!";
+  hintDiv.style.visibility = "visible";
+  let spellFlash = 10;
+  let spellCast = setInterval(castSpell, 75);
+
+
+  function castSpell() {
+    if (spellFlash < 1) {
+      clearInterval(spellCast);
+      playArea.classList.remove("playAreaBlue");
+
+      playerHealth += heal;
+      var healthBarFront = document.getElementById("healthBarFront");
+      healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
+
+      checkAnswer("spell", 0);
+    } else {
+      if ((spellFlash % 2) == 0) {
+        playArea.classList.remove("playAreaBlue");
+      } else {
+        playArea.classList.add("playAreaBlue");
+      }
+    }
+    spellFlash--;
+  }
+  squareSpells--;
+  document.getElementById("squareCount").innerHTML = squareSpells;
+}
+
+
+function castStar() {
+  hintDiv = document.getElementById("hintDiv");
+  //
+  //If the player has no magic, then no fireball is cast
+  if (!starSpells) {
+    hintDiv.innerHTML = "You don't have any Star Magic!";
+    hintDiv.style.visibility = "visible"; //This displays the hint area
+    setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
+    return;
+  }
+  clearInterval(timer);
+
+  hintDiv.innerHTML = "You cast Brahe's Nova!";
+  hintDiv.style.visibility = "visible";
+  let spellFlash = 10;
+  let spellCast = setInterval(castSpell, 75);
+
+  function castSpell() {
+    if (spellFlash < 1) {
+      clearInterval(spellCast);
+      playArea.classList.remove("playAreaWhite");
+      checkAnswer("spell", 10);
+    } else {
+      if ((spellFlash % 2) == 0) {
+        playArea.classList.remove("playAreaWhite");
+      } else {
+        playArea.classList.add("playAreaWhite");
+      }
+    }
+    spellFlash--;
+  }
+  starSpells--;
+  document.getElementById("starCount").innerHTML = starSpells;
 }
