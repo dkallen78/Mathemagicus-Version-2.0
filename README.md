@@ -80,7 +80,7 @@ The Strength Spell ups the damage dealt by the player for one round. I haven't a
 
 The Time Spell doesn't do anything else other than stop the timer from counting down. It works, it was pretty simple.
 
-The Reduce Terms Spell was kind of tricky but it works well. For everything but division I just divided the terms by 2 and calculated a new answer and put those value into the terms[] array. Then I copied the two lines of code that put the problem onto the screen.
+The Reduce Terms Spell was kind of tricky but it works well. For everything but division I just divided the terms by 2 and calculated a new answer and put those values into the terms[] array. Then I copied the two lines of code that put the problem onto the screen.
 
 ## 11/22/17
 
@@ -96,12 +96,16 @@ Finally, I included a new .rar file with all of my game assets so if anyone want
 
 I added the functionality for division hints. Like the multiplication hints, there's some code redundancy that I'll need to work out later, but for now it's working and I'm happy with it.
 
-### Up next: making division hints, finishing up boss rewards, making floor bosses more unique, adding the continue functionality
+### Update 3
 
-Division hints is going to be a few hours. I'm going to use right distribution to do the hints.
+I added the basic functionality for the floor bosses. I have to temporarily resize some elements but I gave them transition animations so it all happens smoothly. I still want to add the functionality for having bosses randomly attack w/ number sequences. I'd also like to add more story elements to the bosses, maybe give them some dialogue.
 
-After clearing the 10th level of a dungeon the player will get an upgrade to their damage. 
+I went and debugged the hex and cube spells. Both had some odd bugs that I went through and fixed, but both now work properly. I fixed cube spells so they don't work on boss monsters anymore. I also made the range of monsters they could become more dynamic.
 
-I want the floor bosses to have larger icons so they appear more intimidating. I also want them to do more attacks, like number sequences (I might make number sequences a feature for all bosses...)
+I removed the timeDown() function from the scope of the battle() function so that it could be restarted from another function, specifically the polymorph monster function. Now, the timer stops when the spell animation is happening, and resumes when it's over.
+
+### Up next: adding the continue functionality, adding number sequences to potential boss attacks
+
+I want the bosses to do more attacks, like number sequences. I like the random algebra attacks and I want to find more ways to mix it up for the player.
 
 Adding continue functionality will involve using local storage for values that I want to persist.
