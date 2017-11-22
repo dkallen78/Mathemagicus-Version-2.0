@@ -5,7 +5,7 @@ var playArea = document.getElementById("playArea");
 var playerName = "";
 var playerHealth = 10;
 var maxHealth = 10;
-var playerDamage = 1;
+var playerBaseDamage = 1;
 var damageBoost = 0;
 //
 //These are variables that need to be available
@@ -13,6 +13,7 @@ var damageBoost = 0;
 //the timer
 var operator = "+";
 var timer;
+var width;
 var additionLevel = 1;
 var subtractionLevel, multiplicationLevel, divisionLevel = 0;
 //
@@ -34,6 +35,7 @@ var damagePlayer, damageMonster;
 //
 //Variables for displaying the math problems
 var terms = [];
+var answer;
 var algebra = false;
 //
 //Hint spells
@@ -436,6 +438,7 @@ function dungeonEntrance() {
   //
   //This block sets up the <table> elements for the dungeon screen
   playArea.innerHTML = "";
+  playArea.style.height = "450px";
 
   let dungeonTable = document.createElement("table");
   dungeonTable.id = "dungeonTable";
@@ -543,7 +546,7 @@ function checkKeyPress(event, answer) {
   var key = event.which;
   switch(key) {
     case 13: //Enter key, check answer
-      checkAnswer(answer, playerDamage);
+      checkAnswer(answer, playerBaseDamage);
       break;
     case 97: //"a" key, Fibonacci Spell
       event.preventDefault(); //prevents the writing of the "a" key
@@ -623,8 +626,8 @@ function dungeon(operation) {
 function battle() {
   terms = getTerms();
   algebra = false;
-  var width = 340;
-  var answer;
+  width = 340;
+
   var countdownBarFront = document.getElementById("countdownBarFront");
   var countdownTimer = document.getElementById("countdownTimer");
 
@@ -672,24 +675,23 @@ function battle() {
     var answerInput = document.getElementById("answerInput");
     answerInput.focus();
   }
-  //
-  //This function handles the countdown bar
-  function timeDown() {
-    if (width < 1) {          //When the countdown ends, the setInterval is stopped
-      clearInterval(timer);   //and a wrong answer is passed to checkAnswer()
-      countdownTimer.innerHTML = "0.00";
-      checkAnswer(-answer);
-    } else {
-      width -= 0.34;   //How much the countdown bar decreases in size every 10 milliseconds
-      //
-      //These three lines display the time left on top of the
-      //countdown timer
-      countdownBarFront.style.width = width + "px";
-      let timeLeft = (width / 34);
-      countdownTimer.innerHTML = timeLeft.toFixed(2);
-    }
+}
+//
+//This function handles the countdown bar
+function timeDown() {
+  if (width < 1) {          //When the countdown ends, the setInterval is stopped
+    clearInterval(timer);   //and a wrong answer is passed to checkAnswer()
+    countdownTimer.innerHTML = "0.00";
+    checkAnswer(-answer, 0);
+  } else {
+    width -= 0.34;   //How much the countdown bar decreases in size every 10 milliseconds
+    //
+    //These three lines display the time left on top of the
+    //countdown timer
+    countdownBarFront.style.width = width + "px";
+    let timeLeft = (width / 34);
+    countdownTimer.innerHTML = timeLeft.toFixed(2);
   }
-
 }
 //
 //This function gets the terms for an arithmetic problem
@@ -775,6 +777,7 @@ function checkAnswer(answer, damage) {
   if ((answerInput.value == answer) || (answer == "spell") || (answer == "heal")) {
     checkForSpells();
     monster.hp -= (damage + damageBoost);
+
     if (monster.hp < 1) {
       monster.hp = 0;
     }
@@ -935,6 +938,15 @@ function checkAnswer(answer, damage) {
               progressLevel();
               insertNextButton("Next", function() {dropScroll("./scrolls/pyramidScroll.gif");});
             }
+            if (playerLevel == 10) {//Damage Boost
+              problemDiv.innerHTML += "You feel stronger than you did before...<br />Damage +1!<br /><br />";
+              playerBaseDamage++;
+              playerHealth = maxHealth;
+              progressLevel();
+              var healthBarFront = document.getElementById("healthBarFront");
+              healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
+              insertNextButton("Next", dungeonEntrance);
+            }
             break;
           case "-":
             if (playerLevel == 2) { //Triangle/Fireball Spell
@@ -963,6 +975,15 @@ function checkAnswer(answer, damage) {
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
               insertNextButton("Next", function() {dropScroll("./scrolls/pentagonScroll.gif");});
+            }
+            if (playerLevel == 10) {//Damage Boost
+              problemDiv.innerHTML += "You feel stronger than you did before...<br />Damage +1!<br /><br />";
+              playerBaseDamage++;
+              playerHealth = maxHealth;
+              progressLevel();
+              var healthBarFront = document.getElementById("healthBarFront");
+              healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
+              insertNextButton("Next", dungeonEntrance);
             }
             break;
           case "*":
@@ -993,6 +1014,15 @@ function checkAnswer(answer, damage) {
               progressLevel();
               insertNextButton("Next", function() {dropScroll("./scrolls/hexagonScroll.gif");});
             }
+            if (playerLevel == 10) {//Damage Boost
+              problemDiv.innerHTML += "You feel stronger than you did before...<br />Damage +1!<br /><br />";
+              playerBaseDamage++;
+              playerHealth = maxHealth;
+              progressLevel();
+              var healthBarFront = document.getElementById("healthBarFront");
+              healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
+              insertNextButton("Next", dungeonEntrance);
+            }
             break;
           case "/":
             if (playerLevel == 2) { //Upgraded Hints
@@ -1019,6 +1049,16 @@ function checkAnswer(answer, damage) {
               progressLevel();
               insertNextButton("Next", function() {dropScroll("./scrolls/starScroll.gif");});
             }
+            if (playerLevel == 10) {//Damage Boost
+              problemDiv.innerHTML += "You feel stronger than you did before...<br />Damage +1!<br /><br />";
+              playerBaseDamage++;
+              playerHealth = maxHealth;
+              progressLevel();
+              var healthBarFront = document.getElementById("healthBarFront");
+              healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
+              insertNextButton("Next", dungeonEntrance);
+            }
+            break;
         }
 
         function shakeDungeon() {
@@ -1191,7 +1231,6 @@ function checkAnswer(answer, damage) {
       }
     }
   }
-
 }
 //
 //I use this function to assign the proper level
@@ -1491,6 +1530,16 @@ function newBoss() {
   this.hp = 1; //I only use this for testing and debugging
   this.maxHp = this.hp;
   this.damage = (Math.floor(this.hp / 10) + 2);
+  //
+  //This if statement does some resizing of two elements
+  //to make the floor bosses larger than their normal
+  //counterparts to make them more imposing
+  if (this.index == 34) {
+    playArea.style.height = "474px";
+    let monsterDiv = document.getElementById("monsterDiv");
+    monsterDiv.style.height = "125px";
+    monsterDiv.style.width = "125px";
+  }
   switch (operator) {
     case "+":
       this.src = "./monsters/addition/" + additionMonsters[this.index];
@@ -2060,7 +2109,8 @@ function castPentagon() {
   pentagonImg.style.filter = "opacity(30%)";
   pentagonImg.onclick = "";
 }
-
+//
+//This function handles my hexagon/strength spell
 function castHexagon() {
   hintDiv = document.getElementById("hintDiv");
   //
@@ -2135,7 +2185,8 @@ function castPyramid() {
   pyramidImg.style.filter = "opacity(30%)";
   pyramidImg.onclick = "";
 }
-
+//
+//This function handles my cube/polymorph monster spell
 function castCube() {
   hintDiv = document.getElementById("hintDiv");
   clearInterval(timer);
@@ -2147,10 +2198,19 @@ function castCube() {
     setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
     return;
   }
+  //
+  //If the player is fighting one of the boss monsters
+  //the spell won't work
+  if (monster.index > 29) {
+    hintDiv.innerHTML = "You can't polymorph the " + monster.name + "!";
+    hintDiv.style.visibility = "visible"; //This displays the hint area
+    setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
+    return;
+  }
 
   hintDiv.innerHTML = "You cast Fermet's Polymorph Monster!";
   hintDiv.style.visibility = "visible";
-  //setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
+  setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
   let spellFlash = 10;
   let spellCast = setInterval(castSpell, 75);
 
@@ -2158,9 +2218,10 @@ function castCube() {
     if (spellFlash < 1) {
       clearInterval(spellCast);
       playArea.classList.remove("playAreaPurple");
-      monster = new newMonster(1);
-      battle();
-
+      let newMonsterLevel = getRandomNumber(1, (Math.ceil(getLevel() / 2)));
+      monster = new newMonster(newMonsterLevel);
+      //battle();
+      timer = setInterval(timeDown, 10);
     } else {
       if ((spellFlash % 2) == 0) {
         playArea.classList.remove("playAreaPurple");

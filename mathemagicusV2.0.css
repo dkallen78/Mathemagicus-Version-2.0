@@ -9,7 +9,7 @@ Styles the play area where the game takes place*/
   border: 8px solid #996633;
   border-radius: 5px;
   background-image: url("tile.png");
-  transition: margin 100ms;
+  transition: height 500ms;
 }
 /*
 I use this class to put a red overlay on top of
@@ -21,7 +21,7 @@ the playArea for a flashing visual effect I have*/
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 2;
   background-color: rgba(255, 0, 0, 0.5);
 }
 /*
@@ -34,7 +34,7 @@ the playArea for a flashing visual effect I have*/
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 2;
   background-color: rgba(255, 255, 255, 0.5);
 }
 /*
@@ -47,7 +47,7 @@ the playArea for a flashing visual effect I have*/
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 2;
   background-color: rgba(10, 250, 250, 0.5);
 }
 /*
@@ -60,7 +60,7 @@ the playArea for a flashing visual effect I have*/
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 2;
   background-color: rgba(10, 250, 34, 0.5);
 }
 /*
@@ -73,7 +73,7 @@ the playArea for a flashing visual effect I have*/
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 2;
   background-color: rgba(249, 141, 0, 0.5);
 }
 /*
@@ -86,7 +86,7 @@ the playArea for a flashing visual effect I have*/
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 2;
   background-color: rgba(233, 249, 0, 0.5);
 }
 /*
@@ -99,7 +99,7 @@ the playArea for a flashing visual effect I have*/
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 0;
+  z-index: 2;
   background-color: rgba(141, 0, 249, 0.5);
 }
 /*
@@ -363,7 +363,7 @@ I might get rid of this later, still not sure...*/
 This styles the area where the spells are displayed*/
 #spellBar {
   position: absolute;
-  bottom: 140px;
+  top: 274px;
   left: 53px;
   width: 340px;
   height: 30px;
@@ -400,7 +400,7 @@ This controls the behavior of the <div>s inside of the spellBar*/
 This is the grey bar behind my green countdown timer */
 #countdownBarBack {
   position: absolute;
-  bottom: 180px;
+  top: 235px;
   left: 53px;
   width: 340px;
   height: 30px;
@@ -439,7 +439,7 @@ and the player and monster images*/
 #combatDiv {
   left: 55px;
   position: absolute;
-  bottom: 4px;
+  top: 312px;
 }
 /*
 The grey background container for the player and computer health bar */
@@ -471,6 +471,7 @@ This styles the <div>s that contain the player and monster images*/
 #playerDiv, #monsterDiv {
   display: inline-block;
   position: relative;
+  vertical-align: top;
   background-color: grey;
   margin: 11px;
   padding: 5px;
@@ -478,6 +479,8 @@ This styles the <div>s that contain the player and monster images*/
   width: 100px;
   border: 3px solid black;
   border-radius: 5px;
+  transition: height 500ms;
+  transition: width 500ms;
 }
 /*
 This ensures that the player and monster images are centered
