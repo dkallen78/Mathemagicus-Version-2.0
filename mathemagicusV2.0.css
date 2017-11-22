@@ -2,6 +2,7 @@
 Styles the play area where the game takes place*/
 #playArea {
   position: relative;
+  overflow: hidden;
   margin: auto;
   width: 450px;
   height: 450px;
@@ -198,12 +199,12 @@ I think this is temporary until I resize my cameo image*/
   height: 100px;
 }
 /*
-The table that holds the choices of character at the start of the game*/
-#characterTable {
+Positions and styles the text that goes above
+the character selection area*/
+#characterSelectText {
   position: absolute;
-  left: 73.5px;
-  bottom: 15px;
-  border-spacing: 45px 10px;
+  left: 128px;
+  bottom: 155px;
   font-size: 1.5em;
   font-weight: bold;
   font-family: monospace;
@@ -214,21 +215,87 @@ The table that holds the choices of character at the start of the game*/
                0px -2px black;
 }
 /*
-Styles the <td>s to look like buttons*/
-#characterTable td {
+Styles the buttons that move the character images
+during character selection*/
+.selectButtons {
+  position: absolute;
+  font-family: monospace;
+  font-size: 2em;
+  font-weight: bold;
+  bottom: 50px;
+  z-index: 2;
+  background-color: #999999;
+  border: 2px solid black;
+  border-radius: 5px;
+}
+/*
+Changes the background color when the mouse hovers
+over the butons*/
+.selectButtons:hover {
+  background-color: #bbbbbb;
+}
+/*
+Positions the left button*/
+#leftButton {
+  left: 111px;
+}
+/*
+Positions the right button*/
+#rightButton {
+  left: 304px;
+}
+/*
+The general styling information for the <div>s that
+hold the character images during character selection*/
+#characterDiv1, #characterDiv2, #characterDiv3 {
+  position: absolute;
   padding: 5px;
+  height: 100px;
+  width: 85px;
+  left: 175px;
+  bottom: 15px;
   background-color: #555555;
   border: 2px solid black;
   border-radius: 5px;
   box-shadow: 5px 5px 5px black;
-  transition: background-color 500ms;
-  transition: border 500ms;
+  transition: all 500ms;
 }
 /*
-To make it clear that these are "buttons" to be pressed*/
-#characterTable td:hover {
+Handles the blinking border for when the mouse hovers
+over the character <div>s during character selection*/
+@keyframes characterBoxBlink {
+  from {border: 2px solid black;}
+  to {border: 2px solid white;}
+}
+/*
+Defines the hover styling for the visible <div> during
+character selection*/
+#characterDiv2:hover {
   background-color: #777777;
-  border: 2px solid #996633;
+  animation-name: characterBoxBlink;
+  animation-duration: 500ms;
+  animation-iteration-count: infinite;
+}
+/*
+Positions the first <div> outside of the playArea*/
+#characterDiv1 {
+  left: -120px;
+}
+/*
+Positions the third <div> outside of the playArea*/
+#characterDiv3 {
+  left: 460px;
+}
+/*
+Defines how the <img>s behave in the character
+selection screen*/
+.characterImg {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  margin: auto;
+  z-index: 1;
 }
 /*
 This handles the animation for my blinking "next" button*/
@@ -325,6 +392,7 @@ This controls the behavior of the <div>s inside of the spellBar*/
   font-size: 1em;
   font-family: monospace;
 }
+
 #spellBar div div {
   width: 15px;
 }

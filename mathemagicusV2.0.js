@@ -1,25 +1,38 @@
 var playArea = document.getElementById("playArea");
-
+//
+//These variables hold the values for the
+//player's information such as damage and name
 var playerName = "";
 var playerHealth = 10;
 var maxHealth = 10;
 var playerDamage = 1;
 var damageBoost = 0;
-
+//
+//These are variables that need to be available
+//anywhere for determining level and stopping
+//the timer
 var operator = "+";
 var timer;
 var additionLevel = 1;
 var subtractionLevel, multiplicationLevel, divisionLevel = 0;
-
-var mage, mageFight, mageHurt, mageDead = 0;
-mage = "whiteMage.gif";
-mageFight = "whiteMageFight.gif";
-mageHurt = "whiteMageHurt.gif";
-mageDead = "whiteMageDead.gif";
+//
+//Mage variables for holding the information about which
+//mage the player has chosen and where to find the image
+var mages = [
+  ["mage0.gif", "mage0fight.gif", "mage0hurt.gif", "mage0dead.gif"],
+  ["mage1.gif", "mage1fight.gif", "mage1hurt.gif", "mage1dead.gif"],
+  ["mage2.gif", "mage2fight.gif", "mage2hurt.gif", "mage2dead.gif"],
+  ["mage3.gif", "mage3fight.gif", "mage3hurt.gif", "mage3dead.gif"],
+  ["mage4.gif", "mage4fight.gif", "mage4hurt.gif", "mage4dead.gif"],
+  ["mage5.gif", "mage5fight.gif", "mage5hurt.gif", "mage5dead.gif"],
+  ["mage6.gif", "mage6fight.gif", "mage6hurt.gif", "mage6dead.gif"]
+];
+var mageIndex = 0;
 //
 //I don't know if these two need to be global...
 var damagePlayer, damageMonster;
-
+//
+//Variables for displaying the math problems
 var terms = [];
 var algebra = false;
 //
@@ -67,7 +80,8 @@ var octagonNumbers = [9, 25, 49, 81, 121];
 
 var octahedronSpells = 0;
 var octahedronNumbers = [6, 19, 44, 85, 146];
-
+//
+//Monster variables, there are a lot of these...
 var monster = {};
 var monstersKilled = 0;
 //
@@ -136,6 +150,7 @@ var divisionMonsterNames = ["Grey Goblin", "Geist", "Werewolf", "Red Ringtail", 
                           "Wraith", "Wizard Ogre", "Pterodactyl", "Skull", "Shadow Master", "Wild Horn", "Gas Dragon",
                           "Phantom", "Wizard Knight", "Mantis King", "Vampire Queen", "Black Knight", "Death Claw", "Grey Naga",
                           "General", "Queen Lamia", "Beast Demon", "Zombie Dragon", "Tiamat"];
+
 //
 //Gets random number for the math problems from a floor to a ceiling
 function getRandomNumber(floor, ceiling) {
@@ -150,6 +165,7 @@ function resetStartVariables() {
   playerHealth = 10;
   maxHealth = 10;
   playerDamage = 1;
+  mageIndex = 0;
   additionLevel = 9;
   subtractionLevel = 9;
   multiplicationLevel = 9;
@@ -265,39 +281,131 @@ function chooseCharacter() {
   playArea.appendChild(introTextDiv);
   typeText("introTextDiv", introText, 0, showMages); //This function "types" the text into the box
   //
-  //This block sets up the table for the character select
-  let chooseCharacterTable = document.createElement("table");  //These lines set up the table for display
-  let tableCaption = document.createElement("caption");
-  let tableTitle = document.createTextNode("Choose your mage:");
-  tableCaption.appendChild(tableTitle);
-  chooseCharacterTable.appendChild(tableCaption);
-  chooseCharacterTable.setAttribute("id", "characterTable");
-  let tableRow = document.createElement("tr");
-  let blackMageTD = document.createElement("td");   //These six lines put the Black Mage into
-  let blackMageImg = document.createElement("img"); //their box and initializes their attributes
-  blackMageImg.src = "blackMage.gif";
-  blackMageImg.onclick = chooseBlack;
-  blackMageTD.appendChild(blackMageImg);
-  tableRow.appendChild(blackMageTD);
-  let whiteMageTD = document.createElement("td");   //These six lines put the White Mage into
-  let whiteMageImg = document.createElement("img"); //their box and initializes their attributes
-  whiteMageImg.src = "whiteMage.gif";
-  whiteMageImg.onclick = chooseWhite;
-  whiteMageTD.appendChild(whiteMageImg);
-  tableRow.appendChild(whiteMageTD);
-  chooseCharacterTable.appendChild(tableRow);
+  //This block of code puts together all the pieces needed
+  //for character selection
+  var characterSelectText = document.createElement("div");
+  characterSelectText.setAttribute("id", "characterSelectText");
+  characterSelectText.innerHTML = "Choose your mage:";
+
+  var leftButton = document.createElement("input");
+  leftButton.setAttribute("id", "leftButton");
+  leftButton.setAttribute("class", "selectButtons");
+  leftButton.setAttribute("type", "button");
+  leftButton.setAttribute("value", "<");
+  leftButton.onclick = shiftRight;
+
+  var rightButton = document.createElement("input");
+  rightButton.setAttribute("id", "rightButton");
+  rightButton.setAttribute("class", "selectButtons");
+  rightButton.setAttribute("type", "button");
+  rightButton.setAttribute("value", ">");
+  rightButton.onclick = shiftLeft;
+
+  var characterDiv1 = document.createElement("div");
+  characterDiv1.setAttribute("id", "characterDiv1");
+  var characterDiv2 = document.createElement("div");
+  characterDiv2.setAttribute("id", "characterDiv2");
+
+  var characterDiv3 = document.createElement("div");
+  characterDiv3.setAttribute("id", "characterDiv3");
+
+  var characterImg1 = document.createElement("img");
+  characterImg1.setAttribute("class", "characterImg");
+  characterDiv1.appendChild(characterImg1);
+  characterImg1.src = "./mages/" + mages[6][0];
+
+  var characterImg2 = document.createElement("img");
+  characterImg2.setAttribute("class", "characterImg");
+  characterDiv2.appendChild(characterImg2);
+  characterImg2.src = "./mages/" + mages[0][0];
+  characterImg2.onclick = townIntro;
+
+  var characterImg3 = document.createElement("img");
+  characterImg3.setAttribute("class", "characterImg");
+  characterDiv3.appendChild(characterImg3);
+  characterImg3.src = "./mages/" + mages[1][0];
   //
   //This function doesn't run until the text has finished typing
-  //Basically, you can't choose your mage until after the NPC is done talking
+  //Basically, you can't choose your mage until after the NPC is
+  //done talking
   function showMages() {
-    playArea.appendChild(chooseCharacterTable);
+    playArea.appendChild(characterSelectText);
+    playArea.appendChild(leftButton);
+    playArea.appendChild(characterDiv1);
+    playArea.appendChild(characterDiv2);
+    playArea.appendChild(characterDiv3);
+    playArea.appendChild(rightButton);
+  }
+  //
+  //This function shifts the list of available mages to the left
+  function shiftLeft() { //Right arrow button
+    playArea.removeChild(characterDiv1);
+    mageIndex++;
+
+    if (mageIndex >= mages.length) {
+      mageIndex = 0;
+    }
+    /*console.clear();
+    console.log("index is " + mageIndex);
+    console.log("(index + 1) % " + mages.length + " is " + ((mageIndex + 1) % mages.length));*/
+
+    characterDiv2.setAttribute("id", "characterDiv1");
+    characterDiv1 = characterDiv2;
+
+    characterDiv3.setAttribute("id", "characterDiv2");
+    characterDiv2 = characterDiv3;
+    characterImg2 = characterImg3;
+    characterImg2.onclick = townIntro;
+
+
+    characterDiv3 = document.createElement("div");
+    characterDiv3.setAttribute("id", "characterDiv3");
+    characterImg3 = document.createElement("img");
+    characterImg3.setAttribute("class", "characterImg");
+    characterDiv3.appendChild(characterImg3);
+    characterImg3.src = "./mages/" + mages[(mageIndex + 1) % mages.length][0];
+    playArea.insertBefore(characterDiv3, rightButton);
+  }
+  //
+  //This function shifts the list of available mages to the right
+  function shiftRight() { //left arrow button
+    playArea.removeChild(characterDiv3);
+    mageIndex--
+
+    if (mageIndex < 0) {
+      mageIndex = mages.length - 1;
+    }
+    /*console.clear();
+    console.log("index is " + mageIndex);
+    console.log("(index + 6) % " + mages.length + " is " + ((mageIndex + 1) % 7));*/
+
+    characterDiv2.setAttribute("id", "characterDiv3")
+    characterDiv3 = characterDiv2;
+
+    characterDiv1.setAttribute("id", "characterDiv2")
+    characterDiv2 = characterDiv1;
+    characterImg2 = characterImg1;
+    characterImg2.onclick = townIntro;
+
+    characterDiv1 = document.createElement("div");
+    characterDiv1.setAttribute("id", "characterDiv1");
+    characterImg1 = document.createElement("img");
+    characterImg1.setAttribute("class", "characterImg");
+    characterDiv1.appendChild(characterImg1);
+    characterImg1.src = "./mages/" + mages[(mageIndex + 6) % mages.length][0];
+    playArea.insertBefore(characterDiv1, characterDiv2);
   }
 }
 //
 //Introduces the basic game plot
 function townIntro() {
   let table = document.getElementById("characterTable");
-  playArea.removeChild(table);
+  playArea.removeChild(characterSelectText);
+  playArea.removeChild(leftButton);
+  playArea.removeChild(characterDiv1);
+  playArea.removeChild(characterDiv2);
+  playArea.removeChild(characterDiv3);
+  playArea.removeChild(rightButton);
   let textString = "Ah, that's better. We asked you to come because we have a monster problem. ";
   typeText("introTextDiv", textString, introPart2, 0);
 
@@ -361,28 +469,28 @@ function dungeonEntrance() {
   //This block of ifs determines which door gif to display
   //and assigns an onclick function to open doors
   if (additionLevel) {
-    additionDoor = "additionDoorOpen.gif";
+    additionDoor = "./doors/additionDoorOpen.gif";
     additionDoorImg.onclick = function() {dungeon("+");}
   } else {
-    additionDoor = "additionDoorClosed.gif";
+    additionDoor = "./doors/additionDoorClosed.gif";
   }
   if (subtractionLevel) {
-    subtractionDoor = "subtractionDoorOpen.gif";
+    subtractionDoor = "./doors/subtractionDoorOpen.gif";
     subtractionDoorImg.onclick = function() {dungeon("-");}
   } else {
-    subtractionDoor = "subtractionDoorClosed.gif";
+    subtractionDoor = "./doors/subtractionDoorClosed.gif";
   }
   if (multiplicationLevel) {
-    multiplicationDoor = "multiplicationDoorOpen.gif";
+    multiplicationDoor = "./doors/multiplicationDoorOpen.gif";
     multiplicationDoorImg.onclick = function() {dungeon("*");}
   } else {
-    multiplicationDoor = "multiplicationDoorClosed.gif";
+    multiplicationDoor = "./doors/multiplicationDoorClosed.gif";
   }
   if (divisionLevel) {
-    divisionDoor = "divisionDoorOpen.gif";
+    divisionDoor = "./doors/divisionDoorOpen.gif";
     divisionDoorImg.onclick = function() {dungeon("/");}
   } else {
-    divisionDoor = "divisionDoorClosed.gif";
+    divisionDoor = "./doors/divisionDoorClosed.gif";
   }
   //
   //Defines the src for the door images
@@ -395,26 +503,6 @@ function dungeonEntrance() {
   dungeonTable.appendChild(firstRow);
   dungeonTable.appendChild(secondRow);
   playArea.appendChild(dungeonTable);
-}
-//
-//The stuff that happens when the player chooses the black mage
-//This can probably be an internal function to chooseCharacter()
-function chooseBlack() {
-  mage = "blackMage.gif";
-  mageHurt = "blackMageHurt.gif";
-  mageFight = "blackMageFight.gif";
-  mageDead = "blackMageDead.gif";
-  townIntro();
-}
-//
-//The stuff that happens when the player chooses the white mage
-//This can probably be an internal function to chooseCharacter()
-function chooseWhite() {
-  mage = "whiteMage.gif";
-  mageHurt = "whiteMageHurt.gif";
-  mageFight = "whiteMageFight.gif";
-  mageDead = "whiteMageDead.gif";
-  townIntro();
 }
 //
 //The function that handles the text typing effect
@@ -742,11 +830,11 @@ function checkAnswer(answer, damage) {
   //This function handles the animation for monster damage
   function monsterDamage() {
 
-    playerImg.src = mageFight;
+    playerImg.src = "./mages/" + mages[mageIndex][1];
     monsterImg.style.filter = "brightness(50%)";
 
     if (damageFlash <= 0) {
-      playerImg.src = mage;
+      playerImg.src = "./mages/" + mages[mageIndex][0];
       if (monster.hp > 0) {
         monsterImg.style.filter = "brightness(100%)";
       }
@@ -765,13 +853,13 @@ function checkAnswer(answer, damage) {
   //
   //This function handles the animation for player damage
   function playerDamage() {
-    playerImg.src = mageHurt;
+    playerImg.src = "./mages/" + mages[mageIndex][2];
 
     if (damageFlash <= 0) {
       if (playerHealth < 1) {
-        playerImg.src = mageDead;
+        playerImg.src = "./mages/" + mages[mageIndex][3];
       } else {
-        playerImg.src = mage;
+        playerImg.src = "./mages/" + mages[mageIndex][0];
       }
       clearInterval(damagePlayer);
     } else {
@@ -823,7 +911,7 @@ function checkAnswer(answer, damage) {
             if (playerLevel == 2) { //Fibonacci Spell
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
-              insertNextButton("Next", function() {dropScroll("fibonacciScroll.gif");});
+              insertNextButton("Next", function() {dropScroll("./scrolls/fibonacciScroll.gif");});
             }
             if (playerLevel == 4) { //Subtraction Dungeon
               problemDiv.innerHTML += "Something seems to be happening...<br /><br />";
@@ -837,7 +925,7 @@ function checkAnswer(answer, damage) {
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               maxHealth += 2;
               playerHealth += 2;
-              var healthBarFront = document.getElementById("healthBarFront");
+              var healthBarFront = document.getElementById("./scrolls/healthBarFront");
               healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
               progressLevel();
               insertNextButton("Next", function() {dropScroll("squareScroll.gif");});
@@ -845,14 +933,14 @@ function checkAnswer(answer, damage) {
             if (playerLevel == 8) { //Pyramid/Time Spell
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
-              insertNextButton("Next", function() {dropScroll("pyramidScroll.gif");});
+              insertNextButton("Next", function() {dropScroll("./scrolls/pyramidScroll.gif");});
             }
             break;
           case "-":
             if (playerLevel == 2) { //Triangle/Fireball Spell
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
-              insertNextButton("Next", function() {dropScroll("triangleScroll.gif");});
+              insertNextButton("Next", function() {dropScroll("./scrolls/triangleScroll.gif");});
             }
             if (playerLevel == 4) { //Multiplication Dungeon
               problemDiv.innerHTML += "Something seems to be happening...<br /><br />";
@@ -874,14 +962,14 @@ function checkAnswer(answer, damage) {
             if (playerLevel == 8) { //Pentagon/Reduce Terms Spell
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
-              insertNextButton("Next", function() {dropScroll("pentagonScroll.gif");});
+              insertNextButton("Next", function() {dropScroll("./scrolls/pentagonScroll.gif");});
             }
             break;
           case "*":
             if (playerLevel == 2) { //Upgraded Hints
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
-              insertNextButton("Next", function() {dropScroll("fibonacciScroll2.gif");});
+              insertNextButton("Next", function() {dropScroll("./scrolls/fibonacciScroll2.gif");});
             }
             if (playerLevel == 4) { //Division Dungeon
               problemDiv.innerHTML += "Something seems to be happening...<br /><br />";
@@ -903,14 +991,14 @@ function checkAnswer(answer, damage) {
             if (playerLevel == 8) { //Hexagon/Strength Spell
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
-              insertNextButton("Next", function() {dropScroll("hexagonScroll.gif");});
+              insertNextButton("Next", function() {dropScroll("./scrolls/hexagonScroll.gif");});
             }
             break;
           case "/":
             if (playerLevel == 4) { //Cube Spell
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
-              insertNextButton("Next", function() {dropScroll("cubeScroll.gif");});
+              insertNextButton("Next", function() {dropScroll("./scrolls/cubeScroll.gif");});
             }
             if (playerLevel == 6) { //Health Boost
               problemDiv.innerHTML += "You feel healthier than you did before...<br />Max Health +2!<br /><br />";
@@ -924,7 +1012,7 @@ function checkAnswer(answer, damage) {
             if (playerLevel == 8) { //Star Spell
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
-              insertNextButton("Next", function() {dropScroll("starScroll.gif");});
+              insertNextButton("Next", function() {dropScroll("./scrolls/starScroll.gif");});
             }
         }
 
@@ -1176,7 +1264,7 @@ function makeDungeonScreen() {
   //fibonacci spell
   let fibonacciDiv = document.createElement("div");
   let fibonacciImg = document.createElement("img");
-  fibonacciImg.src = "fibonacci.gif";
+  fibonacciImg.src = "./spellIcons/fibonacci.gif";
   fibonacciImg.setAttribute("id", "fibonacciImg");
   fibonacciImg.style.filter = "opacity(10%)";
   fibonacciDiv.appendChild(fibonacciImg);
@@ -1190,7 +1278,7 @@ function makeDungeonScreen() {
   //triangle spell
   let triangleDiv = document.createElement("div");
   let triangleImg = document.createElement("img");
-  triangleImg.src = "triangle.gif";
+  triangleImg.src = "./spellIcons/triangle.gif";
   triangleImg.setAttribute("id", "triangleImg");
   triangleImg.style.filter = "opacity(10%)";
   triangleDiv.appendChild(triangleImg);
@@ -1204,7 +1292,7 @@ function makeDungeonScreen() {
   //square spell
   let squareDiv = document.createElement("div");
   let squareImg = document.createElement("img");
-  squareImg.src = "square.gif";
+  squareImg.src = "./spellIcons/square.gif";
   squareImg.setAttribute("id", "squareImg");
   squareImg.style.filter = "opacity(10%)";
   squareDiv.appendChild(squareImg);
@@ -1218,7 +1306,7 @@ function makeDungeonScreen() {
   //pentagon spell
   let pentagonDiv = document.createElement("div");
   let pentagonImg = document.createElement("img");
-  pentagonImg.src = "pentagon.gif";
+  pentagonImg.src = "./spellIcons/pentagon.gif";
   pentagonImg.setAttribute("id", "pentagonImg");
   pentagonImg.style.filter = "opacity(10%)";
   pentagonDiv.appendChild(pentagonImg);
@@ -1232,7 +1320,7 @@ function makeDungeonScreen() {
   //hexagon spell
   let hexagonDiv = document.createElement("div");
   let hexagonImg = document.createElement("img");
-  hexagonImg.src = "hexagon.gif";
+  hexagonImg.src = "./spellIcons/hexagon.gif";
   hexagonImg.setAttribute("id", "hexagonImg");
   hexagonImg.style.filter = "opacity(10%)";
   hexagonDiv.appendChild(hexagonImg);
@@ -1246,7 +1334,7 @@ function makeDungeonScreen() {
   //pyramid spell
   let pyramidDiv = document.createElement("div");
   let pyramidImg = document.createElement("img");
-  pyramidImg.src = "pyramid.gif";
+  pyramidImg.src = "./spellIcons/pyramid.gif";
   pyramidImg.setAttribute("id", "pyramidImg");
   pyramidImg.style.filter = "opacity(10%)";
   pyramidDiv.appendChild(pyramidImg);
@@ -1260,7 +1348,7 @@ function makeDungeonScreen() {
   //cube spell
   let cubeDiv = document.createElement("div");
   let cubeImg = document.createElement("img");
-  cubeImg.src = "cube.gif";
+  cubeImg.src = "./spellIcons/cube.gif";
   cubeImg.setAttribute("id", "cubeImg");
   cubeImg.style.filter = "opacity(10%)";
   cubeDiv.appendChild(cubeImg);
@@ -1274,7 +1362,7 @@ function makeDungeonScreen() {
   //star spell
   let starDiv = document.createElement("div");
   let starImg = document.createElement("img");
-  starImg.src = "star.gif";
+  starImg.src = "./spellIcons/star.gif";
   starImg.setAttribute("id", "starImg");
   starImg.style.filter = "opacity(10%)";
   starDiv.appendChild(starImg);
@@ -1307,7 +1395,7 @@ function makeDungeonScreen() {
   playerDiv.setAttribute("id", "playerDiv");
   let playerImg = document.createElement("img");
   playerImg.setAttribute("id", "playerImg");
-  playerImg.src = mage;
+  playerImg.src = "./mages/" + mages[mageIndex][0];
   playerDiv.appendChild(playerImg);
   let slash = document.createElement("img");
   slash.setAttribute("id", "slash");
