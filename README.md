@@ -92,6 +92,10 @@ I cleaned up my file structure. Instead of having a mess of files all in one dir
 
 Finally, I included a new .rar file with all of my game assets so if anyone wants to see the current state of the game befoe it goes up on some fly-by-night webhost, they can.
 
+### Update 2
+
+I added the functionality for division hints. Like the multiplication hints, there's some code redundancy that I'll need to work out later, but for now it's working and I'm happy with it.
+
 ### Up next: making division hints, finishing up boss rewards, making floor bosses more unique, adding the continue functionality
 
 Division hints is going to be a few hours. I'm going to use right distribution to do the hints.
