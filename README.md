@@ -82,6 +82,22 @@ The Time Spell doesn't do anything else other than stop the timer from counting 
 
 The Reduce Terms Spell was kind of tricky but it works well. For everything but division I just divided the terms by 2 and calculated a new answer and put those value into the terms[] array. Then I copied the two lines of code that put the problem onto the screen.
 
-### Up next: making division hints, cleaning up the file structure, finishing up boss rewards
+## 11/22/17
 
-After clearing the 10th level of a dungeon the player will get an upgrade to their damage. Division hints is going to be a few hours. My file structure is UGLY, I need to clean it up. After I do that, I need to update my .rar file.
+### Update
+
+I got inspired to update my character selection screen. I know it wasn't on my list of things to do, but I had a lot of time at work yesterday and I figured out the basic logic I needed. So instead of only having two characters to choose from, there are now a list of seven possibilities. They only show one at a time and the user can click a button on either side of the mage icon to cycle through them. I built in some pretty CSS transition changes to go along with it to make it look like they were moving instead of just changing instantly. 
+
+I cleaned up my file structure. Instead of having a mess of files all in one directory, I've grouped files together by type. I had to do some minor updates to my code after this, but it's totally worth it since now my main directory isn't a hot mess.
+
+Finally, I included a new .rar file with all of my game assets so if anyone wants to see the current state of the game befoe it goes up on some fly-by-night webhost, they can.
+
+### Up next: making division hints, finishing up boss rewards, making floor bosses more unique, adding the continue functionality
+
+Division hints is going to be a few hours. I'm going to use right distribution to do the hints.
+
+After clearing the 10th level of a dungeon the player will get an upgrade to their damage. 
+
+I want the floor bosses to have larger icons so they appear more intimidating. I also want them to do more attacks, like number sequences (I might make number sequences a feature for all bosses...)
+
+Adding continue functionality will involve using local storage for values that I want to persist.
