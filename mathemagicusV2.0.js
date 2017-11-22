@@ -995,6 +995,11 @@ function checkAnswer(answer, damage) {
             }
             break;
           case "/":
+            if (playerLevel == 2) { //Upgraded Hints
+              problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
+              progressLevel();
+              insertNextButton("Next", function() {dropScroll("./scrolls/fibonacciScroll3.gif");});
+            }
             if (playerLevel == 4) { //Cube Spell
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
@@ -1629,13 +1634,15 @@ function castFibonacci() {
         subtractionHint(terms[0], terms[2]);
         break;
       case "*":
-        hintString += terms[2] + " / " + terms[0] + " = ?";
+        hintString += terms[2] + " / " + terms[0] + " = ? <br />";
         if (divisionLevel > 2) {
-          hintString += "<br />";
+          divisionHint(terms[2], terms[0]);
         }
         break;
       case "/":
-
+        hintString += terms[0] + " / " + terms[2] + " = ? <br />";
+        divisionHint(terms[0], terms[2]);
+        break;
     }
     //
     //These five lines display the final hint to the hintDiv,
@@ -1663,8 +1670,13 @@ function castFibonacci() {
       }
       break;
     case "/":
-
-  }
+      if (divisionLevel < 3) {
+        hintString = "Your magic doesn't seem to be working!";
+      } else {
+        divisionHint(terms[0], terms[1]);
+      }
+      break;
+   }
   //
   //These last four lines display the final hint to the hintDiv
   //and update the count of Fibonacci Spells
@@ -1826,6 +1838,49 @@ function castFibonacci() {
       }
 
       hintString += "(" + multiplicand + " * <span style=\"color:#ffbaba\">" + multiplier2 + "</span>) = ?";
+    }
+  }
+  //
+  //This is the logic that handles the divison hints
+  function divisionHint(dividend1, divisor) {
+    var quotient = dividend1 / divisor;
+    //
+    //I like this if statement because it works, but it has some
+    //redundancy that I'd like to work out later if I can
+    if (divisor == 10) {
+      hintString += dividend1 + " / <span style=\"color:#ffbaba\">" + divisor + "</span> = ?";
+    } else if (divisor == 5) {
+      hintString += dividend1 + " / <span style=\"color:#ffbaba\">" + divisor + "</span> = ?";
+    } else if (divisor < 3) {
+      hintString += dividend1 + " / <span style=\"color:#ffbaba\">" + divisor + "</span> = ?";
+    } else if (dividend1 > (divisor * 10)) {
+      let dividend2 = dividend1 - (divisor * 10);
+      dividend1 = divisor * 10;
+      hintString += "(" + dividend1 + " + " + dividend2 + ") / ";
+      hintString += "<span style=\"color:#ffbaba\">" + divisor + "</span> = ?<br />";
+      hintString += "(" + dividend1 + " / <span style=\"color:#ffbaba\">" + divisor + "</span>) + ";
+      hintString += "(" + dividend2 + " / <span style=\"color:#ffbaba\">" + divisor + "</span>) = ?";
+    } else if (dividend1 < (divisor * 5)) {
+      let dividend2 = dividend1 - (divisor * 2);
+      dividend1 = divisor * 2;
+      hintString += "(" + dividend1 + " + " + dividend2 + ") / ";
+      hintString += "<span style=\"color:#ffbaba\">" + divisor + "</span> = ?<br />";
+      hintString += "(" + dividend1 + " / <span style=\"color:#ffbaba\">" + divisor + "</span>) + ";
+      hintString += "(" + dividend2 + " / <span style=\"color:#ffbaba\">" + divisor + "</span>) = ?";
+    } else if (dividend1 < (divisor * 8)) {
+      let dividend2 = dividend1 - (divisor * 5);
+      dividend1 = divisor * 5;
+      hintString += "(" + dividend1 + " + " + dividend2 + ") / ";
+      hintString += "<span style=\"color:#ffbaba\">" + divisor + "</span> = ?<br />";
+      hintString += "(" + dividend1 + " / <span style=\"color:#ffbaba\">" + divisor + "</span>) + ";
+      hintString += "(" + dividend2 + " / <span style=\"color:#ffbaba\">" + divisor + "</span>) = ?";
+    } else if (dividend1 < (divisor * 10)) {
+      let dividend2 = (10 - quotient) * divisor;
+      dividend1 = divisor * 10;
+      hintString += "(" + dividend1 + " - " + dividend2 + ") / ";
+      hintString += "<span style=\"color:#ffbaba\">" + divisor + "</span> = ?<br />";
+      hintString += "(" + dividend1 + " / <span style=\"color:#ffbaba\">" + divisor + "</span>) - ";
+      hintString += "(" + dividend2 + " / <span style=\"color:#ffbaba\">" + divisor + "</span>) = ?";
     }
   }
 
