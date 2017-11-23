@@ -1,0 +1,422 @@
+<html>
+<head>
+<title>dungeon screen test</title>
+<link rel="stylesheet" type="text/css" href="mathemagicusV2.0.css" />
+<style>
+
+#nextScreen {
+  position: absolute;
+  left: 208px;
+  top: 417px;
+  font-family: monospace;
+  font-size: 1.5em;
+  font-weight: bold;
+  z-index: 1;
+  background-color: #999999;
+  border: 2px solid black;
+  border-radius: 5px;
+  transform: scale(-1, -1);
+  transition: all 500ms;
+}
+
+#nextScreen:hover {
+  background-color: #bbbbbb;
+}
+
+#monsterBook {
+  position: absolute;
+  top: 470px;
+  left: 10px;
+  height: 400px;
+  width: 430px;
+  z-index: 0;
+  transition: top 500ms, transform 750ms;
+}
+
+#openBook {
+  margin: 1px;
+  background-color: rgba(0,0,0,0.125);
+  border-radius: 5px;
+  border: 1px solid black;
+  transition: border 500ms, background-color 500ms;
+}
+
+#openBook:hover {
+  border: 1px solid white;
+  background-color: rgba(255,255,255,0.125);
+}
+
+.bookPage {
+  position: absolute;
+  /*top: 470px;
+  left: 10px;*/
+  height: 394px;
+  width: 424px;
+  z-index: 1;
+  background-color: #e6c790;
+  border: 3px solid black;
+  border-radius: 5px;
+  transition: top 500ms, transform 750ms;
+}
+
+#quickButtonDiv {
+  position: relative;
+  margin: auto;
+}
+
+.quickButtons {
+  margin: 1px;
+  background-color: rgba(0,0,0,0.125);
+  border-radius: 5px;
+  border: 1px solid black;
+  transition: border 500ms, background-color 500ms;
+}
+
+.quickButtons:hover {
+  border: 1px solid white;
+  background-color: rgba(255,255,255,0.125);
+}
+
+#playerCameoDiv {
+  position: absolute;
+  padding: 5px;
+  height: 100px;
+  width: 85px;
+  left: 290px;
+  top: 40px;
+  background-color: #555555;
+  border: 2px solid black;
+  border-radius: 5px;
+}
+
+#playerCameoImg {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  margin: auto;
+  z-index: 1;
+}
+
+#statusPage p {
+  font-size: 1.25em;
+  margin-left: 10px;
+}
+</style>
+</head>
+<body onload="dungeonEntrance()">
+  <div id="playArea"></div>
+</body>
+<script>
+
+var maxHealth = 10;
+var playerDamage = 1;
+var mageIndex = 0;
+var additionLevel = 9;
+var subtractionLevel = 9;
+var multiplicationLevel = 9;
+var divisionLevel = 9;
+var totalMonstersKilled = 0;
+var playerName = "Ratonchis";
+
+var mages = [
+  ["mage0.gif", "mage0fight.gif", "mage0hurt.gif", "mage0dead.gif"],
+  ["mage1.gif", "mage1fight.gif", "mage1hurt.gif", "mage1dead.gif"],
+  ["mage2.gif", "mage2fight.gif", "mage2hurt.gif", "mage2dead.gif"],
+  ["mage3.gif", "mage3fight.gif", "mage3hurt.gif", "mage3dead.gif"],
+  ["mage4.gif", "mage4fight.gif", "mage4hurt.gif", "mage4dead.gif"],
+  ["mage5.gif", "mage5fight.gif", "mage5hurt.gif", "mage5dead.gif"],
+  ["mage6.gif", "mage6fight.gif", "mage6hurt.gif", "mage6dead.gif"]
+];
+
+function dungeonEntrance() {
+  let additionDoor = "";
+  let subtractionDoor = "";
+  let multiplicationDoor = "";
+  let divisionDoor = "";
+  //
+  //This block sets up the <table> elements for the dungeon screen
+  playArea.innerHTML = "";
+  playArea.style.height = "450px";
+
+  let dungeonTable = document.createElement("table");
+  dungeonTable.id = "dungeonTable";
+  let firstRow = document.createElement("tr");
+  let secondRow = document.createElement("tr");
+  //
+  //This block sets up the addition dungeon elements
+  let additionDoorTD = document.createElement("td");
+  let additionDoorImg = document.createElement("img");
+  additionDoorTD.appendChild(additionDoorImg);
+  firstRow.appendChild(additionDoorTD);
+  //
+  //This block sets up the subtraction dungeon elements
+  let subtractionDoorTD = document.createElement("td");
+  let subtractionDoorImg = document.createElement("img");
+  subtractionDoorTD.appendChild(subtractionDoorImg);
+  firstRow.appendChild(subtractionDoorTD);
+  //
+  //This block sets up the multiplication dungeon elements
+  let multiplicationDoorTD = document.createElement("td");
+  let multiplicationDoorImg = document.createElement("img");
+  multiplicationDoorTD.appendChild(multiplicationDoorImg);
+  secondRow.appendChild(multiplicationDoorTD);
+  //
+  //This block sets up the division dungeon elements
+  let divisionDoorTD = document.createElement("td");
+  let divisionDoorImg = document.createElement("img");
+  divisionDoorTD.appendChild(divisionDoorImg);
+  secondRow.appendChild(divisionDoorTD);
+  //
+  //This block of ifs determines which door gif to display
+  //and assigns an onclick function to open doors
+  if (additionLevel) {
+    additionDoor = "./doors/additionDoorOpen.gif";
+    //additionDoorImg.onclick = function() {dungeon("+");}
+  } else {
+    additionDoor = "./doors/additionDoorClosed.gif";
+  }
+  if (subtractionLevel) {
+    subtractionDoor = "./doors/subtractionDoorOpen.gif";
+    //subtractionDoorImg.onclick = function() {dungeon("-");}
+  } else {
+    subtractionDoor = "./doors/subtractionDoorClosed.gif";
+  }
+  if (multiplicationLevel) {
+    multiplicationDoor = "./doors/multiplicationDoorOpen.gif";
+    //multiplicationDoorImg.onclick = function() {dungeon("*");}
+  } else {
+    multiplicationDoor = "./doors/multiplicationDoorClosed.gif";
+  }
+  if (divisionLevel) {
+    divisionDoor = "./doors/divisionDoorOpen.gif";
+    //divisionDoorImg.onclick = function() {dungeon("/");}
+  } else {
+    divisionDoor = "./doors/divisionDoorClosed.gif";
+  }
+  //
+  //Defines the src for the door images
+  additionDoorImg.src = additionDoor;
+  subtractionDoorImg.src = subtractionDoor;
+  multiplicationDoorImg.src = multiplicationDoor;
+  divisionDoorImg.src = divisionDoor;
+
+  var nextScreen = document.createElement("input");
+  nextScreen.id = "nextScreen";
+  nextScreen.type = "button";
+  nextScreen.value = "^";
+  nextScreen.onclick = bookScreen;
+
+  var monsterBook = document.createElement("div");
+  monsterBook.id = "monsterBook";
+  var titlePage = document.createElement("div");
+  titlePage.className = "bookPage";
+
+  var openBook = document.createElement("input");
+  openBook.id = "openBook";
+  openBook.type = "button";
+  openBook.value = "Open Book";
+  openBook.onclick = function() {turnPageLeft(titlePage, contentsPage);}
+  titlePage.appendChild(openBook);
+  monsterBook.appendChild(titlePage);
+
+
+
+  //
+  //Finishes displaying the <table> in the play area
+  dungeonTable.appendChild(firstRow);
+  dungeonTable.appendChild(secondRow);
+  playArea.appendChild(dungeonTable);
+  playArea.appendChild(nextScreen);
+  playArea.appendChild(monsterBook);
+
+  function bookScreen() {
+    dungeonTable.style.top = "-450px";
+    nextScreen.style.top = "10px";
+    nextScreen.style.transform = "scale(1, 1)";
+    //nextScreen.value = "^";
+    nextScreen.onclick = dungeonSelectScreen;
+    monsterBook.style.top = "40px";
+  }
+
+  function dungeonSelectScreen() {
+    monsterBook.style.top = "470px";
+    nextScreen.style.top = "417px";
+    nextScreen.style.transform = "scale(1, -1)";
+    //nextScreen.value = "v";
+    nextScreen.onclick = bookScreen;
+    dungeonTable.style.top = "14px";
+  }
+
+  function turnPageLeft(currentPage, targetPage) {
+    let nextPage = targetPage();
+    monsterBook.appendChild(nextPage);
+    currentPage.style.zIndex = "2";
+    currentPage.style.transformOrigin = "0 200px 0px";
+    setTimeout(function() {currentPage.style.transform = "perspective(2000px) rotateY(-90deg)";}, 1);
+    setTimeout(function() {monsterBook.removeChild(currentPage);}, 755);
+  }
+
+  function turnPageRight(currentPage, targetPage) {
+    currentPage.style.zIndex = "1";
+    let nextPage = targetPage();
+    nextPage.style.zIndex = "2";
+    //nextPage.style.transition = "";
+    nextPage.style.transformOrigin = "0 200px 0px";
+    nextPage.style.transform = "perspective(2000px) rotateY(-90deg)";
+    //nextPage.style.transition = "top 500ms, transform 750ms";
+    monsterBook.insertBefore(nextPage, currentPage);
+    setTimeout(function() {nextPage.style.transform = "perspective(2000px) rotateY(0deg)";}, 250);
+    setTimeout(function() {monsterBook.removeChild(currentPage);}, 2000);
+  }
+
+  function contentsPage() {
+    let tableOfContents = document.createElement("div");
+    tableOfContents.className = "bookPage";
+
+    let quickButtons = makeQuickButtons(tableOfContents);
+
+    let quickButton = quickButtons.getElementsByClassName("quickButtons");
+    quickButton[1].onclick = function() {turnPageLeft(tableOfContents, statusPage);}
+    quickButton[2].onclick = function() {turnPageLeft(tableOfContents, spellsPage);}
+    quickButton[3].onclick = function() {turnPageLeft(tableOfContents, monstersPage);}
+
+    let text = document.createTextNode("Table of Contents");
+    tableOfContents.appendChild(text);
+
+    return tableOfContents;
+  }
+
+  function statusPage() {
+    let status = document.createElement("div");
+    status.className = "bookPage";
+    status.id = "statusPage";
+
+    let quickButtons = makeQuickButtons(status);
+
+    let quickButton = quickButtons.getElementsByClassName("quickButtons");
+    quickButton[0].onclick = function() {turnPageRight(status, contentsPage);}
+    quickButton[2].onclick = function() {turnPageLeft(status, spellsPage);}
+    quickButton[3].onclick = function() {turnPageLeft(status, monstersPage);}
+
+    let playerCameoDiv = document.createElement("div");
+    playerCameoDiv.id = "playerCameoDiv";
+    let playerCameoImg = document.createElement("img");
+    playerCameoImg.id = "playerCameoImg";
+    playerCameoImg.src = "./mages/" + mages[mageIndex][0];
+    playerCameoDiv.appendChild(playerCameoImg);
+    status.appendChild(playerCameoDiv);
+
+
+    let p = document.createElement("p");
+    let node1 = document.createTextNode(playerName);
+    p.appendChild(node1);
+    status.appendChild(p);
+
+    p = document.createElement("p");
+    node1 = document.createTextNode("Max Health: " + maxHealth);
+    let node2 = document.createTextNode("Max Damage: " + playerDamage);
+    p.appendChild(node1);
+    let br = document.createElement("br");
+    p.appendChild(br);
+    p.appendChild(node2);
+    status.appendChild(p);
+
+    p = document.createElement("p");
+    node1 = document.createTextNode("Monsters Killed: " + totalMonstersKilled);
+    p.appendChild(node1);
+    status.appendChild(p);
+
+    p = document.createElement("p");
+    node1 = document.createTextNode("Addition Level: " + additionLevel);
+    node2 = document.createTextNode("Subtraction Level: " + subtractionLevel);
+    let node3 = document.createTextNode("Multiplication Level: " + multiplicationLevel);
+    let node4 = document.createTextNode("Division Level: " + divisionLevel);
+    p.appendChild(node1);
+    br = document.createElement("br");
+    p.appendChild(br);
+    p.appendChild(node2);
+    br = document.createElement("br");
+    p.appendChild(br);
+    p.appendChild(node3);
+    br = document.createElement("br");
+    p.appendChild(br);
+    p.appendChild(node4);
+    br = document.createElement("br");
+    p.appendChild(br);
+    status.appendChild(p);
+
+
+    return status;
+  }
+
+  function spellsPage() {
+    let spells = document.createElement("div");
+    spells.className = "bookPage";
+
+    let quickButtons = makeQuickButtons(spells);
+
+    let quickButton = quickButtons.getElementsByClassName("quickButtons");
+    quickButton[0].onclick = function() {turnPageRight(spells, contentsPage);}
+    quickButton[1].onclick = function() {turnPageRight(spells, statusPage);}
+    quickButton[3].onclick = function() {turnPageLeft(spells, monstersPage);}
+
+    let text = document.createTextNode("Spells");
+    spells.appendChild(text);
+
+    return spells;
+  }
+
+  function monstersPage() {
+    let monsters = document.createElement("div");
+    monsters.className = "bookPage";
+
+    let quickButtons = makeQuickButtons(monsters);
+
+    let quickButton = quickButtons.getElementsByClassName("quickButtons");
+    quickButton[0].onclick = function() {turnPageRight(monsters, contentsPage);}
+    quickButton[1].onclick = function() {turnPageRight(monsters, statusPage);}
+    quickButton[2].onclick = function() {turnPageRight(monsters, spellsPage);}
+
+    let text = document.createTextNode("Monsters");
+    monsters.appendChild(text);
+
+    return monsters;
+  }
+
+  function makeQuickButtons(targetElement) {
+    let quickButtonDiv = document.createElement("div");
+    quickButtonDiv.id = "quickButtonDiv";
+
+    let contentsButton = document.createElement("input");
+    contentsButton.className = "quickButtons";
+    contentsButton.type = "button";
+    contentsButton.value = "TOC";
+    quickButtonDiv.appendChild(contentsButton);
+
+    let statusButton = document.createElement("input");
+    statusButton.className = "quickButtons";
+    statusButton.type = "button";
+    statusButton.value = "Status";
+    quickButtonDiv.appendChild(statusButton);
+
+    let spellsButton = document.createElement("input");
+    spellsButton.className = "quickButtons";
+    spellsButton.type = "button";
+    spellsButton.value = "Spells";
+    quickButtonDiv.appendChild(spellsButton);
+
+    let monstersButton = document.createElement("input");
+    monstersButton.className = "quickButtons";
+    monstersButton.type = "button";
+    monstersButton.value = "Monsters";
+    quickButtonDiv.appendChild(monstersButton);
+
+    targetElement.appendChild(quickButtonDiv);
+
+    return quickButtonDiv;
+  }
+}
+
+</script>
+</html>
