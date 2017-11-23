@@ -104,7 +104,23 @@ I went and debugged the hex and cube spells. Both had some odd bugs that I went 
 
 I removed the timeDown() function from the scope of the battle() function so that it could be restarted from another function, specifically the polymorph monster function. Now, the timer stops when the spell animation is happening, and resumes when it's over.
 
-### Up next: adding the continue functionality, adding number sequences to potential boss attacks
+## 11/23/17
+
+### Update
+
+I realized that if I wanted to create save/continue functionality, I needed a place to allow the player to save their game. Since I needed to make a place, I figured I should make a cool place. I'm creating a "book" in the game where the player can see various things about their character. Other than some transition bugs, things are working pretty well.
+
+I created the basic elements of the "book" and the functionality to change the pages with cool css animations (when they work).
+
+I created a status page where the player can see their basic information.
+
+### Up next: figuring out how to fix my animations, making a spell page, making the monster pages, adding the continue functionality, adding number sequences to potential boss attacks
+
+I don't know what's wrong with my animations. I'm going to ask for help tomorrow...
+
+The spell page will show a list of all the spells the player has learned so far and will display each spell on a page of its own.
+
+The monster pages will be a beast of a challenge. I will have one base page for each of the four operations (+, -, *, /) showing which monsters you've defeated at least once, and then an individual page for each monster showing their image and information about them.
 
 I want the bosses to do more attacks, like number sequences. I like the random algebra attacks and I want to find more ways to mix it up for the player.
 
