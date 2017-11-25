@@ -122,9 +122,16 @@ I have a working (finally!) spells page that lists all the spells the player has
 
 I have the first page of the monster portion of the book that I will work on later because I have real work to do now (sob).
 
-### Up next: completing the monster pages of the book, adding save and continue functionality, adding number sequences to potential boss attacks
+### Update 2 (after midnight)
 
-The monster pages will function pretty much like the spell pages, they'll just show the image of the monster and give some basic stats about it. 
+I have improved the functionality of the monster pages. I can now dynamically generate a table of monsters based on which monsters I've caught. I had originally intended to make four seperate pages for each operation but that would have been too easy/more work. I decided instead to make one function do the work of all four.
+
+
+### Up next: completing the monster pages of the book, making the book prettier, adding save and continue functionality, adding number sequences to potential boss attacks
+
+Now that I can generate a list of monsters that the player has encountered, I want to have the monster names on that list be clickable so players can see the monsters and see their stats. I also need to figure out the next and previous page button onclick functions.
+
+To make the book look nicer I want to add a title page and make a nice table of contents. I know it's fluff, but it's the icing on the cupcake, and part of the reason I hope students will want to play this.
 
 After I get that working I'll put all the new code into the original file and start working on save/continue functionality.
 
