@@ -172,6 +172,28 @@
   font-size: 1.25em;
   line-height: 25px;
   margin-left: 10px;
+  transition: background-color 500ms;
+}
+
+#monsterPage span:hover {
+  background-color: rgba(255,255,255,0.25);
+  cursor: default;
+}
+
+#monsterListTable {
+  margin-left: 10px;
+  width: 415px;
+}
+
+#monsterListTable tr {
+  line-height: 14px;
+}
+
+#monsterListTable td {
+  padding-left: 32px;
+  text-indent: -32px;
+  border: 1px solid grey;
+  width: 72px;
 }
 
 </style>
@@ -217,10 +239,75 @@ var mages = [
   ["mage6.gif", "mage6fight.gif", "mage6hurt.gif", "mage6dead.gif"]
 ];
 
-var additionMonstersKilled = [0, 1, 2, 5, 7, 9];
-var subtractionMonstersKilled = [0, 1, 2, 8, 13];
-var multiplicationMonstersKilled = [0, 1, 2, 4, 11];
-var divisionMonstersKilled = [0, 1, 2, 3, 4, 5];
+var additionMonstersKilled = [];
+var multiplicationMonstersKilled = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
+                              25, 26, 27, 28, 29, 30, 31, 32, 33, 34];
+var subtractionMonstersKilled = []; //= [0, 1, 2, 8, 13];
+//var multiplicationMonstersKilled = []; //= [0, 1, 2, 4, 11];
+var divisionMonstersKilled = []; //= [0, 1, 2, 3, 4, 5];
+
+var additionMonsters = ["imp.gif", "Hornet.gif", "Wererat.gif", "Spider.gif", "Wolf.gif", "scorpion.gif", "cobra.gif",
+                       "pirate.gif", "bone.gif", "bomb.gif", "crawl.gif", "gator.gif", "gargoyle.gif", "KumKum.gif",
+                       "Zombie.gif", "bigeye.gif", "badman.gif", "medusa.gif", "vampire.gif", "Pede.gif", "DarkGeneral.gif",
+                       "Worm.gif", "ankylo.gif", "Drake.gif", "Garm.gif", "GoldKnight.gif", "Ogre.gif", "RedOgre.gif",
+                       "Shadow.gif", "Wyvern.gif", "Soldier.gif", "Silenus.gif", "garland.gif", "Earth.gif", "Lich.gif"];
+
+var additionMonsterNames = ["Imp", "Hornet", "Wererat", "Spider", "Wolf", "Scorpion", "Cobra", "Pirate", "Bone", "Bomb",
+                            "Crawl", "Gator", "Gargoyle", "Hedge Mage", "Zombie", "Bigeye", "Sell Sword", "Medusa", "Vampire",
+                            "Centipede", "Dark General", "Worm", "Ankylo", "Drake", "Garm", "Gold Knight", "Ogre", "Red Ogre",
+                            "Shadow", "Wyvern", "Soldier", "Silenus", "Garland", "Earth Fiend", "Lich"];
+
+//The source of all the image files for the
+//monsters in the subtraction dungeon
+var subtractionMonsters = ["grimp.gif", "arachnid.gif", "asp.gif", "kyzoku.gif", "grwolf.gif", "mummy.gif", "QueenBee.gif",
+                         "rbone.gif", "rgoyle.gif", "GiantRat.gif", "frgator.gif", "evilman.gif", "Specter.gif", "grmedusa.gif",
+                         "Wizard.gif", "Bovian.gif", "creep.gif", "Mine.gif", "FrostGiant.gif", "Ghost.gif", "GreenOgre.gif",
+                         "mage.gif", "DreadKnight.gif", "Magician.gif", "Gottos.gif", "Naga.gif", "GreatPede.gif",
+                         "MantisDevil.gif", "SeaSnake.gif", "DeathRider.gif", "Sergeant.gif", "VampireLady.gif",
+                         "FrostDragon.gif", "Lamia.gif", "Kraken.gif"];
+//
+//The names of all the monsters
+//in the subtraction dungeon
+var subtractionMonsterNames = ["Grey Imp", "Arachnid", "Asp", "Kyzoku", "Blue Wolf", "Mummy", "Wasp", "Red Bone", "Redgoyle",
+                             "Giant Rat", "Frost Gator", "Mercenary", "Fiend", "Green Medusa", "Wizard", "Bovian", "Creep",
+                             "Mine", "Frost Giant", "Ghost", "Green Ogre", "Mage", "Dread Knight", "Magician", "Gottos",
+                             "Naga", "Greater Centipede", "Mantis", "Sea Snake", "Death Rider", "Sergeant", "Vampire Wraith",
+                             "Frost Dragon", "Lamia", "Kraken"];
+//
+//The source of all the image files for the
+//monsters in the multiplication dungeon
+var multiplicationMonsters = ["FarDarrig.gif", "PetitMage.gif", "Tarantula.gif", "bull.gif", "fighter.gif", "frwolf.gif",
+                            "ghoul.gif", "Balloon.gif", "DeadHead.gif", "OgreChief.gif", "oddeye.gif", "SpecterKnight.gif",
+                            "SeaSnake.gif", "Sorceror.gif", "ImperialShadow.gif", "RedGiant.gif", "wzvamp.gif", "KingLizard.gif",
+                            "Eye.gif", "Cerberus.gif", "BigHorn.gif", "Chronos.gif", "BlueDragon.gif", "Kunoichi.gif",
+                            "SandWorm.gif", "Peryton.gif", "Hydra.gif", "SeaDragon.gif", "RoyalGuard.gif", "RedAnkylo.gif",
+                            "Captain.gif", "RedDragon.gif", "IronClaws.gif", "Fire.gif", "Kary.gif"];
+//
+//The names of all the monsters
+//in the multiplication dungeon
+var multiplicationMonsterNames = ["Goblin", "Ring Tail", "Tarantula", "Bull", "Fighter", "Frost Wolf", "Ghoul", "Balloon",
+                                "Dead Head", "Ogre Chief", "Oddeye", "Specter Knight", "Sea Snake", "Sorceror", "Imperial Shadow",
+                                "Red Giant", "Wizard Vampire", "King Lizard", "Beholder", "Cerberus", "Big Horn", "Chronos",
+                                "Blue Dragon", "Kunoichi", "Sand Worm", "Peryton", "Hydra", "Sea Dragon", "Royal Guard",
+                                "Red Ankylo", "Captain", "Red Dragon", "Iron Claws", "Fire Fiend", "Kali"];
+//
+//The source of all the image files for the
+//monsters in the division dungeon
+var divisionMonsters = ["Leprechaun.gif", "geist.gif", "Werewolf.gif", "Petit.gif", "catman.gif", "lobster.gif", "Darklegs.gif",
+                      "OgreMage.gif", "astos.gif", "Grenade.gif", "Sorcerer.gif", "Lizardman.gif", "GreyWorm.gif", "Giant.gif",
+                      "rhydra.gif", "Minotaur.gif", "Wraith.gif", "WizardOgre.gif", "Pterodactyl.gif", "Skull.gif",
+                      "ShadowMaster.gif", "WildHorn.gif", "GasDragon.gif", "Phantom.gif", "Emperor1.gif", "MantisKing.gif",
+                      "VampireGirl.gif", "BlackKnight.gif", "DeathClaw.gif", "GreyNaga.gif", "General.gif", "QueenLamia.gif",
+                      "BeastDemon.gif", "ZombieDragon.gif", "Tiamat.gif"];
+//
+//The names of all the monsters
+//in the division dungeon
+var divisionMonsterNames = ["Grey Goblin", "Geist", "Werewolf", "Red Ringtail", "Werecat", "Blue Scorpion", "Darklegs",
+                          "Ogre Mage", "Astos", "Grenade", "Flayer", "Lizardman", "Grey Worm", "Giant", "Red Hydra", "Minotaur",
+                          "Wraith", "Wizard Ogre", "Pterodactyl", "Skull", "Shadow Master", "Wild Horn", "Gas Dragon",
+                          "Phantom", "Wizard Knight", "Mantis King", "Vampire Queen", "Black Knight", "Death Claw", "Grey Naga",
+                          "General", "Queen Lamia", "Beast Demon", "Zombie Dragon", "Tiamat"];
+
 
 function dungeonEntrance() {
   let additionDoor = "";
@@ -485,9 +572,7 @@ function dungeonEntrance() {
   }
   //
   //This function makes the layout of the spells
-  //page of the player's book. It needs to do more
-  //though: it needs to call a function that creates
-  //a page based on whether the player knows a spell
+  //page of the player's book.
   function spellsPage() {
     let spells = document.createElement("div");
     spells.className = "bookPage";
@@ -541,7 +626,8 @@ function dungeonEntrance() {
 
     return spells;
   }
-
+  //
+  //This function handles the individual spell pages
   function spellDetailPage(index) {
     let spell = document.createElement("div");
     spell.className = "bookPage";
@@ -594,7 +680,6 @@ function dungeonEntrance() {
 
     let pageTurnButtons = turnPageButtons(monsters);
     let turnButton = pageTurnButtons.getElementsByClassName("turnPageButtons");
-    console.log(spellArray.length);
     if (spellArray[0] >= 0) {
       turnButton[0].onclick = function() {turnPageRight(monsters, spellDetailPage, (spellArray[spellArray.length - 1]));}
     } else {
@@ -617,8 +702,9 @@ function dungeonEntrance() {
     strong = document.createElement("strong");
     u = document.createElement("u");
     br = document.createElement("br");
-    node = document.createTextNode("Addition Monsters Killed: " + additionMonstersKilled.length);
+    node = document.createTextNode("Addition Monsters: " + additionMonstersKilled.length);
     span.appendChild(node);
+    span.onclick = function() {turnPageLeft(monsters, monsterBasePage, "+");}
     monsters.appendChild(span);
     monsters.appendChild(br);
 
@@ -626,8 +712,9 @@ function dungeonEntrance() {
     strong = document.createElement("strong");
     u = document.createElement("u");
     br = document.createElement("br");
-    node = document.createTextNode("Subtraction Monsters Killed: " + subtractionMonstersKilled.length);
+    node = document.createTextNode("Subtraction Monsters: " + subtractionMonstersKilled.length);
     span.appendChild(node);
+    span.onclick = function() {turnPageLeft(monsters, monsterBasePage, "-");}
     monsters.appendChild(span);
     monsters.appendChild(br);
 
@@ -635,8 +722,9 @@ function dungeonEntrance() {
     strong = document.createElement("strong");
     u = document.createElement("u");
     br = document.createElement("br");
-    node = document.createTextNode("Multiplication Monsters Killed: " + multiplicationMonstersKilled.length);
+    node = document.createTextNode("Multiplication Monsters: " + multiplicationMonstersKilled.length);
     span.appendChild(node);
+    span.onclick = function() {turnPageLeft(monsters, monsterBasePage, "*");}
     monsters.appendChild(span);
     monsters.appendChild(br);
 
@@ -644,17 +732,107 @@ function dungeonEntrance() {
     strong = document.createElement("strong");
     u = document.createElement("u");
     br = document.createElement("br");
-    node = document.createTextNode("Division Monsters Killed: " + divisionMonstersKilled.length);
+    node = document.createTextNode("Division Monsters: " + divisionMonstersKilled.length);
     span.appendChild(node);
+    span.onclick = function() {turnPageLeft(monsters, monsterBasePage, "/");}
     monsters.appendChild(span);
     monsters.appendChild(br);
-
-
-
-
 
     return monsters;
   }
+
+  function monsterBasePage(monsterClass) {
+    let monsterList = document.createElement("div");
+    monsterList.className = "bookPage";
+    monsterList.id = "monsterListPage";
+
+    var monsterArray;
+    var masterArray;
+    var monsterNames;
+
+    let quickButtons = makeQuickButtons(monsterList);
+
+    let quickButton = quickButtons.getElementsByClassName("quickButtons");
+    quickButton[0].onclick = function() {turnPageRight(monsterList, contentsPage);}
+    quickButton[1].onclick = function() {turnPageRight(monsterList, statusPage);}
+    quickButton[2].onclick = function() {turnPageRight(monsterList, spellsPage);}
+    quickButton[3].onclick = function() {turnPageRight(monsterList, monstersPage);}
+
+    let pageTurnButtons = turnPageButtons(monsterList);
+    let turnButton = pageTurnButtons.getElementsByClassName("turnPageButtons");
+    /*if (spellArray[0] >= 0) {
+      turnButton[0].onclick = function() {turnPageRight(monsters, spellDetailPage, (spellArray[spellArray.length - 1]));}
+    } else {
+      turnButton[0].onclick = function() {turnPageRight(monsters, spellsPage);}
+    }*/
+    let p = document.createElement("p");
+    p.style.textDecoration = "underline";
+    p.style.fontWeight = "bold";
+    p.style.fontSize = "1.5em";
+    p.style.margin = "10px";
+    var node;
+    let br = document.createElement("br");
+
+    switch (monsterClass) {
+      case "+":
+        monsterArray = additionMonstersKilled;
+        masterArray = additionMonsters;
+        monsterNames = additionMonsterNames;
+        node = document.createTextNode("Addition Monsters");
+        break;
+      case "-":
+        monsterArray = subtractionMonstersKilled;
+        masterArray = subtractionMonsters;
+        monsterNames = subtractionMonsterNames;
+        node = document.createTextNode("Subtraction Monsters");
+        break;
+      case "*":
+        monsterArray = multiplicationMonstersKilled;
+        masterArray = multiplicationMonsters;
+        monsterNames = multiplicationMonsterNames;
+        node = document.createTextNode("Multiplication Monsters");
+        break;
+      case "/":
+        monsterArray = divisionMonstersKilled;
+        masterArray = divisionMonsters;
+        monsterNames = divisionMonsterNames;
+        node = document.createTextNode("Division Monsters");
+        break;
+    }
+
+    p.appendChild(node);
+    p.appendChild(br);
+    monsterList.appendChild(p);
+
+    let table = document.createElement("table");
+    table.id = "monsterListTable";
+
+    for (let i = 0; i < monsterArray.length; i += 3) {
+      let tr = document.createElement("tr");
+      let td1 = document.createElement("td");
+      let node1 = document.createTextNode(monsterArray[i] + ". " + monsterNames[monsterArray[i]]);
+      td1.appendChild(node1);
+      tr.appendChild(td1);
+      if (monsterArray[i + 1]) {
+        let td2 = document.createElement("td");
+        let node2 = document.createTextNode(monsterArray[i + 1] + ". " + monsterNames[monsterArray[i + 1]]);
+        td2.appendChild(node2);
+        tr.appendChild(td2);
+      }
+      if (monsterArray[i + 2]) {
+        let td3 = document.createElement("td");
+        let node3 = document.createTextNode(monsterArray[i + 2] + ". " + monsterNames[monsterArray[i + 2]]);
+        td3.appendChild(node3);
+        tr.appendChild(td3);
+      }
+      table.appendChild(tr);
+    }
+
+    monsterList.appendChild(table);
+
+    return monsterList;
+  }
+
   //
   //This function makes the quick buttons that
   //go at the top of most book pages
