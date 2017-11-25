@@ -114,13 +114,19 @@ I created the basic elements of the "book" and the functionality to change the p
 
 I created a status page where the player can see their basic information.
 
-### Up next: figuring out how to fix my animations, making a spell page, making the monster pages, adding the continue functionality, adding number sequences to potential boss attacks
+## 11/24/17
 
-I don't know what's wrong with my animations. I'm going to ask for help tomorrow...
+### Update: Liber Mathemagicus
 
-The spell page will show a list of all the spells the player has learned so far and will display each spell on a page of its own.
+I have a working (finally!) spells page that lists all the spells the player has learned and dynamically generates pages that show the stuff that was on the spell scrolls they were shown when getting the spell.
 
-The monster pages will be a beast of a challenge. I will have one base page for each of the four operations (+, -, *, /) showing which monsters you've defeated at least once, and then an individual page for each monster showing their image and information about them.
+I have the first page of the monster portion of the book that I will work on later because I have real work to do now (sob).
+
+### Up next: completing the monster pages of the book, adding save and continue functionality, adding number sequences to potential boss attacks
+
+The monster pages will function pretty much like the spell pages, they'll just show the image of the monster and give some basic stats about it. 
+
+After I get that working I'll put all the new code into the original file and start working on save/continue functionality.
 
 I want the bosses to do more attacks, like number sequences. I like the random algebra attacks and I want to find more ways to mix it up for the player.
 
