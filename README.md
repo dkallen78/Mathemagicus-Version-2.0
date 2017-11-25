@@ -104,7 +104,25 @@ I went and debugged the hex and cube spells. Both had some odd bugs that I went 
 
 I removed the timeDown() function from the scope of the battle() function so that it could be restarted from another function, specifically the polymorph monster function. Now, the timer stops when the spell animation is happening, and resumes when it's over.
 
-### Up next: adding the continue functionality, adding number sequences to potential boss attacks
+## 11/24/17
+
+### Update: Liber Mathemagicus
+
+I've spent the last two days working on a big piece of code for the game that doesn't directly affect the game itself. When thinking about continue functionality I realized that I needed a place to save the game, and if I was going to make a new place to save the game then I might as well make it cool.
+
+Below the dungeon entrance screen there will be a book that keeps track of thinks like your stats, the spells you've learned, and the monsters you've killed (like a pokedex). The original dungeonEntrance() function was about 100 lines of code and it's up to over 700 w/ all the style elements...
+
+In the book I have a status page that shows player stats and the player's avatar.
+
+I have a working (finally!) spells page that lists all the spells the player has learned and dynamically generates pages that show the stuff that was on the spell scrolls they were shown when getting the spell.
+
+I have the first page of the monster portion of the book that I will work on later because I have real work to do now (sob).
+
+### Up next: completing the monster pages of the book, adding save and continue functionality, adding number sequences to potential boss attacks
+
+The monster pages will function pretty much like the spell pages, they'll just show the image of the monster and give some basic stats about it. 
+
+After I get that working I'll put all the new code into the original file and start working on save/continue functionality.
 
 I want the bosses to do more attacks, like number sequences. I like the random algebra attacks and I want to find more ways to mix it up for the player.
 
