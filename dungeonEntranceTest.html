@@ -30,7 +30,8 @@
   height: 400px;
   width: 430px;
   z-index: 0;
-  transition: top 500ms, transform 750ms;
+  transition: top 500ms;
+
 }
 
 #openBook {
@@ -48,20 +49,20 @@
 
 .bookPage {
   position: absolute;
-  /*top: 470px;
-  left: 10px;*/
   height: 394px;
   width: 424px;
   z-index: 1;
   background-color: #e6c790;
   border: 3px solid black;
   border-radius: 5px;
-  transition: top 500ms, transform 750ms;
+  transition: transform 750ms;
+  text-align: center;
 }
 
 #quickButtonDiv {
   position: relative;
   margin: auto;
+  text-align: center;
 }
 
 .quickButtons {
@@ -99,9 +100,80 @@
 }
 
 #statusPage p {
+  text-align: left;
   font-size: 1.25em;
   margin-left: 10px;
 }
+
+#spellsPage {
+  text-align: center;
+}
+
+#spellsPage p {
+  font-size: 1.5em;
+}
+
+#spellsPage span {
+  font-size: 1.125em;
+  text-align: center;
+  transition: background-color 500ms;
+  border-radius: 5px;
+  padding: 2px;
+  line-height: 25px;
+}
+
+#spellsPage span:hover {
+  background-color: rgba(255,255,255,0.25);
+  cursor: default;
+}
+
+/*#spellsPage p:nth-of-type(n+2):hover {
+  background-color: rgba(255,255,255,0.25);
+  cursor: default;
+}*/
+
+#pageTurnButtons {
+  position: absolute;
+  bottom: 30px;
+}
+
+#leftPageButton, #rightPageButton {
+  position: absolute;
+  background-color: rgba(0,0,0,0.125);
+  border-radius: 5px;
+  border: 1px solid black;
+  font-family: monospace;
+  transition: border 500ms, background-color 500ms;
+}
+
+#leftPageButton {
+  left: 10px;
+}
+
+#rightPageButton {
+  left: 385px;
+}
+
+#leftPageButton:hover, #rightPageButton:hover {
+  border: 1px solid white;
+  background-color: rgba(255,255,255,0.125);
+}
+
+#monsterPage {
+  text-align: left;
+}
+
+#monsterPage p {
+  text-align: center;
+  font-size: 1.5em
+}
+
+#monsterPage span {
+  font-size: 1.25em;
+  line-height: 25px;
+  margin-left: 10px;
+}
+
 </style>
 </head>
 <body onload="dungeonEntrance()">
@@ -119,6 +191,22 @@ var divisionLevel = 9;
 var totalMonstersKilled = 0;
 var playerName = "Ratonchis";
 
+//var spellArray = [2, 3, 4];
+var spellArray = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+var spellBookContent = [
+  ["Fibonacci's Associative Spell", "fibonacciSpellBook1.gif"],
+  ["Fibonacci's Distributive Spell", "fibonacciSpellBook2.gif"],
+  ["Fibonacci's Distributive Spell 2", "fibonacciSpellBook3.gif"],
+  ["Euclid's Fireball Spell", "triangleSpellBook.gif"],
+  ["Nightengale's Healiing Spell", "squareSpellBook.gif"],
+  ["Huygen's Stop Time Spell", "pyramidSpellBook.gif"],
+  ["Lovelace's Reduction Spell", "pentagonSpellBook.gif"],
+  ["Hercules' Strength Spell", "hexagonSpellBook.gif"],
+  ["Fermet's Polymorph Monster Spell", "cubeSpellBook.gif"],
+  ["Brahe's Nova Spell", "starSpellBook.gif"]
+];
+
 var mages = [
   ["mage0.gif", "mage0fight.gif", "mage0hurt.gif", "mage0dead.gif"],
   ["mage1.gif", "mage1fight.gif", "mage1hurt.gif", "mage1dead.gif"],
@@ -128,6 +216,11 @@ var mages = [
   ["mage5.gif", "mage5fight.gif", "mage5hurt.gif", "mage5dead.gif"],
   ["mage6.gif", "mage6fight.gif", "mage6hurt.gif", "mage6dead.gif"]
 ];
+
+var additionMonstersKilled = [0, 1, 2, 5, 7, 9];
+var subtractionMonstersKilled = [0, 1, 2, 8, 13];
+var multiplicationMonstersKilled = [0, 1, 2, 4, 11];
+var divisionMonstersKilled = [0, 1, 2, 3, 4, 5];
 
 function dungeonEntrance() {
   let additionDoor = "";
@@ -200,18 +293,24 @@ function dungeonEntrance() {
   subtractionDoorImg.src = subtractionDoor;
   multiplicationDoorImg.src = multiplicationDoor;
   divisionDoorImg.src = divisionDoor;
-
+  //
+  //This block of code creates the button that shifts the
+  //screen up and down
   var nextScreen = document.createElement("input");
   nextScreen.id = "nextScreen";
   nextScreen.type = "button";
   nextScreen.value = "^";
   nextScreen.onclick = bookScreen;
-
+  //
+  //This block creates the <div> that holds all the
+  //pages of the book and the first page
   var monsterBook = document.createElement("div");
   monsterBook.id = "monsterBook";
   var titlePage = document.createElement("div");
   titlePage.className = "bookPage";
-
+  //
+  //This creates the button that "opens" the book
+  //from its title page
   var openBook = document.createElement("input");
   openBook.id = "openBook";
   openBook.type = "button";
@@ -223,53 +322,63 @@ function dungeonEntrance() {
 
 
   //
-  //Finishes displaying the <table> in the play area
+  //Finishes displaying the elements of the screen in the play area
   dungeonTable.appendChild(firstRow);
   dungeonTable.appendChild(secondRow);
   playArea.appendChild(dungeonTable);
   playArea.appendChild(nextScreen);
   playArea.appendChild(monsterBook);
-
+  //
+  //This function shifts the screen to the book view
   function bookScreen() {
     dungeonTable.style.top = "-450px";
     nextScreen.style.top = "10px";
     nextScreen.style.transform = "scale(1, 1)";
-    //nextScreen.value = "^";
     nextScreen.onclick = dungeonSelectScreen;
     monsterBook.style.top = "40px";
   }
-
+  //
+  //This function shifts the screen to the
+  //dungeon select view
   function dungeonSelectScreen() {
     monsterBook.style.top = "470px";
     nextScreen.style.top = "417px";
     nextScreen.style.transform = "scale(1, -1)";
-    //nextScreen.value = "v";
     nextScreen.onclick = bookScreen;
     dungeonTable.style.top = "14px";
   }
-
-  function turnPageLeft(currentPage, targetPage) {
-    let nextPage = targetPage();
+  //
+  //This function handles the animation of turning
+  //a page to the left
+  function turnPageLeft(currentPage, targetPage, index) {
+    let nextPage = targetPage(index);
     monsterBook.appendChild(nextPage);
     currentPage.style.zIndex = "2";
     currentPage.style.transformOrigin = "0 200px 0px";
     setTimeout(function() {currentPage.style.transform = "perspective(2000px) rotateY(-90deg)";}, 1);
     setTimeout(function() {monsterBook.removeChild(currentPage);}, 755);
   }
-
-  function turnPageRight(currentPage, targetPage) {
+  //
+  //This function handles the animation of turning a
+  //page to the right. It does not like to run as it
+  //should most of the time and I need to vigorously
+  //debug it
+  function turnPageRight(currentPage, targetPage, index) {
     currentPage.style.zIndex = "1";
-    let nextPage = targetPage();
+    let nextPage = targetPage(index);
     nextPage.style.zIndex = "2";
-    //nextPage.style.transition = "";
     nextPage.style.transformOrigin = "0 200px 0px";
     nextPage.style.transform = "perspective(2000px) rotateY(-90deg)";
-    //nextPage.style.transition = "top 500ms, transform 750ms";
     monsterBook.insertBefore(nextPage, currentPage);
-    setTimeout(function() {nextPage.style.transform = "perspective(2000px) rotateY(0deg)";}, 250);
-    setTimeout(function() {monsterBook.removeChild(currentPage);}, 2000);
+    setTimeout(function() {monsterBook.removeChild(currentPage);}, 1000);
+    setTimeout(function() {
+      requestAnimationFrame(function() {nextPage.style.transform = "perspective(2000px) rotateY(0deg)";});
+    }, 10);
   }
-
+  //
+  //This function handles the set up of the
+  //table of contents page. I need to make it
+  //look better
   function contentsPage() {
     let tableOfContents = document.createElement("div");
     tableOfContents.className = "bookPage";
@@ -281,24 +390,43 @@ function dungeonEntrance() {
     quickButton[2].onclick = function() {turnPageLeft(tableOfContents, spellsPage);}
     quickButton[3].onclick = function() {turnPageLeft(tableOfContents, monstersPage);}
 
+    let pageTurnButtons = turnPageButtons(tableOfContents);
+    let turnButton = pageTurnButtons.getElementsByClassName("turnPageButtons");
+    turnButton[0].onclick = function() {turnPageRight(tableOfContents, titlePage);}
+    turnButton[1].onclick = function() {turnPageLeft(tableOfContents, statusPage);}
+
     let text = document.createTextNode("Table of Contents");
     tableOfContents.appendChild(text);
 
     return tableOfContents;
   }
-
+  //
+  //This function makes the layout of the status
+  //page of the player's book
   function statusPage() {
     let status = document.createElement("div");
     status.className = "bookPage";
     status.id = "statusPage";
-
+    //
+    //This makes the buttons at the top of the book
+    //for faster navigation
     let quickButtons = makeQuickButtons(status);
-
+    //
+    //This assigns the proper function to the
+    //quick buttons at the top of the book
     let quickButton = quickButtons.getElementsByClassName("quickButtons");
     quickButton[0].onclick = function() {turnPageRight(status, contentsPage);}
     quickButton[2].onclick = function() {turnPageLeft(status, spellsPage);}
     quickButton[3].onclick = function() {turnPageLeft(status, monstersPage);}
 
+    let pageTurnButtons = turnPageButtons(status);
+    let turnButton = pageTurnButtons.getElementsByClassName("turnPageButtons");
+    turnButton[0].onclick = function() {turnPageRight(status, contentsPage);}
+    turnButton[1].onclick = function() {turnPageLeft(status, spellsPage);}
+
+    //
+    //This block makes and places the <div> and <image>
+    //elements for the status page of the book
     let playerCameoDiv = document.createElement("div");
     playerCameoDiv.id = "playerCameoDiv";
     let playerCameoImg = document.createElement("img");
@@ -306,13 +434,18 @@ function dungeonEntrance() {
     playerCameoImg.src = "./mages/" + mages[mageIndex][0];
     playerCameoDiv.appendChild(playerCameoImg);
     status.appendChild(playerCameoDiv);
-
-
+    //
+    //This makes the players name
     let p = document.createElement("p");
     let node1 = document.createTextNode(playerName);
-    p.appendChild(node1);
+    let strong = document.createElement("strong");
+    let underline = document.createElement("u");
+    strong.appendChild(node1);
+    underline.appendChild(strong);
+    p.appendChild(underline);
     status.appendChild(p);
-
+    //
+    //This displays the max health and damage of the player
     p = document.createElement("p");
     node1 = document.createTextNode("Max Health: " + maxHealth);
     let node2 = document.createTextNode("Max Damage: " + playerDamage);
@@ -321,12 +454,14 @@ function dungeonEntrance() {
     p.appendChild(br);
     p.appendChild(node2);
     status.appendChild(p);
-
+    //
+    //This displays the total monsters killed
     p = document.createElement("p");
     node1 = document.createTextNode("Monsters Killed: " + totalMonstersKilled);
     p.appendChild(node1);
     status.appendChild(p);
-
+    //
+    //This long chunk displays the different levels of the player
     p = document.createElement("p");
     node1 = document.createTextNode("Addition Level: " + additionLevel);
     node2 = document.createTextNode("Subtraction Level: " + subtractionLevel);
@@ -346,13 +481,17 @@ function dungeonEntrance() {
     p.appendChild(br);
     status.appendChild(p);
 
-
     return status;
   }
-
+  //
+  //This function makes the layout of the spells
+  //page of the player's book. It needs to do more
+  //though: it needs to call a function that creates
+  //a page based on whether the player knows a spell
   function spellsPage() {
     let spells = document.createElement("div");
     spells.className = "bookPage";
+    spells.id = "spellsPage";
 
     let quickButtons = makeQuickButtons(spells);
 
@@ -361,15 +500,90 @@ function dungeonEntrance() {
     quickButton[1].onclick = function() {turnPageRight(spells, statusPage);}
     quickButton[3].onclick = function() {turnPageLeft(spells, monstersPage);}
 
-    let text = document.createTextNode("Spells");
-    spells.appendChild(text);
+    let pageTurnButtons = turnPageButtons(spells);
+    let turnButton = pageTurnButtons.getElementsByClassName("turnPageButtons");
+    turnButton[0].onclick = function() {turnPageRight(spells, statusPage);}
+    if (spellArray[0] >= 0) {
+      turnButton[1].onclick = function() {turnPageLeft(spells, spellDetailPage, spellArray[0]);}
+    } else {
+      turnButton[1].onclick = function() {turnPageLeft(spells, monstersPage);}
+    }
+
+
+    if (playerName.charAt(playerName.length - 1) == "s") {
+      var text = document.createTextNode(playerName + "' Spells");
+    } else {
+      var text = document.createTextNode(playerName + "'s Spells");
+    }
+    var p = document.createElement("p");
+    var br = document.createElement("br");
+    var underline = document.createElement("u");
+    var strong = document.createElement("strong");
+    strong.appendChild(text);
+    underline.appendChild(strong);
+    p.appendChild(underline);
+    p.appendChild(br);
+    spells.appendChild(p);
+
+    //
+    //Iterates through the spells the player has acquired
+    //and places them in the spells object
+    for (let index of spellArray) {
+      span = document.createElement("span");
+      br = document.createElement("br");
+      text = document.createTextNode(spellBookContent[index][0]);
+      span.onclick = function() {turnPageLeft(spells, spellDetailPage, (index - 1));}
+      span.appendChild(text);
+      span.appendChild(br);
+      spells.appendChild(span);
+      index++;
+    }
 
     return spells;
+  }
+
+  function spellDetailPage(index) {
+    let spell = document.createElement("div");
+    spell.className = "bookPage";
+    spell.id = "spellsDetailPage";
+
+    let quickButtons = makeQuickButtons(spell);
+
+    let quickButton = quickButtons.getElementsByClassName("quickButtons");
+    quickButton[0].onclick = function() {turnPageRight(spell, contentsPage);}
+    quickButton[1].onclick = function() {turnPageRight(spell, statusPage);}
+    quickButton[2].onclick = function() {turnPageRight(spell, spellsPage);}
+    quickButton[3].onclick = function() {turnPageLeft(spell, monstersPage);}
+
+    let pageTurnButtons = turnPageButtons(spell);
+    let turnButton = pageTurnButtons.getElementsByClassName("turnPageButtons");
+
+    if (spellArray.indexOf(index) === 0) {
+      turnButton[0].onclick = function() {turnPageRight(spell, spellsPage);}
+    } else {
+      turnButton[0].onclick = function() {turnPageRight(spell, spellDetailPage, (index - 1));}
+    }
+    if ((spellArray.indexOf(index)) < (spellArray.length - 1)) {
+      turnButton[1].onclick = function() {turnPageLeft(spell, spellDetailPage, (index + 1));}
+    } else {
+      turnButton[1].onclick = function() {turnPageLeft(spell, monstersPage);}
+    }
+
+    var spellDiv = document.createElement("div");
+    spellDiv.id = "spellDetailDiv";
+    var spellImg = document.createElement("img");
+    spellImg.src = "./scrolls/" + spellBookContent[index][1];
+    spellImg.style.height = "330px";
+    spellDiv.appendChild(spellImg);
+    spell.appendChild(spellDiv);
+
+    return spell;
   }
 
   function monstersPage() {
     let monsters = document.createElement("div");
     monsters.className = "bookPage";
+    monsters.id = "monsterPage";
 
     let quickButtons = makeQuickButtons(monsters);
 
@@ -378,12 +592,72 @@ function dungeonEntrance() {
     quickButton[1].onclick = function() {turnPageRight(monsters, statusPage);}
     quickButton[2].onclick = function() {turnPageRight(monsters, spellsPage);}
 
-    let text = document.createTextNode("Monsters");
-    monsters.appendChild(text);
+    let pageTurnButtons = turnPageButtons(monsters);
+    let turnButton = pageTurnButtons.getElementsByClassName("turnPageButtons");
+    console.log(spellArray.length);
+    if (spellArray[0] >= 0) {
+      turnButton[0].onclick = function() {turnPageRight(monsters, spellDetailPage, (spellArray[spellArray.length - 1]));}
+    } else {
+      turnButton[0].onclick = function() {turnPageRight(monsters, spellsPage);}
+    }
+
+    let p = document.createElement("p");
+    let strong = document.createElement("strong");
+    let u = document.createElement("u");
+    let br = document.createElement("br");
+    let node = document.createTextNode("Capitulum Prodigium");
+    strong.appendChild(node);
+    u.appendChild(strong);
+    p.appendChild(u);
+    p.appendChild(br);
+    monsters.appendChild(p);
+
+
+    let span = document.createElement("span");
+    strong = document.createElement("strong");
+    u = document.createElement("u");
+    br = document.createElement("br");
+    node = document.createTextNode("Addition Monsters Killed: " + additionMonstersKilled.length);
+    span.appendChild(node);
+    monsters.appendChild(span);
+    monsters.appendChild(br);
+
+    span = document.createElement("span");
+    strong = document.createElement("strong");
+    u = document.createElement("u");
+    br = document.createElement("br");
+    node = document.createTextNode("Subtraction Monsters Killed: " + subtractionMonstersKilled.length);
+    span.appendChild(node);
+    monsters.appendChild(span);
+    monsters.appendChild(br);
+
+    span = document.createElement("span");
+    strong = document.createElement("strong");
+    u = document.createElement("u");
+    br = document.createElement("br");
+    node = document.createTextNode("Multiplication Monsters Killed: " + multiplicationMonstersKilled.length);
+    span.appendChild(node);
+    monsters.appendChild(span);
+    monsters.appendChild(br);
+
+    span = document.createElement("span");
+    strong = document.createElement("strong");
+    u = document.createElement("u");
+    br = document.createElement("br");
+    node = document.createTextNode("Division Monsters Killed: " + divisionMonstersKilled.length);
+    span.appendChild(node);
+    monsters.appendChild(span);
+    monsters.appendChild(br);
+
+
+
+
 
     return monsters;
   }
-
+  //
+  //This function makes the quick buttons that
+  //go at the top of most book pages
   function makeQuickButtons(targetElement) {
     let quickButtonDiv = document.createElement("div");
     quickButtonDiv.id = "quickButtonDiv";
@@ -415,6 +689,29 @@ function dungeonEntrance() {
     targetElement.appendChild(quickButtonDiv);
 
     return quickButtonDiv;
+  }
+
+  function turnPageButtons(targetElement) {
+    let pageTurnButtons = document.createElement("div");
+    pageTurnButtons.id = "pageTurnButtons";
+
+    let leftButton = document.createElement("input");
+    leftButton.className = "turnPageButtons";
+    leftButton.id = "leftPageButton";
+    leftButton.type = "button";
+    leftButton.value = "<";
+    pageTurnButtons.appendChild(leftButton);
+
+    let rightButton = document.createElement("input");
+    rightButton.className = "turnPageButtons";
+    rightButton.id = "rightPageButton";
+    rightButton.type = "button";
+    rightButton.value = ">";
+    pageTurnButtons.appendChild(rightButton);
+
+    targetElement.appendChild(pageTurnButtons);
+
+    return(pageTurnButtons);
   }
 }
 
