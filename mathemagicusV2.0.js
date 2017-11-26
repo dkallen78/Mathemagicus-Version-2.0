@@ -1501,7 +1501,7 @@ function battle() {
         algebraFlash--; //One less time to run the function
       }
     }
-  } else if (getRandomNumber(0, 100) <= monster.index) {
+  } else if (getRandomNumber(0, 0) <= monster.index) {
     problemDiv.innerHTML = "The " + monster.name + " used Sequence!";
     sequence = true;
     terms = getTerms("sequence");
@@ -2661,10 +2661,27 @@ function castFibonacci() {
         divisionHint(terms[0], terms[2]);
         break;
     }
-
     //
     //These five lines display the final hint to the hintDiv,
     //update the count of Fibonacci Spells, and end the function
+    hintDiv.innerHTML = hintString;
+    hintDiv.style.visibility = "visible";
+    fibonacciSpells--;
+    fibonacciCount.innerHTML = fibonacciSpells;
+    return;
+  }
+  //
+  //If the problem is a number sequence, this logic
+  //runs to display a sequence hint
+  if (sequence) {
+    sequence = false;
+    if ((operator == "+") || (operator == "*")) {
+      hintString += terms[1] + " - " + terms[0] + " = ?<br />";
+      hintString += terms[2] + " - " + terms[1] + " = ?";
+    } else {
+      hintString += terms[0] + " - " + terms[1] + " = ?<br />";
+      hintString += terms[1] + " - " + terms[2] + " = ?";
+    }
     hintDiv.innerHTML = hintString;
     hintDiv.style.visibility = "visible";
     fibonacciSpells--;
@@ -3375,7 +3392,7 @@ function developer() {
   starSpells = 10;
   monstersKilled = 9;
   totalMonstersKilled = 0;
-  monstersPerFight = 5;
+  monstersPerFight = 9;
 
   dungeonEntrance();
 }
