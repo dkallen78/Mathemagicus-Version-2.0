@@ -109,6 +109,14 @@ var octahedronNumbers = [6, 19, 44, 85, 146];
 var monster = {};
 var monstersKilled = 0;
 var totalMonstersKilled = 0;
+//
+//This value is strictly for debugging purposes.
+//In the course of normal gameplay, the player
+//would have to fight 10 monsters per level.
+//This variable reduces that number so they only
+//have to fight (10 - mPF) per level.
+var monstersPerFight = 0;
+
 var additionMonstersKilled = [];
 var subtractionMonstersKilled = [];
 var multiplicationMonstersKilled = [];
@@ -195,19 +203,19 @@ function resetStartVariables() {
   maxHealth = 10;
   playerDamage = 1;
   mageIndex = 0;
-  additionLevel = 9;
-  subtractionLevel = 9;
-  multiplicationLevel = 9;
-  divisionLevel = 9;
-  fibonacciSpells = 10;
-  triangleSpells = 10;
-  squareSpells = 10;
-  pentagonSpells = 10;
-  hexagonSpells = 10;
-  pyramidSpells = 10;
-  cubeSpells = 10;
-  starSpells = 10;
-  monstersKilled = 9;
+  additionLevel = 1;
+  subtractionLevel = 0;
+  multiplicationLevel = 0;
+  divisionLevel = 0;
+  fibonacciSpells = 0;
+  triangleSpells = 0;
+  squareSpells = 0;
+  pentagonSpells = 0;
+  hexagonSpells = 0;
+  pyramidSpells = 0;
+  cubeSpells = 0;
+  starSpells = 0;
+  monstersKilled = 0;
   totalMonstersKilled = 0;
 }
 //
@@ -218,14 +226,14 @@ function gameStart() {
   //
   //These five lines put the title on the screen
   let titleDiv = document.createElement("div");
-  titleDiv.setAttribute("id", "titleDiv");
+  titleDiv.id = "titleDiv";
   let title = document.createTextNode("Mathemagicus");
   titleDiv.appendChild(title);
   playArea.appendChild(titleDiv);
   //
   //This block puts the buttons for New Game and Continue on the screen
   let newGameButtons = document.createElement("table");
-  newGameButtons.setAttribute("id", "newGameButtons");//Sets the id for the table for styling
+  newGameButtons.id = "newGameButtons";//Sets the id for the table for styling
   let tableRow = document.createElement("tr");
   let newGameTD = document.createElement("td");//The <td>s for the two buttons
   let continueTD = document.createElement("td");
@@ -236,7 +244,10 @@ function gameStart() {
   newGameButton.setAttribute("type", "button");
   newGameButton.setAttribute("value", "New Game");
   newGameButton.setAttribute("class", "startButtons");
-  newGameButton.onclick = newGame;
+  newGameButton.onclick = function() {
+    deleteValues();
+    newGame();
+  }
   newGameTD.appendChild(newGameButton);
   tableRow.appendChild(newGameTD);
   //
@@ -246,9 +257,15 @@ function gameStart() {
   continueButton.setAttribute("type", "button");
   continueButton.setAttribute("value", "Continue");
   continueButton.setAttribute("class", "startButtons");
-  continueButton.onclick = dungeonEntrance;
+  continueButton.onclick = retrieveValues;
   continueTD.appendChild(continueButton);
   tableRow.appendChild(continueTD);
+
+  /*let debug = document.createElement("input");
+  debug.type = "button";
+  debug.value = "Developer";
+  debug.onclick = debug;
+  playArea.appendChild(debug);*/
 
   newGameButtons.appendChild(tableRow);//This puts the <tr> with my buttons into the table
   playArea.appendChild(newGameButtons);//This puts the <table> onto the screen
@@ -429,13 +446,20 @@ function chooseCharacter() {
 //
 //Introduces the basic game plot
 function townIntro() {
-  let table = document.getElementById("characterTable");
   playArea.removeChild(characterSelectText);
   playArea.removeChild(leftButton);
   playArea.removeChild(characterDiv1);
   playArea.removeChild(characterDiv2);
   playArea.removeChild(characterDiv3);
   playArea.removeChild(rightButton);
+
+  let skipButton = document.createElement("input");
+  skipButton.id = "skipButton";
+  skipButton.type = "button";
+  skipButton.value = "Skip Intro";
+  skipButton.onclick = dungeonEntrance;
+  playArea.appendChild(skipButton);
+
   let textString = "Ah, that's better. We asked you to come because we have a monster problem. ";
   typeText("introTextDiv", textString, introPart2, 0);
 
@@ -544,7 +568,6 @@ function dungeonEntrance() {
   monsterBook.id = "monsterBook";
   var titlePage = makeTitlePage();
   monsterBook.appendChild(titlePage);
-
   //
   //Finishes displaying the elements of the screen in the play area
   dungeonTable.appendChild(firstRow);
@@ -804,6 +827,7 @@ function dungeonEntrance() {
     saveGame.id = "saveGame";
     saveGame.type = "button";
     saveGame.value = "Save Game";
+    saveGame.onclick = saveValues;
     status.appendChild(saveGame);
 
     return status;
@@ -1545,7 +1569,7 @@ function getTerms() {
       //temporarily to make the answer formula take up
       //less space
       var lvl = divisionLevel;
-      var constant2 = getRandomNumber(0, (lvl + 5));
+      var constant2 = getRandomNumber(1, (lvl + 5));
       //
       //There might be a better formula for getting this
       //progression of products but this works for now
@@ -1702,6 +1726,7 @@ function checkAnswer(answer, damage) {
     var playerLevel = getLevel();
     monster = new newMonster(playerLevel);
     monsterHealthBarFront.style.height = ((monster.hp / monster.maxHp) * 110) + "px";
+    monsterImg.style.filter = "brightness(100%)";
     battle();
   }
   //
@@ -1903,7 +1928,7 @@ function checkAnswer(answer, damage) {
         insertNextButton("Next", dungeonEntrance);
       }
 
-      monstersKilled = 9;
+      monstersKilled = monstersPerFight;
     }
     //
     //This function progresses the players level.
@@ -3134,4 +3159,119 @@ function castStar() {
   }
   starSpells--;
   document.getElementById("starCount").innerHTML = starSpells;
+}
+
+function saveValues() {
+  localStorage.setItem("playerName", playerName);
+  localStorage.setItem("playerHealth", playerHealth);
+  localStorage.setItem("maxHealth", maxHealth);
+  localStorage.setItem("playerBaseDamage", playerBaseDamage);
+  localStorage.setItem("mageIndex", mageIndex);
+  localStorage.setItem("totalMonstersKilled", totalMonstersKilled);
+  localStorage.setItem("additionLevel", additionLevel);
+  localStorage.setItem("subtractionLevel", subtractionLevel);
+  localStorage.setItem("multiplicationLevel", multiplicationLevel);
+  localStorage.setItem("divisionLevel", divisionLevel);
+  localStorage.setItem("spellArray", JSON.stringify(spellArray));
+  localStorage.setItem("additionMonstersKilled", JSON.stringify(additionMonstersKilled));
+  localStorage.setItem("subtractionMonstersKilled", JSON.stringify(subtractionMonstersKilled));
+  localStorage.setItem("multiplicationMonstersKilled", JSON.stringify(multiplicationMonstersKilled));
+  localStorage.setItem("divisionMonstersKilled", JSON.stringify(divisionMonstersKilled));
+  localStorage.setItem("fibonacciSpells", fibonacciSpells);
+  localStorage.setItem("triangleSpells", triangleSpells);
+  localStorage.setItem("squareSpells", squareSpells);
+  localStorage.setItem("pentagonSpells", pentagonSpells);
+  localStorage.setItem("hexagonSpells", hexagonSpells);
+  localStorage.setItem("pyramidSpells", pyramidSpells);
+  localStorage.setItem("cubeSpells", cubeSpells);
+  localStorage.setItem("starSpells", starSpells);
+}
+
+function retrieveValues() {
+  playerName = localStorage.getItem("playerName");
+  if (!playerName) {
+    let noSave = document.createElement("div");
+    noSave.className = "textBox";
+    let node = document.createTextNode("No save file found!");
+    noSave.appendChild(node);
+    playArea.appendChild(noSave);
+    setTimeout(function() {
+      playArea.removeChild(noSave);
+    }, 3000)
+    return;
+  }
+  playerHealth = parseInt(localStorage.getItem("playerHealth"));
+  maxHealth = parseInt(localStorage.getItem("maxHealth"));
+  playerBaseDamage = parseInt(localStorage.getItem("playerBaseDamage"));
+  mageIndex = parseInt(localStorage.getItem("mageIndex"));
+  totalMonstersKilled = parseInt(localStorage.getItem("totalMonstersKilled"));
+  additionLevel = parseInt(localStorage.getItem("additionLevel"));
+  subtractionLevel = parseInt(localStorage.getItem("subtractionLevel"));
+  multiplicationLevel = parseInt(localStorage.getItem("multiplicationLevel"));
+  divisionLevel = parseInt(localStorage.getItem("divisionLevel"));
+  spellArray = JSON.parse(localStorage.getItem("spellArray"));
+  additionMonstersKilled = JSON.parse(localStorage.getItem("additionMonstersKilled"));
+  subtractionMonstersKilled = JSON.parse(localStorage.getItem("subtractionMonstersKilled"));
+  multiplicationMonstersKilled = JSON.parse(localStorage.getItem("multiplicationMonstersKilled"));
+  divisionMonstersKilled = JSON.parse(localStorage.getItem("divisionMonstersKilled"));
+  fibonacciSpells = parseInt(localStorage.getItem("fibonacciSpells"));
+  triangleSpells = parseInt(localStorage.getItem("triangleSpells"));
+  squareSpells = parseInt(localStorage.getItem("squareSpells"));
+  pentagonSpells = parseInt(localStorage.getItem("pentagonSpells"));
+  hexagonSpells = parseInt(localStorage.getItem("hexagonSpells"));
+  pyramidSpells = parseInt(localStorage.getItem("pyramidSpells"));
+  cubeSpells = parseInt(localStorage.getItem("cubeSpells"));
+  starSpells = parseInt(localStorage.getItem("starSpells"));
+
+  dungeonEntrance();
+}
+
+function deleteValues() {
+  localStorage.removeItem("playerName");
+  localStorage.removeItem("playerHealth");
+  localStorage.removeItem("maxHealth");
+  localStorage.removeItem("playerBaseDamage");
+  localStorage.removeItem("mageIndex");
+  localStorage.removeItem("totalMonstersKilled");
+  localStorage.removeItem("additionLevel");
+  localStorage.removeItem("subtractionLevel");
+  localStorage.removeItem("multiplicationLevel");
+  localStorage.removeItem("divisionLevel");
+  localStorage.removeItem("spellArray");
+  localStorage.removeItem("additionMonstersKilled");
+  localStorage.removeItem("subtractionMonstersKilled");
+  localStorage.removeItem("multiplicationMonstersKilled");
+  localStorage.removeItem("divisionMonstersKilled");
+  localStorage.removeItem("fibonacciSpells");
+  localStorage.removeItem("triangleSpells");
+  localStorage.removeItem("squareSpells");
+  localStorage.removeItem("pentagonSpells");
+  localStorage.removeItem("hexagonSpells");
+  localStorage.removeItem("pyramidSpells");
+  localStorage.removeItem("cubeSpells");
+  localStorage.removeItem("starSpells");
+}
+
+function debug() {
+  playerHealth = 10;
+  maxHealth = 10;
+  playerDamage = 1;
+  mageIndex = 0;
+  additionLevel = 9;
+  subtractionLevel = 9;
+  multiplicationLevel = 9;
+  divisionLevel = 9;
+  fibonacciSpells = 10;
+  triangleSpells = 10;
+  squareSpells = 10;
+  pentagonSpells = 10;
+  hexagonSpells = 10;
+  pyramidSpells = 10;
+  cubeSpells = 10;
+  starSpells = 10;
+  monstersKilled = 9;
+  totalMonstersKilled = 0;
+  monstersPerFight = 9;
+
+  dungeonEntrance();
 }
