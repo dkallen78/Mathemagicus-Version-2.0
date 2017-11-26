@@ -48,16 +48,16 @@ var pageBackgrounds = [
 
 var spellArray = [];
 var spellBookContent = [
-  ["Fibonacci's Associative Spell", "something.gif"],
-  ["Fibonacci's Distributive Spell", "something.gif"],
-  ["Fibonacci's Distributive Spell 2", "something.gif"],
-  ["Euclid's Fireball Spell", "something.gif"],
-  ["Nightengale's Healiing Spell", "something.gif"],
-  ["Huygen's Stop Time Spell", "something.gif"],
-  ["Lovelace's Reduction Spell", "something.gif"],
-  ["Hercules' Strength Spell", "something.gif"],
-  ["Fermet's Polymorph Monster Spell", "something.gif"],
-  ["Brahe's Nova Spell", "something.gif"]
+  ["Fibonacci's Associative Spell", "fibonacciSpellBook1.gif"],
+  ["Fibonacci's Distributive Spell", "fibonacciSpellBook2.gif"],
+  ["Fibonacci's Distributive Spell 2", "fibonacciSpellBook3.gif"],
+  ["Euclid's Fireball Spell", "triangleSpellBook.gif"],
+  ["Nightengale's Healiing Spell", "squareSpellBook.gif"],
+  ["Huygen's Stop Time Spell", "pyramidSpellBook.gif"],
+  ["Lovelace's Reduction Spell", "pentagonSpellBook.gif"],
+  ["Hercules' Strength Spell", "hexagonSpellBook.gif"],
+  ["Fermet's Polymorph Monster Spell", "cubeSpellBook.gif"],
+  ["Brahe's Nova Spell", "starSpellBook.gif"]
 ];
 
 //
@@ -307,6 +307,9 @@ function newGame() {
 //The character select screen and dialogue
 function chooseCharacter() {
   playerName = document.getElementById("nameTextBox").value;
+  if (playerName == "Indiana Jones") {
+    godMode();
+  }
   let introText = "Welcome to Arithmeticia. You must be " + playerName +
                   ", the mage that we sent for. Let me get a better look at you.";
   let titleDiv = document.getElementById("titleDiv"); //Removes the Mathemagicus title
@@ -1556,8 +1559,8 @@ function timeDown() {
 //
 //This function gets the terms for an arithmetic problem
 //based on which operation the player is solving for
-function getTerms(type) {
-  if (type = "sequence") {
+function getTerms(termType) {
+  if (termType == "sequence") {
     var sequenceTerms = [];
     switch (operator) {
       case "+": //Addition
@@ -1628,7 +1631,7 @@ function getTerms(type) {
       //temporarily to make the constant2 formula take up
       //less space
       var lvl = multiplicationLevel;
-      var constant1 = getRandomNumber(0, (lvl + 5));
+      var constant1 = getRandomNumber(1, (lvl + 5));
       //
       //There might be a better formula for getting this
       //progression of products but this works for now
@@ -3329,6 +3332,28 @@ function deleteValues() {
   localStorage.removeItem("pyramidSpells");
   localStorage.removeItem("cubeSpells");
   localStorage.removeItem("starSpells");
+}
+
+function godMode() {
+  playerHealth = 100;
+  maxHealth = 100;
+  playerBaseDamage = 10;
+  mageIndex = 0;
+  additionLevel = 1;
+  subtractionLevel = 1;
+  multiplicationLevel = 1;
+  divisionLevel = 1;
+  fibonacciSpells = 99;
+  triangleSpells = 99;
+  squareSpells = 99;
+  pentagonSpells = 99;
+  hexagonSpells = 99;
+  pyramidSpells = 99;
+  cubeSpells = 99;
+  starSpells = 99;
+  monstersKilled = 9;
+  totalMonstersKilled = 0;
+  monstersPerFight = 9;
 }
 
 function developer() {
