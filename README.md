@@ -8,13 +8,17 @@ My assets are almost entirely borrowed and if the game ever sees wide distributi
 
 Included in this project are the html, css, and js files. Also included is a .rar file with all the assets used in the game.
 
-### Up next: sequence hints, maybe number rounding, eliminating redundancy
-
-I need to make the hint functionality for sequences. I think that will be pretty easy... (famous last words)
+### Up next: maybe number rounding, eliminating redundancy
 
 I've got a program that does number rounding that I might put in if I find the right way to implement it. 
 
+I've also got a lot of code redundancy that I can likely remove. Some of my code is the way it is because it works, not because it's the most effecient way to do things. I want to go through the whole program at a later point and simplify things.
+
 ## 11/26/17
+
+### Update 2
+
+I put in the sequence hints functionality. One thing I've noticed about sequences, finding the next number in an incremental sequence is a pain. I'm keeping it for now, but it's tricky; I need to use my stop time functionality to get it in 10 seconds!
 
 ### Update
 
