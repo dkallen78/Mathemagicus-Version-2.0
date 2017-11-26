@@ -140,8 +140,18 @@ I made the background images of the pages be randomly generated between four pap
 
 I made a cover for the book with a leather texture cover that I need to sharpen up later.
 
-### Up next: adding save and continue functionality, adding number sequences to potential boss attacks
+### Update 2 (after midnight)
 
-I want the bosses to do more attacks, like number sequences. I like the random algebra attacks and I want to find more ways to mix it up for the player.
+The game is functionally complete, that is, it has all of the basic functionality that I want in it.
 
-Adding continue functionality will involve using local storage for values that I want to persist.
+The big addition this time is the save and continue functionality. I used local storage to save all the important values and I delete them all whenever a new game is started. I'm sure there's a way around that but it's not important at this point.
+
+I cleaned up a few display bugs that I hadn't noticed before.
+
+I added a button to skip the townIntro() text dialogue.
+
+I added in a function that lets me debug and test easier and put a button for it on the first page but I commented it out for mass consumption.
+
+### Up next: adding number sequences to potential boss attacks
+
+I want the bosses to do more attacks, like number sequences. I like the random algebra attacks and I want to find more ways to mix it up for the player. I've already sketched out the basic algorithm for generating number sequence problems so that should be easy to implement. I've also got an old program that does number rounding that I might put in if I find the right way to implement it. 
