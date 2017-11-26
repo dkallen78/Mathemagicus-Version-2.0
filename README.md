@@ -126,14 +126,21 @@ I have the first page of the monster portion of the book that I will work on lat
 
 I have improved the functionality of the monster pages. I can now dynamically generate a table of monsters based on which monsters I've caught. I had originally intended to make four seperate pages for each operation but that would have been too easy/more work. I decided instead to make one function do the work of all four.
 
+## 11/25/17
 
-### Up next: completing the monster pages of the book, making the book prettier, adding save and continue functionality, adding number sequences to potential boss attacks
+### Update
 
-Now that I can generate a list of monsters that the player has encountered, I want to have the monster names on that list be clickable so players can see the monsters and see their stats. I also need to figure out the next and previous page button onclick functions.
+I've finished the basic functionality of the book and made it look nice. There are still improvements to be made but it works. 
 
-To make the book look nicer I want to add a title page and make a nice table of contents. I know it's fluff, but it's the icing on the cupcake, and part of the reason I hope students will want to play this.
+The individual monster pages was a little tricky but I got it working. There's a dearth of information on those pages so later I will go back and see what else can be added. The next and previous page logic took me a little bit to work out but it works perfectly now.
 
-After I get that working I'll put all the new code into the original file and start working on save/continue functionality.
+I made the table of contents page look nicer and put some "links" to the main sections of it.
+
+I made the background images of the pages be randomly generated between four paper textures I made and "down rendered" from images I found of old paper online.
+
+I made a cover for the book with a leather texture cover that I need to sharpen up later.
+
+### Up next: adding save and continue functionality, adding number sequences to potential boss attacks
 
 I want the bosses to do more attacks, like number sequences. I like the random algebra attacks and I want to find more ways to mix it up for the player.
 
