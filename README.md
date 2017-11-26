@@ -8,9 +8,25 @@ My assets are almost entirely borrowed and if the game ever sees wide distributi
 
 Included in this project are the html, css, and js files. Also included is a .rar file with all the assets used in the game.
 
-### Up next: adding number sequences to potential boss attacks
+### Up next: sequence hints, maybe number rounding, eliminating redundancy
 
-I want the bosses to do more attacks, like number sequences. I like the random algebra attacks and I want to find more ways to mix it up for the player. I've already sketched out the basic algorithm for generating number sequence problems so that should be easy to implement. I've also got an old program that does number rounding that I might put in if I find the right way to implement it. 
+I need to make the hint functionality for sequences. I think that will be pretty easy... (famous last words)
+
+I've got a program that does number rounding that I might put in if I find the right way to implement it. 
+
+## 11/26/17
+
+### Update
+
+I added number sequences to the game. All monsters can use it for now and it has the same chance of firing as algebra does.
+
+In the addition dungeon I use a simple additive sequence where the numbers increase by the same amount each time.
+
+In the subtraction dungeon I use a subtractive sequence.
+
+In the multiplication dungeon I use an additive incremental sequence where the interval between numbers increases by a set ammount for every consiecutive number.
+
+In the division dungeon I use an additive decremental sequence.
 
 ## 11/25/17
 
