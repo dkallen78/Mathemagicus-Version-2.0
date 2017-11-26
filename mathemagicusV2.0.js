@@ -37,6 +37,7 @@ var damagePlayer, damageMonster;
 var terms = [];
 var answer;
 var algebra = false;
+var sequence = false;
 
 var pageBackgrounds = [
   "page1.gif",
@@ -262,9 +263,10 @@ function gameStart() {
   tableRow.appendChild(continueTD);
 
   /*let debug = document.createElement("input");
+  debug.id = "debug";
   debug.type = "button";
   debug.value = "Developer";
-  debug.onclick = debug;
+  debug.onclick = developer();
   playArea.appendChild(debug);*/
 
   newGameButtons.appendChild(tableRow);//This puts the <tr> with my buttons into the table
@@ -1454,6 +1456,7 @@ function dungeon(operation) {
 function battle() {
   terms = getTerms();
   algebra = false;
+  sequence = false;
   width = 340;
 
   var countdownBarFront = document.getElementById("countdownBarFront");
@@ -1465,7 +1468,7 @@ function battle() {
     problemDiv.innerHTML = "The " + monster.name + " used Algebra!";
     algebra = true;
     answer = terms[1];
-    let algebraFlash = 10;
+    var algebraFlash = 10;
     let algebraMagic = setInterval(castAlgebra, 100);
     //
     //This function flashes the screen and displays
@@ -1493,6 +1496,35 @@ function battle() {
           playArea.style.filter = "brightness(100%)";
         }
         algebraFlash--; //One less time to run the function
+      }
+    }
+  } else if (getRandomNumber(0, 100) <= monster.index) {
+    problemDiv.innerHTML = "The " + monster.name + " used Sequence!";
+    sequence = true;
+    terms = getTerms("sequence");
+    answer = terms[4];
+    var sequenceFlash = 10;
+    let sequenceMagic = setInterval(castSequence, 100);
+
+    function castSequence() {
+      if (sequenceFlash < 1) {
+        problemDiv.innerHTML = terms[0] + ", " + terms[1] + ", " + terms[2] + ", " + terms[3] +
+          ", <input id=\"answerInput\" type=\"number\" onKeyPress=\"checkKeyPress(event, " + terms[4] + ")\"/>,...";
+        clearInterval(sequenceMagic);
+        timer = setInterval(timeDown, 10);
+        var answerInput = document.getElementById("answerInput");
+        answerInput.focus();
+      //
+      //This runs while sequenceFlash is counting down.
+      //It changes the brightness of the screen to
+      //create a flash effect
+      } else {
+        if ((sequenceFlash % 2) == 0) {
+          playArea.style.filter = "brightness(50%)";
+        } else {
+          playArea.style.filter = "brightness(100%)";
+        }
+        sequenceFlash--; //One less time to run the function
       }
     }
   } else {
@@ -1524,7 +1556,53 @@ function timeDown() {
 //
 //This function gets the terms for an arithmetic problem
 //based on which operation the player is solving for
-function getTerms() {
+function getTerms(type) {
+  if (type = "sequence") {
+    var sequenceTerms = [];
+    switch (operator) {
+      case "+": //Addition
+        var interval = getRandomNumber(2, (getLevel() + 1));
+        var range = interval * 5;
+        var start = getRandomNumber(1, (100 - range));
+        break;
+      case "-": //Subtraction
+        var interval = getRandomNumber(2, (getLevel() + 1));
+        var range = interval * 5;
+        var start = getRandomNumber((range + 1), 100);
+        break;
+      case "*": //Multiplication
+        var interval = getRandomNumber(1, (Math.ceil((getLevel() + 1) / 2)));
+        var range = interval * 10;
+        var start = getRandomNumber(1, (100 - range));
+        break;
+      case "/": //Division
+        var interval = getRandomNumber(1, (Math.ceil((getLevel() + 1) / 2)));
+        var range = interval * 10;
+        var start = getRandomNumber((range + 1), 100);
+        break;
+    }
+    var increment = interval;
+    for (let i = 0; i < 6; i++) {
+      sequenceTerms[i] = start;
+      switch (operator) {
+        case "+":
+          start += interval;
+          break;
+        case "-":
+          start -= interval;
+          break;
+        case "*":
+          start += interval;
+          interval += increment;
+          break;
+        case "/":
+          start -= interval;
+          interval += increment;
+          break;
+      }
+    }
+    return [sequenceTerms[0], sequenceTerms[1], sequenceTerms[2], sequenceTerms[3], sequenceTerms[4]];
+  }
   switch (operator) {
     case "+": //Addition
       var constant1 = getRandomNumber(0, (additionLevel * 10));
@@ -2019,7 +2097,7 @@ function checkAnswer(answer, damage) {
     //
     //Checks for Fibonacci Numbers
     if ((additionLevel > 2) && (fibonacciNumbers.includes(answer))) {
-      if (fibonacciSpells < 9) {
+      if (fibonacciSpells < 100) {
         fibonacciSpells++;
         document.getElementById("fibonacciCount").innerHTML = fibonacciSpells;
       }
@@ -2027,7 +2105,7 @@ function checkAnswer(answer, damage) {
     //
     //Checks for Triangle Numbers
     if ((subtractionLevel > 2) && (triangleNumbers.includes(answer))) {
-      if (triangleSpells < 9) {
+      if (triangleSpells < 100) {
         triangleSpells++;
         document.getElementById("triangleCount").innerHTML = triangleSpells;
       }
@@ -2035,7 +2113,7 @@ function checkAnswer(answer, damage) {
     //
     //Checks for Square Numbers
     if ((additionLevel > 6) && (squareNumbers.includes(answer))) {
-      if (squareSpells < 9) {
+      if (squareSpells < 100) {
         squareSpells++;
         document.getElementById("triangleCount").innerHTML = triangleSpells;
       }
@@ -2043,7 +2121,7 @@ function checkAnswer(answer, damage) {
     //
     //Checks for Pentagon Numbers
     if ((subtractionLevel > 8) && (pentagonNumbers.includes(answer))) {
-      if (pentagonSpells < 9) {
+      if (pentagonSpells < 100) {
         pentagonSpells++;
         document.getElementById("pentagonCount").innerHTML = pentagonSpells;
       }
@@ -2051,7 +2129,7 @@ function checkAnswer(answer, damage) {
     //
     //Checks for Hexagon Numbers
     if ((multiplicationLevel > 8) && (hexagonNumbers.includes(answer))) {
-      if (hexagonSpells < 9) {
+      if (hexagonSpells < 100) {
         hexagonSpells++;
         document.getElementById("hexagonCount").innerHTML = hexagonSpells;
       }
@@ -2059,7 +2137,7 @@ function checkAnswer(answer, damage) {
     //
     //Checks for Pyramid Numbers
     if ((additionLevel > 8) && (pyramidNumbers.includes(answer))) {
-      if (pyramidSpells < 9) {
+      if (pyramidSpells < 100) {
         pyramidSpells++;
         document.getElementById("pyramidCount").innerHTML = pyramidSpells;
       }
@@ -2067,7 +2145,7 @@ function checkAnswer(answer, damage) {
     //
     //Checks for Cube Numbers
     if ((divisionLevel > 2) && (cubeNumbers.includes(answer))) {
-      if (cubeSpells < 9) {
+      if (cubeSpells < 100) {
         cubeSpells++;
         document.getElementById("cubeCount").innerHTML = cubeSpells;
       }
@@ -2075,7 +2153,7 @@ function checkAnswer(answer, damage) {
     //
     //Checks for Star Numbers
     if ((divisionLevel > 8) && (starNumbers.includes(answer))) {
-      if (starSpells < 9) {
+      if (starSpells < 100) {
         starSpells++;
         document.getElementById("starCount").innerHTML = starSpells;
       }
@@ -2580,6 +2658,7 @@ function castFibonacci() {
         divisionHint(terms[0], terms[2]);
         break;
     }
+
     //
     //These five lines display the final hint to the hintDiv,
     //update the count of Fibonacci Spells, and end the function
@@ -3252,7 +3331,7 @@ function deleteValues() {
   localStorage.removeItem("starSpells");
 }
 
-function debug() {
+function developer() {
   playerHealth = 10;
   maxHealth = 10;
   playerDamage = 1;
@@ -3271,7 +3350,7 @@ function debug() {
   starSpells = 10;
   monstersKilled = 9;
   totalMonstersKilled = 0;
-  monstersPerFight = 9;
+  monstersPerFight = 5;
 
   dungeonEntrance();
 }
