@@ -2,69 +2,87 @@
 
 This is a more advanced version of my original Mathemagicus game (will be uploaded later). 
 
-As it stands now, the game has almost all of the code in it to start the game and create and display all of the elements for the game. 
+Mathemagicus is a arithmetic drill game (+, -, *, /) with a simple RPG-type interface placed on top of it. 
 
-Right now, I just have a simple engine that can advance levels of addition and randomly get a monster based on the players level in that operation (addition, subtraction, multiplication, and division). 
+My assets are almost entirely borrowed and if the game ever sees wide distribution it will need original pixel-art first.
 
-Included in this project are the html, css, and js files.
+Included in this project are the html, css, and js files. Also included is a .rar file with all the assets used in the game.
 
-## 11/16/17
+### Up next: adding number sequences to potential boss attacks
 
-### Update 
+I want the bosses to do more attacks, like number sequences. I like the random algebra attacks and I want to find more ways to mix it up for the player. I've already sketched out the basic algorithm for generating number sequence problems so that should be easy to implement. I've also got an old program that does number rounding that I might put in if I find the right way to implement it. 
 
-Added animations for when the player or the enemy takes damage
+## 11/25/17
 
-### Update 2 
+### Update 2 (after midnight)
 
-Added basic boss monster functionality
+The game is functionally complete, that is, it has all of the basic functionality that I want in it.
 
-Added transition effects for the character select screen and the dungeon select screen
+The big addition this time is the save and continue functionality. I used local storage to save all the important values and I delete them all whenever a new game is started. I'm sure there's a way around that but it's not important at this point.
 
-Moved the getLevel() function to the global scope
+I cleaned up a few display bugs that I hadn't noticed before.
+
+I added a button to skip the townIntro() text dialogue.
+
+I added in a function that lets me debug and test easier and put a button for it on the first page but I commented it out for mass consumption.
+
+### Update
+
+I've finished the basic functionality of the book and made it look nice. There are still improvements to be made but it works. 
+
+The individual monster pages was a little tricky but I got it working. There's a dearth of information on those pages so later I will go back and see what else can be added. The next and previous page logic took me a little bit to work out but it works perfectly now.
+
+I made the table of contents page look nicer and put some "links" to the main sections of it.
+
+I made the background images of the pages be randomly generated between four paper textures I made and "down rendered" from images I found of old paper online.
+
+I made a cover for the book with a leather texture cover that I need to sharpen up later.
+
+## 11/24/17
+
+### Update 2 (after midnight)
+
+I have improved the functionality of the monster pages. I can now dynamically generate a table of monsters based on which monsters I've caught. I had originally intended to make four seperate pages for each operation but that would have been too easy/more work. I decided instead to make one function do the work of all four.
+
+### Update: Liber Mathemagicus
+
+I have a working (finally!) spells page that lists all the spells the player has learned and dynamically generates pages that show the stuff that was on the spell scrolls they were shown when getting the spell.
+
+I have the first page of the monster portion of the book that I will work on later because I have real work to do now (sob).
+
+## 11/23/17
+
+### Update
+
+I realized that if I wanted to create save/continue functionality, I needed a place to allow the player to save their game. Since I needed to make a place, I figured I should make a cool place. I'm creating a "book" in the game where the player can see various things about their character. Other than some transition bugs, things are working pretty well.
+
+I created the basic elements of the "book" and the functionality to change the pages with cool css animations (when they work).
+
+I created a status page where the player can see their basic information.
+
+## 11/22/17
 
 ### Update 3
 
-Added the Algebra spell to the game. It lets the monster randomly change a simple addition problem into a basic missing term problem. The higher the level of the monster, the more likely it is to cast Algebra.
+I added the basic functionality for the floor bosses. I have to temporarily resize some elements but I gave them transition animations so it all happens smoothly. I still want to add the functionality for having bosses randomly attack w/ number sequences. I'd also like to add more story elements to the bosses, maybe give them some dialogue.
 
-I also included all of the .gif assets for the game in a .rar file
+I went and debugged the hex and cube spells. Both had some odd bugs that I went through and fixed, but both now work properly. I fixed cube spells so they don't work on boss monsters anymore. I also made the range of monsters they could become more dynamic.
 
-## 11/17/17
-
-### Update
-
-Added lots of stuff for learning the first spell and making sure it works properly. Short on time, more details later...
-
-## 11/18/17
-
-### Update
-
-I added the subtraction functionality in and got it working properly.
-
-I also put in the triangle/fireball spell and some flashing animations for that. I had to modify my checkAnswers() function to accept an additional argument that determines how much damage an attack does.
-
-## 11/19/17
-
-### Update
-
-I updated the hint functionality to cover subtraction problems. Since I did that, I could also improve the hints for the algebra/missing term problems. 
+I removed the timeDown() function from the scope of the battle() function so that it could be restarted from another function, specifically the polymorph monster function. Now, the timer stops when the spell animation is happening, and resumes when it's over.
 
 ### Update 2
 
-I added functionality to generate multiplication problems. The formula to determine the multiplier is a bit ugly but it does what I want it to.
-
-I added hint functionality for multiplication problems. There's more redundancy than I would like in the code so I need to go back to it and find a way to remove that.
-
-### Update 3
-
-I added functionality to generate division problems. I used the same formula to get terms as I did for the multiplication problems so it would have the same progression of difficulty.
-
-## 11/20/17
+I added the functionality for division hints. Like the multiplication hints, there's some code redundancy that I'll need to work out later, but for now it's working and I'm happy with it.
 
 ### Update
 
-I added functionality for healing spells and nova spells. I haven't made the nova spells accessible yet, but since the function was virtually identical to the fireball spell it was easy to add. 
+I got inspired to update my character selection screen. I know it wasn't on my list of things to do, but I had a lot of time at work yesterday and I figured out the basic logic I needed. So instead of only having two characters to choose from, there are now a list of seven possibilities. They only show one at a time and the user can click a button on either side of the mage icon to cycle through them. I built in some pretty CSS transition changes to go along with it to make it look like they were moving instead of just changing instantly. 
 
-One problem I have with the healing spell is that it invokes checkAnswer() which automatically generates a damage animation on the enemy when I cast it... I need to find a way to keep that from happening...
+I cleaned up my file structure. Instead of having a mess of files all in one directory, I've grouped files together by type. I had to do some minor updates to my code after this, but it's totally worth it since now my main directory isn't a hot mess.
+
+Finally, I included a new .rar file with all of my game assets so if anyone wants to see the current state of the game befoe it goes up on some fly-by-night webhost, they can.
+
+## 11/20/17
 
 ### Update 2
 
@@ -82,76 +100,58 @@ The Time Spell doesn't do anything else other than stop the timer from counting 
 
 The Reduce Terms Spell was kind of tricky but it works well. For everything but division I just divided the terms by 2 and calculated a new answer and put those values into the terms[] array. Then I copied the two lines of code that put the problem onto the screen.
 
-## 11/22/17
-
 ### Update
 
-I got inspired to update my character selection screen. I know it wasn't on my list of things to do, but I had a lot of time at work yesterday and I figured out the basic logic I needed. So instead of only having two characters to choose from, there are now a list of seven possibilities. They only show one at a time and the user can click a button on either side of the mage icon to cycle through them. I built in some pretty CSS transition changes to go along with it to make it look like they were moving instead of just changing instantly. 
+I added functionality for healing spells and nova spells. I haven't made the nova spells accessible yet, but since the function was virtually identical to the fireball spell it was easy to add. 
 
-I cleaned up my file structure. Instead of having a mess of files all in one directory, I've grouped files together by type. I had to do some minor updates to my code after this, but it's totally worth it since now my main directory isn't a hot mess.
+One problem I have with the healing spell is that it invokes checkAnswer() which automatically generates a damage animation on the enemy when I cast it... I need to find a way to keep that from happening...
 
-Finally, I included a new .rar file with all of my game assets so if anyone wants to see the current state of the game befoe it goes up on some fly-by-night webhost, they can.
-
-### Update 2
-
-I added the functionality for division hints. Like the multiplication hints, there's some code redundancy that I'll need to work out later, but for now it's working and I'm happy with it.
+## 11/19/17
 
 ### Update 3
 
-I added the basic functionality for the floor bosses. I have to temporarily resize some elements but I gave them transition animations so it all happens smoothly. I still want to add the functionality for having bosses randomly attack w/ number sequences. I'd also like to add more story elements to the bosses, maybe give them some dialogue.
+I added functionality to generate division problems. I used the same formula to get terms as I did for the multiplication problems so it would have the same progression of difficulty.
 
-I went and debugged the hex and cube spells. Both had some odd bugs that I went through and fixed, but both now work properly. I fixed cube spells so they don't work on boss monsters anymore. I also made the range of monsters they could become more dynamic.
+### Update 2
 
-I removed the timeDown() function from the scope of the battle() function so that it could be restarted from another function, specifically the polymorph monster function. Now, the timer stops when the spell animation is happening, and resumes when it's over.
+I added functionality to generate multiplication problems. The formula to determine the multiplier is a bit ugly but it does what I want it to.
 
-## 11/23/17
-
-### Update
-
-I realized that if I wanted to create save/continue functionality, I needed a place to allow the player to save their game. Since I needed to make a place, I figured I should make a cool place. I'm creating a "book" in the game where the player can see various things about their character. Other than some transition bugs, things are working pretty well.
-
-I created the basic elements of the "book" and the functionality to change the pages with cool css animations (when they work).
-
-I created a status page where the player can see their basic information.
-
-## 11/24/17
-
-### Update: Liber Mathemagicus
-
-I have a working (finally!) spells page that lists all the spells the player has learned and dynamically generates pages that show the stuff that was on the spell scrolls they were shown when getting the spell.
-
-I have the first page of the monster portion of the book that I will work on later because I have real work to do now (sob).
-
-### Update 2 (after midnight)
-
-I have improved the functionality of the monster pages. I can now dynamically generate a table of monsters based on which monsters I've caught. I had originally intended to make four seperate pages for each operation but that would have been too easy/more work. I decided instead to make one function do the work of all four.
-
-## 11/25/17
+I added hint functionality for multiplication problems. There's more redundancy than I would like in the code so I need to go back to it and find a way to remove that.
 
 ### Update
 
-I've finished the basic functionality of the book and made it look nice. There are still improvements to be made but it works. 
+I updated the hint functionality to cover subtraction problems. Since I did that, I could also improve the hints for the algebra/missing term problems. 
 
-The individual monster pages was a little tricky but I got it working. There's a dearth of information on those pages so later I will go back and see what else can be added. The next and previous page logic took me a little bit to work out but it works perfectly now.
+## 11/18/17
 
-I made the table of contents page look nicer and put some "links" to the main sections of it.
+### Update
 
-I made the background images of the pages be randomly generated between four paper textures I made and "down rendered" from images I found of old paper online.
+I added the subtraction functionality in and got it working properly.
 
-I made a cover for the book with a leather texture cover that I need to sharpen up later.
+I also put in the triangle/fireball spell and some flashing animations for that. I had to modify my checkAnswers() function to accept an additional argument that determines how much damage an attack does.
 
-### Update 2 (after midnight)
+## 11/17/17
 
-The game is functionally complete, that is, it has all of the basic functionality that I want in it.
+### Update
 
-The big addition this time is the save and continue functionality. I used local storage to save all the important values and I delete them all whenever a new game is started. I'm sure there's a way around that but it's not important at this point.
+Added lots of stuff for learning the first spell and making sure it works properly. Short on time, more details later...
 
-I cleaned up a few display bugs that I hadn't noticed before.
+## 11/16/17
 
-I added a button to skip the townIntro() text dialogue.
+### Update 3
 
-I added in a function that lets me debug and test easier and put a button for it on the first page but I commented it out for mass consumption.
+Added the Algebra spell to the game. It lets the monster randomly change a simple addition problem into a basic missing term problem. The higher the level of the monster, the more likely it is to cast Algebra.
 
-### Up next: adding number sequences to potential boss attacks
+I also included all of the .gif assets for the game in a .rar file
 
-I want the bosses to do more attacks, like number sequences. I like the random algebra attacks and I want to find more ways to mix it up for the player. I've already sketched out the basic algorithm for generating number sequence problems so that should be easy to implement. I've also got an old program that does number rounding that I might put in if I find the right way to implement it. 
+### Update 2 
+
+Added basic boss monster functionality
+
+Added transition effects for the character select screen and the dungeon select screen
+
+Moved the getLevel() function to the global scope
+
+### Update 
+
+Added animations for when the player or the enemy takes damage
