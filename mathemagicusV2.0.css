@@ -9,6 +9,7 @@ Styles the play area where the game takes place*/
   border: 8px solid #996633;
   border-radius: 5px;
   background-image: url("tile.png");
+  font-family: monospace;
   transition: height 500ms;
 }
 /*
@@ -319,7 +320,11 @@ This styles the "next" button I use to advance long text blocks*/
 The basic styling of my dungeon select <table>*/
 #dungeonTable {
   margin: auto;
+  position: absolute;
+  top: 14px;
+  left: 10px;
   border-spacing: 50px 40px;
+  transition: top 500ms;
 }
 /*
 Adds a transition effect to the change in the dungeon
@@ -331,6 +336,295 @@ door's brightness*/
 Hilights the individual dungeon entrances when the mouse hovers over them*/
 #dungeonTable img:hover {
   filter: brightness(140%);
+}
+/*
+This controls the position of the button that moves
+the book up and down*/
+#nextScreen {
+  position: absolute;
+  left: 208px;
+  top: 417px;
+  font-family: monospace;
+  font-size: 1.5em;
+  font-weight: bold;
+  z-index: 0;
+  background-color: #999999;
+  border: 2px solid black;
+  border-radius: 5px;
+  transform: scale(-1, -1);
+  transition: all 500ms;
+}
+
+#nextScreen:hover {
+  background-color: #bbbbbb;
+}
+/*
+Controls the style of the containing <div> of
+the monsterBook element*/
+#monsterBook {
+  position: absolute;
+  top: 470px;
+  left: 10px;
+  height: 400px;
+  width: 430px;
+  z-index: 0;
+  transition: top 500ms;
+}
+/*
+Controls the style of the individual book pages
+in the monster book*/
+.bookPage {
+  position: absolute;
+  height: 394px;
+  width: 424px;
+  z-index: 1;
+  background-color: #e6c790;
+  border: 3px solid black;
+  border-radius: 0px 15px 15px 0px;
+  transition: transform 750ms;
+  text-align: center;
+}
+/*
+The next three selectors control the positioning of
+the quick navigation buttons at the top of the
+monster book*/
+#quickButtonDiv {
+  position: relative;
+  margin: 3px;
+  text-align: center;
+}
+
+.quickButtons {
+  margin-left: 19px;
+  margin-right: 19px;
+  background-color: rgba(0,0,0,0.125);
+  border-radius: 5px;
+  border: 1px solid black;
+  font-family: monospace;
+  transition: border 500ms, background-color 500ms;
+}
+
+.quickButtons:hover {
+  border: 1px solid white;
+  background-color: rgba(255,255,255,0.125);
+}
+/*
+Sets the background of the cover of the monster book*/
+#titlePage {
+  background-image: url(./book/bookCover.gif);
+}
+/*
+Styles the title of the monster book*/
+#titlePage p {
+  font-size: 3.5em;
+  font-weight: bold;
+  line-height: 60px;
+  color: #d2b30e;
+  text-shadow: 2px 0px black,
+               0px 2px black,
+               -2px 0px black,
+               0px -2px black;
+}
+/*
+These three selectors handle the styling of
+the table of contents*/
+#tableOfContents p {
+  text-align: left;
+  margin-left: 10px;
+  font-size: 1.25em;
+}
+
+#tableOfContents span {
+  font-weight: bold;
+  text-decoration: underline;
+  line-height: 30px;
+  border-radius: 5px;
+  padding: 2px;
+  transition: background-color 500ms;
+}
+
+#tableOfContents span:hover {
+  background-color: rgba(255,255,255,0.25);
+  cursor: default;
+}
+/*
+These two selectors control the positioning and
+size of the player cameo on the status page of
+the monster book*/
+#playerCameoDiv {
+  position: absolute;
+  padding: 5px;
+  height: 100px;
+  width: 85px;
+  left: 290px;
+  top: 40px;
+  background-color: #555555;
+  border: 2px solid black;
+  border-radius: 5px;
+}
+
+#playerCameoImg {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  margin: auto;
+  z-index: 1;
+  transform: scaleX(-1);
+}
+/*
+Controls the text on the status page of
+the monster book*/
+#statusPage p {
+  text-align: left;
+  font-size: 1.25em;
+  margin-left: 10px;
+}
+/*
+These two selectors control the positioning and
+look of the save game button*/
+#saveGame {
+  position: absolute;
+  left: 10px;
+  bottom: 110px;
+  background-color: rgba(0,0,0,0.125);
+  border-radius: 5px;
+  border: 1px solid black;
+  font-size: 1.25em;
+  font-family: monospace;
+  transition: border 500ms, background-color 500ms;
+}
+
+#saveGame:hover {
+  border: 1px solid white;
+  background-color: rgba(255,255,255,0.125);
+}
+/*
+These four selectors control the appearance and
+behavior of the elements on the spell page of
+the monster book*/
+#spellsPage {
+  text-align: center;
+}
+
+#spellsPage p {
+  font-size: 1.5em;
+}
+
+#spellsPage span {
+  font-size: 1.125em;
+  text-align: center;
+  transition: background-color 500ms;
+  border-radius: 5px;
+  padding: 2px;
+  line-height: 25px;
+}
+
+#spellsPage span:hover {
+  background-color: rgba(255,255,255,0.25);
+  cursor: default;
+}
+/*
+These feve selectors control how the page turning
+buttons are displayed and styled in the monster book*/
+#pageTurnButtons {
+  position: absolute;
+  bottom: 30px;
+}
+
+#leftPageButton, #rightPageButton {
+  position: absolute;
+  background-color: rgba(255,255,255,0.25);
+  border-radius: 5px;
+  border: 1px solid black;
+  font-family: monospace;
+  transition: border 500ms, background-color 500ms;
+}
+
+#leftPageButton {
+  left: 10px;
+}
+
+#rightPageButton {
+  left: 385px;
+}
+
+#leftPageButton:hover, #rightPageButton:hover {
+  border: 1px solid white;
+  background-color: rgba(125,125,125,0.125);
+}
+/*
+The next four selectors control the style and display
+of the elements on the base monster page of the
+monster book*/
+#monsterPage {
+  text-align: left;
+  font-size: 1.3em;
+  line-height: 35px;
+}
+
+#monsterPage p {
+  text-align: center;
+  font-size: 1.5em
+}
+
+#monsterPage span {
+  border-radius: 5px;
+  padding: 2px;
+  margin-left: 10px;
+  font-weight: bold;
+  transition: background-color 500ms;
+}
+
+#monsterPage span:hover {
+  background-color: rgba(255,255,255,0.25);
+  cursor: default;
+}
+/*
+These four selectors control the behavior and display of
+the table on the monster list pages of the monster book*/
+#monsterListTable {
+  margin-left: 10px;
+  width: 415px;
+}
+
+#monsterListTable tr {
+  line-height: 14px;
+}
+
+#monsterListTable td {
+  padding-left: 32px;
+  text-indent: -32px;
+  border: 1px solid grey;
+  width: 72px;
+  transition: background-color 500ms;
+}
+
+#monsterListTable td:hover {
+  background-color: rgba(255,255,255,0.25);
+  cursor: default;
+}
+/*
+These two elements control the appearance of the
+elements on the monster detail pages of the
+monster book*/
+#monsterDetailPage p {
+  margin-left: 10px;
+  text-align: left;
+  font-size: 1.25em;
+}
+
+#monsterDetailDiv {
+  position: absolute;
+  background-color: grey;
+  margin: 11px;
+  padding: 5px;
+  height: 125px;
+  width: 125px;
+  left: 255px;
+  top: 72px;
+  border: 3px solid black;
+  border-radius: 5px;
 }
 /*
 This styles the box that tells the player what level of the dungeon they're on*/
@@ -532,12 +826,6 @@ learns a new spell*/
   z-index: 2;
   transition: filter 1000ms;
 }
-/*
-This handles the fade in for when the scroll appears
-on screen
-#scrollImg {
-  transition: filter 1000ms;
-}*/
 
 /*
 This handles the positioning and style of

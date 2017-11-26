@@ -37,6 +37,28 @@ var damagePlayer, damageMonster;
 var terms = [];
 var answer;
 var algebra = false;
+
+var pageBackgrounds = [
+  "page1.gif",
+  "page2.gif",
+  "page3.gif",
+  "page4.gif"
+];
+
+var spellArray = [];
+var spellBookContent = [
+  ["Fibonacci's Associative Spell", "something.gif"],
+  ["Fibonacci's Distributive Spell", "something.gif"],
+  ["Fibonacci's Distributive Spell 2", "something.gif"],
+  ["Euclid's Fireball Spell", "something.gif"],
+  ["Nightengale's Healiing Spell", "something.gif"],
+  ["Huygen's Stop Time Spell", "something.gif"],
+  ["Lovelace's Reduction Spell", "something.gif"],
+  ["Hercules' Strength Spell", "something.gif"],
+  ["Fermet's Polymorph Monster Spell", "something.gif"],
+  ["Brahe's Nova Spell", "something.gif"]
+];
+
 //
 //Hint spells
 var fibonacciSpells = 0;
@@ -86,6 +108,11 @@ var octahedronNumbers = [6, 19, 44, 85, 146];
 //Monster variables, there are a lot of these...
 var monster = {};
 var monstersKilled = 0;
+var totalMonstersKilled = 0;
+var additionMonstersKilled = [];
+var subtractionMonstersKilled = [];
+var multiplicationMonstersKilled = [];
+var divisionMonstersKilled = [];
 //
 //The source of all the image files for the
 //monsters in the addition dungeon
@@ -181,6 +208,7 @@ function resetStartVariables() {
   cubeSpells = 10;
   starSpells = 10;
   monstersKilled = 9;
+  totalMonstersKilled = 0;
 }
 //
 //Sets up the title screen
@@ -502,10 +530,786 @@ function dungeonEntrance() {
   multiplicationDoorImg.src = multiplicationDoor;
   divisionDoorImg.src = divisionDoor;
   //
-  //Finishes displaying the <table> in the play area
+  //This block of code creates the button that shifts the
+  //screen up and down
+  var nextScreen = document.createElement("input");
+  nextScreen.id = "nextScreen";
+  nextScreen.type = "button";
+  nextScreen.value = "^";
+  nextScreen.onclick = bookScreen;
+  //
+  //This block creates the <div> that holds all the
+  //pages of the book and the first page
+  var monsterBook = document.createElement("div");
+  monsterBook.id = "monsterBook";
+  var titlePage = makeTitlePage();
+  monsterBook.appendChild(titlePage);
+
+  //
+  //Finishes displaying the elements of the screen in the play area
   dungeonTable.appendChild(firstRow);
   dungeonTable.appendChild(secondRow);
   playArea.appendChild(dungeonTable);
+  playArea.appendChild(nextScreen);
+  playArea.appendChild(monsterBook);
+  //
+  //This function shifts the screen to the book view
+  function bookScreen() {
+    dungeonTable.style.top = "-450px";
+    nextScreen.style.top = "10px";
+    nextScreen.style.transform = "scale(1, 1)";
+    nextScreen.onclick = dungeonSelectScreen;
+    monsterBook.style.top = "40px";
+  }
+  //
+  //This function shifts the screen to the
+  //dungeon select view
+  function dungeonSelectScreen() {
+    monsterBook.style.top = "470px";
+    nextScreen.style.top = "417px";
+    nextScreen.style.transform = "scale(1, -1)";
+    nextScreen.onclick = bookScreen;
+    dungeonTable.style.top = "14px";
+  }
+  //
+  //This function handles the animation of turning
+  //a page to the left
+  function turnPageLeft(currentPage, targetPage, index) {
+    let nextPage = targetPage(index);
+    let bg = getRandomNumber(0, 3);
+    nextPage.style.backgroundImage = "url(./book/" + pageBackgrounds[bg] +")";
+    monsterBook.appendChild(nextPage);
+    currentPage.style.zIndex = "2";
+    currentPage.style.transformOrigin = "0 200px 0px";
+    requestAnimationFrame(function() {currentPage.style.transform = "perspective(2000px) rotateY(-90deg)";});
+    setTimeout(function() {
+      requestAnimationFrame(function() {monsterBook.removeChild(currentPage);});
+    }, 750);
+  }
+  //
+  //This function handles the animation of turning a
+  //page to the right. It does not like to run as it
+  //should most of the time and I need to vigorously
+  //debug it
+  function turnPageRight(currentPage, targetPage, index) {
+    currentPage.style.zIndex = "1";
+    let nextPage = targetPage(index);
+    if (nextPage.id == "titlePage") {
+      nextPage.style.backgroundImage = "url(./book/bookCover.gif)";
+    } else {
+      let bg = getRandomNumber(0, 3);
+      nextPage.style.backgroundImage = "url(./book/" + pageBackgrounds[bg] +")";
+    }
+    nextPage.style.zIndex = "2";
+    nextPage.style.transformOrigin = "0 200px 0px";
+    nextPage.style.transform = "perspective(2000px) rotateY(-90deg)";
+    monsterBook.insertBefore(nextPage, currentPage);
+    setTimeout(function() {
+      //let itBe = function() {}
+      console.clear();
+      requestAnimationFrame(function() {nextPage.style.transform = "perspective(2000px) rotateY(0deg)";});
+    }, 100);
+    setTimeout(function() {
+      //console.log("removing old page");
+      requestAnimationFrame(function() {monsterBook.removeChild(currentPage);});
+    }, 850);
+
+  }
+
+  function makeTitlePage() {
+    titlePage = document.createElement("div");
+    titlePage.className = "bookPage";
+    titlePage.id = "titlePage";
+
+    let pageTurnButtons = turnPageButtons(titlePage);
+    let turnButton = pageTurnButtons.getElementsByClassName("turnPageButtons");
+    turnButton[1].onclick = function() {turnPageLeft(titlePage, contentsPage);}
+    turnButton[0].parentNode.removeChild(turnButton[0]);
+
+    var p = document.createElement("p");
+    var br = document.createElement("br");
+    var node1 = document.createTextNode("Liber");
+    var node2 = document.createTextNode("Mathemagicus");
+    p.appendChild(node1);
+    p.appendChild(br);
+    p.appendChild(node2);
+    titlePage.appendChild(p);
+
+    return titlePage;
+  }
+  //
+  //This function handles the set up of the
+  //table of contents page. I need to make it
+  //look better
+  function contentsPage() {
+    let tableOfContents = document.createElement("div");
+    tableOfContents.className = "bookPage";
+    tableOfContents.id = "tableOfContents";
+
+    let quickButtons = makeQuickButtons(tableOfContents);
+
+    let quickButton = quickButtons.getElementsByClassName("quickButtons");
+    quickButton[1].onclick = function() {turnPageLeft(tableOfContents, statusPage);}
+    quickButton[2].onclick = function() {turnPageLeft(tableOfContents, spellsPage);}
+    quickButton[3].onclick = function() {turnPageLeft(tableOfContents, monstersPage);}
+
+    quickButton[0].parentNode.removeChild(quickButton[0]);
+
+    let pageTurnButtons = turnPageButtons(tableOfContents);
+    let turnButton = pageTurnButtons.getElementsByClassName("turnPageButtons");
+    turnButton[0].onclick = function() {turnPageRight(tableOfContents, makeTitlePage);}
+    turnButton[1].onclick = function() {turnPageLeft(tableOfContents, statusPage);}
+
+    let p = document.createElement("p");
+    p.style.textAlign = "center";
+    p.style.fontSize = "1.5em";
+    p.style.fontWeight = "bold";
+    p.style.textDecoration = "underline";
+    let br = document.createElement("br");
+    let node = document.createTextNode("Table of Contents");
+    p.appendChild(node);
+    p.appendChild(br);
+    tableOfContents.appendChild(p);
+
+    p = document.createElement("p");
+    br = document.createElement("br");
+    let span = document.createElement("span");
+    span.onclick = function() {turnPageLeft(tableOfContents, statusPage);}
+    let node1 = document.createTextNode("Status");
+    if (playerName.charAt(playerName.length - 1) == "s") {
+      var node2 = document.createTextNode("A list of " + playerName + "' progress.");
+    } else {
+      var node2 = document.createTextNode("A list of " + playerName + "'s progress.");
+    }
+    span.appendChild(node1);
+    p.appendChild(span);
+    p.appendChild(br);
+    p.appendChild(node2);
+    tableOfContents.appendChild(p);
+
+    p = document.createElement("p");
+    br = document.createElement("br");
+    span = document.createElement("span");
+    span.onclick = function() {turnPageLeft(tableOfContents, spellsPage);}
+    node1 = document.createTextNode("Spells");
+    node2 = document.createTextNode("A list of the spells " + playerName + " has learned.");
+
+    span.appendChild(node1);
+    p.appendChild(span);
+    p.appendChild(br);
+    p.appendChild(node2);
+    tableOfContents.appendChild(p);
+
+    p = document.createElement("p");
+    br = document.createElement("br");
+    span = document.createElement("span");
+    span.onclick = function() {turnPageLeft(tableOfContents, monstersPage);}
+    node1 = document.createTextNode("Monsters");
+    node2 = document.createTextNode("A list of the monsters " + playerName + " has encountered.");
+
+    span.appendChild(node1);
+    p.appendChild(span);
+    p.appendChild(br);
+    p.appendChild(node2);
+    tableOfContents.appendChild(p);
+
+
+    return tableOfContents;
+  }
+  //
+  //This function makes the layout of the status
+  //page of the player's book
+  function statusPage() {
+    let status = document.createElement("div");
+    status.className = "bookPage";
+    status.id = "statusPage";
+    //
+    //This makes the buttons at the top of the book
+    //for faster navigation
+    let quickButtons = makeQuickButtons(status);
+    //
+    //This assigns the proper function to the
+    //quick buttons at the top of the book
+    let quickButton = quickButtons.getElementsByClassName("quickButtons");
+    quickButton[0].onclick = function() {turnPageRight(status, contentsPage);}
+    quickButton[2].onclick = function() {turnPageLeft(status, spellsPage);}
+    quickButton[3].onclick = function() {turnPageLeft(status, monstersPage);}
+
+    quickButton[1].parentNode.removeChild(quickButton[1]);
+
+    let pageTurnButtons = turnPageButtons(status);
+    let turnButton = pageTurnButtons.getElementsByClassName("turnPageButtons");
+    turnButton[0].onclick = function() {turnPageRight(status, contentsPage);}
+    turnButton[1].onclick = function() {turnPageLeft(status, spellsPage);}
+
+    //
+    //This block makes and places the <div> and <image>
+    //elements for the status page of the book
+    let playerCameoDiv = document.createElement("div");
+    playerCameoDiv.id = "playerCameoDiv";
+    let playerCameoImg = document.createElement("img");
+    playerCameoImg.id = "playerCameoImg";
+    playerCameoImg.src = "./mages/" + mages[mageIndex][0];
+    playerCameoDiv.appendChild(playerCameoImg);
+    status.appendChild(playerCameoDiv);
+    //
+    //This makes the players name
+    let p = document.createElement("p");
+    let node1 = document.createTextNode(playerName);
+    let strong = document.createElement("strong");
+    let underline = document.createElement("u");
+    strong.appendChild(node1);
+    underline.appendChild(strong);
+    p.appendChild(underline);
+    p.style.fontSize = "1.5em";
+    status.appendChild(p);
+    //
+    //This displays the max health and damage of the player
+    p = document.createElement("p");
+    node1 = document.createTextNode("Max Health: " + maxHealth);
+    let node2 = document.createTextNode("Max Damage: " + playerDamage);
+    p.appendChild(node1);
+    let br = document.createElement("br");
+    p.appendChild(br);
+    p.appendChild(node2);
+    status.appendChild(p);
+    //
+    //This displays the total monsters killed
+    p = document.createElement("p");
+    node1 = document.createTextNode("Monsters Killed: " + totalMonstersKilled);
+    p.appendChild(node1);
+    status.appendChild(p);
+    //
+    //This long chunk displays the different levels of the player
+    p = document.createElement("p");
+    node1 = document.createTextNode("Addition Level: " + additionLevel);
+    node2 = document.createTextNode("Subtraction Level: " + subtractionLevel);
+    let node3 = document.createTextNode("Multiplication Level: " + multiplicationLevel);
+    let node4 = document.createTextNode("Division Level: " + divisionLevel);
+    p.appendChild(node1);
+    br = document.createElement("br");
+    p.appendChild(br);
+    p.appendChild(node2);
+    br = document.createElement("br");
+    p.appendChild(br);
+    p.appendChild(node3);
+    br = document.createElement("br");
+    p.appendChild(br);
+    p.appendChild(node4);
+    br = document.createElement("br");
+    p.appendChild(br);
+    status.appendChild(p);
+
+    let saveGame = document.createElement("input");
+    saveGame.id = "saveGame";
+    saveGame.type = "button";
+    saveGame.value = "Save Game";
+    status.appendChild(saveGame);
+
+    return status;
+  }
+  //
+  //This function makes the layout of the spells
+  //page of the player's book.
+  function spellsPage() {
+    let spells = document.createElement("div");
+    spells.className = "bookPage";
+    spells.id = "spellsPage";
+
+    let quickButtons = makeQuickButtons(spells);
+
+    let quickButton = quickButtons.getElementsByClassName("quickButtons");
+    quickButton[0].onclick = function() {turnPageRight(spells, contentsPage);}
+    quickButton[1].onclick = function() {turnPageRight(spells, statusPage);}
+    quickButton[3].onclick = function() {turnPageLeft(spells, monstersPage);}
+
+    quickButton[2].parentNode.removeChild(quickButton[2]);
+
+    let pageTurnButtons = turnPageButtons(spells);
+    let turnButton = pageTurnButtons.getElementsByClassName("turnPageButtons");
+    turnButton[0].onclick = function() {turnPageRight(spells, statusPage);}
+    if (spellArray[0] >= 0) {
+      turnButton[1].onclick = function() {turnPageLeft(spells, spellDetailPage, spellArray[0]);}
+    } else {
+      turnButton[1].onclick = function() {turnPageLeft(spells, monstersPage);}
+    }
+
+
+    if (playerName.charAt(playerName.length - 1) == "s") {
+      var text = document.createTextNode(playerName + "' Spells");
+    } else {
+      var text = document.createTextNode(playerName + "'s Spells");
+    }
+    var p = document.createElement("p");
+    var br = document.createElement("br");
+    var underline = document.createElement("u");
+    var strong = document.createElement("strong");
+    strong.appendChild(text);
+    underline.appendChild(strong);
+    p.appendChild(underline);
+    p.appendChild(br);
+    spells.appendChild(p);
+
+    //
+    //Iterates through the spells the player has acquired
+    //and places them in the spells object
+    for (let index of spellArray) {
+      span = document.createElement("span");
+      br = document.createElement("br");
+      text = document.createTextNode(spellBookContent[index][0]);
+      span.onclick = function() {turnPageLeft(spells, spellDetailPage, (index - 1));}
+      span.appendChild(text);
+      span.appendChild(br);
+      spells.appendChild(span);
+      index++;
+    }
+
+    return spells;
+  }
+  //
+  //This function handles the individual spell pages
+  function spellDetailPage(index) {
+    let spell = document.createElement("div");
+    spell.className = "bookPage";
+    spell.id = "spellsDetailPage";
+
+    let quickButtons = makeQuickButtons(spell);
+
+    let quickButton = quickButtons.getElementsByClassName("quickButtons");
+    quickButton[0].onclick = function() {turnPageRight(spell, contentsPage);}
+    quickButton[1].onclick = function() {turnPageRight(spell, statusPage);}
+    quickButton[2].onclick = function() {turnPageRight(spell, spellsPage);}
+    quickButton[3].onclick = function() {turnPageLeft(spell, monstersPage);}
+
+    let pageTurnButtons = turnPageButtons(spell);
+    let turnButton = pageTurnButtons.getElementsByClassName("turnPageButtons");
+
+    if (spellArray.indexOf(index) === 0) {
+      turnButton[0].onclick = function() {turnPageRight(spell, spellsPage);}
+    } else {
+      turnButton[0].onclick = function() {turnPageRight(spell, spellDetailPage, (index - 1));}
+    }
+    if ((spellArray.indexOf(index)) < (spellArray.length - 1)) {
+      turnButton[1].onclick = function() {turnPageLeft(spell, spellDetailPage, (index + 1));}
+    } else {
+      turnButton[1].onclick = function() {turnPageLeft(spell, monstersPage);}
+    }
+
+    var spellDiv = document.createElement("div");
+    spellDiv.id = "spellDetailDiv";
+    var spellImg = document.createElement("img");
+    spellImg.src = "./scrolls/" + spellBookContent[index][1];
+    spellImg.style.height = "330px";
+    spellDiv.appendChild(spellImg);
+    spell.appendChild(spellDiv);
+
+    return spell;
+  }
+
+  function monstersPage() {
+    let monsters = document.createElement("div");
+    monsters.className = "bookPage";
+    monsters.id = "monsterPage";
+
+    let quickButtons = makeQuickButtons(monsters);
+
+    let quickButton = quickButtons.getElementsByClassName("quickButtons");
+    quickButton[0].onclick = function() {turnPageRight(monsters, contentsPage);}
+    quickButton[1].onclick = function() {turnPageRight(monsters, statusPage);}
+    quickButton[2].onclick = function() {turnPageRight(monsters, spellsPage);}
+    quickButton[3].parentNode.removeChild(quickButton[3]);
+
+    let pageTurnButtons = turnPageButtons(monsters);
+    let turnButton = pageTurnButtons.getElementsByClassName("turnPageButtons");
+    if (spellArray[0] >= 0) {
+      turnButton[0].onclick = function() {turnPageRight(monsters, spellDetailPage, (spellArray[spellArray.length - 1]));}
+    } else {
+      turnButton[0].onclick = function() {turnPageRight(monsters, spellsPage);}
+    }
+    if ((additionMonstersKilled[0] + 1)) {
+      turnButton[1].onclick = function() {turnPageLeft(monsters, monsterBasePage, "+");}
+    } else {
+      turnButton[1].parentNode.removeChild(turnButton[1]);
+    }
+
+    let p = document.createElement("p");
+    let strong = document.createElement("strong");
+    let u = document.createElement("u");
+    let br = document.createElement("br");
+    let node = document.createTextNode("Capitulum Prodigium");
+    strong.appendChild(node);
+    u.appendChild(strong);
+    p.appendChild(u);
+    p.appendChild(br);
+    monsters.appendChild(p);
+
+    let span = document.createElement("span");
+    strong = document.createElement("strong");
+    u = document.createElement("u");
+    br = document.createElement("br");
+    node = document.createTextNode("Addition Monsters");
+    let node2 = document.createTextNode(": " + additionMonstersKilled.length);
+    span.appendChild(node);
+    span.onclick = function() {turnPageLeft(monsters, monsterBasePage, "+");}
+    monsters.appendChild(span);
+    monsters.appendChild(node2);
+    monsters.appendChild(br);
+
+    span = document.createElement("span");
+    strong = document.createElement("strong");
+    u = document.createElement("u");
+    br = document.createElement("br");
+    node = document.createTextNode("Subtraction Monsters");
+    node2 = document.createTextNode(": " + subtractionMonstersKilled.length);
+    span.appendChild(node);
+    span.onclick = function() {turnPageLeft(monsters, monsterBasePage, "-");}
+    monsters.appendChild(span);
+    monsters.appendChild(node2);
+    monsters.appendChild(br);
+
+    span = document.createElement("span");
+    strong = document.createElement("strong");
+    u = document.createElement("u");
+    br = document.createElement("br");
+    node = document.createTextNode("Multiplication Monsters");
+    node2 = document.createTextNode(": " + multiplicationMonstersKilled.length)
+    span.appendChild(node);
+    span.onclick = function() {turnPageLeft(monsters, monsterBasePage, "*");}
+    monsters.appendChild(span);
+    monsters.appendChild(node2);
+    monsters.appendChild(br);
+
+    span = document.createElement("span");
+    strong = document.createElement("strong");
+    u = document.createElement("u");
+    br = document.createElement("br");
+    node = document.createTextNode("Division Monsters");
+    node2 = document.createTextNode(": " + divisionMonstersKilled.length);
+    span.appendChild(node);
+    span.onclick = function() {turnPageLeft(monsters, monsterBasePage, "/");}
+    monsters.appendChild(span);
+    monsters.appendChild(node2);
+    monsters.appendChild(br);
+
+    return monsters;
+  }
+
+  function monsterBasePage(monsterClass) {
+    let monsterList = document.createElement("div");
+    monsterList.className = "bookPage";
+    monsterList.id = "monsterListPage";
+
+    var monsterArray;
+    var masterArray;
+    var monsterNames;
+    var last;
+
+    let quickButtons = makeQuickButtons(monsterList);
+
+    let quickButton = quickButtons.getElementsByClassName("quickButtons");
+    quickButton[0].onclick = function() {turnPageRight(monsterList, contentsPage);}
+    quickButton[1].onclick = function() {turnPageRight(monsterList, statusPage);}
+    quickButton[2].onclick = function() {turnPageRight(monsterList, spellsPage);}
+    quickButton[3].onclick = function() {turnPageRight(monsterList, monstersPage);}
+
+    let pageTurnButtons = turnPageButtons(monsterList);
+    var turnButton = pageTurnButtons.getElementsByClassName("turnPageButtons");
+
+    let p = document.createElement("p");
+    p.style.textDecoration = "underline";
+    p.style.fontWeight = "bold";
+    p.style.fontSize = "1.5em";
+    p.style.margin = "10px";
+    var node;
+    let br = document.createElement("br");
+
+    switch (monsterClass) {
+      case "+":
+        monsterArray = additionMonstersKilled;
+        masterArray = additionMonsters;
+        monsterNames = additionMonsterNames;
+        node = document.createTextNode("Addition Monsters");
+        turnButton[0].onclick = function() {turnPageRight(monsterList, monstersPage);}
+        turnButton[1].onclick = function() {turnPageLeft(monsterList, monsterDetailPage, ["+", additionMonstersKilled[0]]);}
+        break;
+      case "-":
+        monsterArray = subtractionMonstersKilled;
+        masterArray = subtractionMonsters;
+        monsterNames = subtractionMonsterNames;
+        node = document.createTextNode("Subtraction Monsters");
+        last = (additionMonstersKilled.length - 1);
+        turnButton[0].onclick = function() {turnPageRight(monsterList, monsterDetailPage, ["+", additionMonstersKilled[last]]);}
+        turnButton[1].onclick = function() {turnPageLeft(monsterList, monsterDetailPage, ["-", subtractionMonstersKilled[0]]);}
+        break;
+      case "*":
+        monsterArray = multiplicationMonstersKilled;
+        masterArray = multiplicationMonsters;
+        monsterNames = multiplicationMonsterNames;
+        node = document.createTextNode("Multiplication Monsters");
+        last = (subtractionMonstersKilled.length - 1);
+        turnButton[0].onclick = function() {turnPageRight(monsterList, monsterDetailPage, ["-", subtractionMonstersKilled[last]]);}
+        turnButton[1].onclick = function() {turnPageLeft(monsterList, monsterDetailPage, ["*", multiplicationMonstersKilled[0]]);}
+        break;
+      case "/":
+        monsterArray = divisionMonstersKilled;
+        masterArray = divisionMonsters;
+        monsterNames = divisionMonsterNames;
+        node = document.createTextNode("Division Monsters");
+        last = (multiplicationMonstersKilled.length - 1);
+        turnButton[0].onclick = function() {turnPageRight(monsterList, monsterDetailPage, ["*", multiplicationMonstersKilled[last]]);}
+        turnButton[1].onclick = function() {turnPageLeft(monsterList, monsterDetailPage, ["/", divisionMonstersKilled[0]]);}
+        break;
+    }
+
+    p.appendChild(node);
+    p.appendChild(br);
+    monsterList.appendChild(p);
+
+    let table = document.createElement("table");
+    table.id = "monsterListTable";
+
+    for (let i = 0; i < monsterArray.length; i += 3) {
+      let tr = document.createElement("tr");
+      let td1 = document.createElement("td");
+      let node1 = document.createTextNode(monsterArray[i] + ". " + monsterNames[monsterArray[i]]);
+      td1.appendChild(node1);
+      td1.onclick = function() {turnPageLeft(monsterList, monsterDetailPage, [monsterClass, monsterArray[i]]);}
+      tr.appendChild(td1);
+      if (monsterArray[i + 1]) {
+        let td2 = document.createElement("td");
+        let node2 = document.createTextNode(monsterArray[i + 1] + ". " + monsterNames[monsterArray[i + 1]]);
+        td2.appendChild(node2);
+        td2.onclick = function() {turnPageLeft(monsterList, monsterDetailPage, [monsterClass, monsterArray[i + 1]]);}
+        tr.appendChild(td2);
+      }
+      if (monsterArray[i + 2]) {
+        let td3 = document.createElement("td");
+        let node3 = document.createTextNode(monsterArray[i + 2] + ". " + monsterNames[monsterArray[i + 2]]);
+        td3.appendChild(node3);
+        td3.onclick = function() {turnPageLeft(monsterList, monsterDetailPage, [monsterClass, monsterArray[i + 2]]);}
+        tr.appendChild(td3);
+      }
+      table.appendChild(tr);
+    }
+
+    monsterList.appendChild(table);
+
+    return monsterList;
+  }
+
+  function monsterDetailPage(currentMonster) {
+    //
+    //currentMonster[0] = operation; indicates which set of arrays to use
+    //currentMonster[1] = index of monster to display
+
+    var monsterArray;
+    var masterArray;
+    var monsterNames;
+    var imgSrcString = "";
+
+    let monsterDetail = document.createElement("div");
+    monsterDetail.className = "bookPage";
+    monsterDetail.id = "monsterDetailPage";
+
+    let quickButtons = makeQuickButtons(monsterDetail);
+
+    let quickButton = quickButtons.getElementsByClassName("quickButtons");
+    quickButton[0].onclick = function() {turnPageRight(monsterDetail, contentsPage);}
+    quickButton[1].onclick = function() {turnPageRight(monsterDetail, statusPage);}
+    quickButton[2].onclick = function() {turnPageRight(monsterDetail, spellsPage);}
+    quickButton[3].onclick = function() {turnPageRight(monsterDetail, monstersPage);}
+
+    let pageTurnButtons = turnPageButtons(monsterDetail);
+    let turnButton = pageTurnButtons.getElementsByClassName("turnPageButtons");
+
+    switch (currentMonster[0]) {
+      case "+":
+        monsterArray = additionMonstersKilled;
+        masterArray = additionMonsters;
+        monsterNames = additionMonsterNames;
+        imgSrcString = "./monsters/addition/";
+        if (monsterArray.indexOf(currentMonster[1]) == 0) {
+          turnButton[0].onclick = function() {turnPageRight(monsterDetail, monsterBasePage, "+");}
+        } else {
+          let next = (monsterArray.indexOf(currentMonster[1]) - 1);
+          turnButton[0].onclick = function() {turnPageRight(monsterDetail, monsterDetailPage, ["+", monsterArray[next]]);}
+        }
+        if (monsterArray.indexOf(currentMonster[1]) < (monsterArray.length - 1)) {
+          let next = (monsterArray.indexOf(currentMonster[1]) + 1);
+          turnButton[1].onclick = function() {turnPageLeft(monsterDetail, monsterDetailPage, ["+", monsterArray[next]]);}
+        } else {
+          if ((subtractionMonstersKilled[0] + 1)) {
+            turnButton[1].onclick = function() {turnPageLeft(monsterDetail, monsterBasePage, "-");}
+          } else {
+            turnButton[1].parentNode.removeChild(turnButton[1]);
+          }
+        }
+        break;
+      case "-":
+        monsterArray = subtractionMonstersKilled;
+        masterArray = subtractionMonsters;
+        monsterNames = subtractionMonsterNames;
+        imgSrcString = "./monsters/subtraction/";
+        if (monsterArray.indexOf(currentMonster[1]) == 0) {
+          turnButton[0].onclick = function() {turnPageRight(monsterDetail, monsterBasePage, "-");}
+        } else {
+          let next = (monsterArray.indexOf(currentMonster[1]) - 1);
+          turnButton[0].onclick = function() {turnPageRight(monsterDetail, monsterDetailPage, ["-", monsterArray[next]]);}
+        }
+        if (monsterArray.indexOf(currentMonster[1]) < (monsterArray.length - 1)) {
+          let next = (monsterArray.indexOf(currentMonster[1]) + 1);
+          turnButton[1].onclick = function() {turnPageLeft(monsterDetail, monsterDetailPage, ["-", monsterArray[next]]);}
+        } else {
+          if ((multiplicationMonstersKilled[0] + 1)) {
+            turnButton[1].onclick = function() {turnPageLeft(monsterDetail, monsterBasePage, "*");}
+          } else {
+            turnButton[1].parentNode.removeChild(turnButton[1]);
+          }
+        }
+        break;
+      case "*":
+        monsterArray = multiplicationMonstersKilled;
+        masterArray = multiplicationMonsters;
+        monsterNames = multiplicationMonsterNames;
+        imgSrcString = "./monsters/multiplication/";
+        if (monsterArray.indexOf(currentMonster[1]) == 0) {
+          turnButton[0].onclick = function() {turnPageRight(monsterDetail, monsterBasePage, "*");}
+        } else {
+          let next = (monsterArray.indexOf(currentMonster[1]) - 1);
+          turnButton[0].onclick = function() {turnPageRight(monsterDetail, monsterDetailPage, ["*", monsterArray[next]]);}
+        }
+        if (monsterArray.indexOf(currentMonster[1]) < (monsterArray.length - 1)) {
+          let next = (monsterArray.indexOf(currentMonster[1]) + 1);
+          turnButton[1].onclick = function() {turnPageLeft(monsterDetail, monsterDetailPage, ["*", monsterArray[next]]);}
+        } else {
+          if ((divisionMonstersKilled[0] + 1)) {
+            turnButton[1].onclick = function() {turnPageLeft(monsterDetail, monsterBasePage, "/");}
+          } else {
+            turnButton[1].parentNode.removeChild(turnButton[1]);
+          }
+        }
+        break;
+      case "/":
+        monsterArray = divisionMonstersKilled;
+        masterArray = divisionMonsters;
+        monsterNames = divisionMonsterNames;
+        imgSrcString = "./monsters/division/";
+        if (monsterArray.indexOf(currentMonster[1]) == 0) {
+          turnButton[0].onclick = function() {turnPageRight(monsterDetail, monsterBasePage, "/");}
+        } else {
+          let next = (monsterArray.indexOf(currentMonster[1]) - 1);
+          turnButton[0].onclick = function() {turnPageRight(monsterDetail, monsterDetailPage, ["/", monsterArray[next]]);}
+        }
+        if (monsterArray.indexOf(currentMonster[1]) < (monsterArray.length - 1)) {
+          let next = (monsterArray.indexOf(currentMonster[1]) + 1);
+          turnButton[1].onclick = function() {turnPageLeft(monsterDetail, monsterDetailPage, ["/", monsterArray[next]]);}
+        } else {
+          turnButton[1].parentNode.removeChild(turnButton[1]);
+        }
+        break;
+    }
+
+    let p = document.createElement("p");
+    p.style.textDecoration = "underline";
+    p.style.fontWeight = "bold";
+    p.style.fontSize = "1.5em";
+    //p.style.margin = "10px";
+    p.style.textAlign = "center";
+    var node = document.createTextNode(currentMonster[1] + ". " + monsterNames[currentMonster[1]]);
+    let br = document.createElement("br");
+
+    p.appendChild(node);
+    monsterDetail.appendChild(p);
+
+    p = document.createElement("p");
+    node = document.createTextNode("Hit Points: " + Math.ceil(((currentMonster[1] + 1) / 3) + 1));
+    p.appendChild(node);
+    monsterDetail.appendChild(p);
+
+    p = document.createElement("p");
+    node = document.createTextNode("Damage: " + Math.ceil((currentMonster[1] + 1) / 9));
+    p.appendChild(node);
+    monsterDetail.appendChild(p);
+
+    if (currentMonster[1] < 30) {
+      var monsterLevel = Math.ceil((currentMonster[1] + 1) / 3);
+    } else {
+      var monsterLevel = (((currentMonster[1] % 30) * 2) + 2) + " Boss";
+    }
+    p = document.createElement("p");
+    node = document.createTextNode("Level " + monsterLevel);
+    p.appendChild(node);
+    monsterDetail.appendChild(p);
+
+    let monsterDetailDiv = document.createElement("div");
+    monsterDetailDiv.id = "monsterDetailDiv";
+    let monsterDetailImg = document.createElement("img");
+    monsterDetailImg.id = "monsterImg";
+    monsterDetailImg.src = imgSrcString + masterArray[currentMonster[1]];
+    monsterDetailDiv.appendChild(monsterDetailImg);
+    monsterDetail.appendChild(monsterDetailDiv);
+
+    return monsterDetail;
+  }
+
+  //
+  //This function makes the quick buttons that
+  //go at the top of most book pages
+  function makeQuickButtons(targetElement) {
+    let quickButtonDiv = document.createElement("div");
+    quickButtonDiv.id = "quickButtonDiv";
+
+    let contentsButton = document.createElement("input");
+    contentsButton.className = "quickButtons";
+    contentsButton.type = "button";
+    contentsButton.value = "TOC";
+    quickButtonDiv.appendChild(contentsButton);
+
+    let statusButton = document.createElement("input");
+    statusButton.className = "quickButtons";
+    statusButton.type = "button";
+    statusButton.value = "Status";
+    quickButtonDiv.appendChild(statusButton);
+
+    let spellsButton = document.createElement("input");
+    spellsButton.className = "quickButtons";
+    spellsButton.type = "button";
+    spellsButton.value = "Spells";
+    quickButtonDiv.appendChild(spellsButton);
+
+    let monstersButton = document.createElement("input");
+    monstersButton.className = "quickButtons";
+    monstersButton.type = "button";
+    monstersButton.value = "Monsters";
+    quickButtonDiv.appendChild(monstersButton);
+
+    targetElement.appendChild(quickButtonDiv);
+
+    return quickButtonDiv;
+  }
+
+  function turnPageButtons(targetElement) {
+    let pageTurnButtons = document.createElement("div");
+    pageTurnButtons.id = "pageTurnButtons";
+
+    let leftButton = document.createElement("input");
+    leftButton.className = "turnPageButtons";
+    leftButton.id = "leftPageButton";
+    leftButton.type = "button";
+    leftButton.value = "<";
+    pageTurnButtons.appendChild(leftButton);
+
+    let rightButton = document.createElement("input");
+    rightButton.className = "turnPageButtons";
+    rightButton.id = "rightPageButton";
+    rightButton.type = "button";
+    rightButton.value = ">";
+    pageTurnButtons.appendChild(rightButton);
+
+    targetElement.appendChild(pageTurnButtons);
+
+    return(pageTurnButtons);
+  }
 }
 //
 //The function that handles the text typing effect
@@ -793,6 +1597,8 @@ function checkAnswer(answer, damage) {
     //This if checks to see if the monster is killed or not
     if (monster.hp < 1) {
       monstersKilled++;
+      totalMonstersKilled++;
+      checkMonster();
       problemDiv.innerHTML = "Great job, you defeated the " + monster.name + "!<br /><br />";
       //
       //This if checks to see if you've killed enough monsters
@@ -912,6 +1718,7 @@ function checkAnswer(answer, damage) {
         switch (operator) {
           case "+":
             if (playerLevel == 2) { //Fibonacci Spell
+              spellArray.push(0);
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
               insertNextButton("Next", function() {dropScroll("./scrolls/fibonacciScroll.gif");});
@@ -925,6 +1732,8 @@ function checkAnswer(answer, damage) {
               insertNextButton("Next", dungeonEntrance);
             }
             if (playerLevel == 6) { //Health Spell
+              spellArray.push(4);
+              spellArray.sort();
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               maxHealth += 2;
               playerHealth += 2;
@@ -934,6 +1743,8 @@ function checkAnswer(answer, damage) {
               insertNextButton("Next", function() {dropScroll("squareScroll.gif");});
             }
             if (playerLevel == 8) { //Pyramid/Time Spell
+              spellArray.push(5);
+              spellArray.sort();
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
               insertNextButton("Next", function() {dropScroll("./scrolls/pyramidScroll.gif");});
@@ -950,6 +1761,8 @@ function checkAnswer(answer, damage) {
             break;
           case "-":
             if (playerLevel == 2) { //Triangle/Fireball Spell
+              spellArray.push(3);
+              spellArray.sort();
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
               insertNextButton("Next", function() {dropScroll("./scrolls/triangleScroll.gif");});
@@ -972,6 +1785,8 @@ function checkAnswer(answer, damage) {
               insertNextButton("Next", dungeonEntrance);
             }
             if (playerLevel == 8) { //Pentagon/Reduce Terms Spell
+              spellArray.push(6);
+              spellArray.sort();
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
               insertNextButton("Next", function() {dropScroll("./scrolls/pentagonScroll.gif");});
@@ -988,6 +1803,8 @@ function checkAnswer(answer, damage) {
             break;
           case "*":
             if (playerLevel == 2) { //Upgraded Hints
+              spellArray.push(1);
+              spellArray.sort();
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
               insertNextButton("Next", function() {dropScroll("./scrolls/fibonacciScroll2.gif");});
@@ -1010,6 +1827,8 @@ function checkAnswer(answer, damage) {
               insertNextButton("Next", dungeonEntrance);
             }
             if (playerLevel == 8) { //Hexagon/Strength Spell
+              spellArray.push(7);
+              spellArray.sort();
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
               insertNextButton("Next", function() {dropScroll("./scrolls/hexagonScroll.gif");});
@@ -1026,11 +1845,15 @@ function checkAnswer(answer, damage) {
             break;
           case "/":
             if (playerLevel == 2) { //Upgraded Hints
+              spellArray.push(2);
+              spellArray.sort();
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
               insertNextButton("Next", function() {dropScroll("./scrolls/fibonacciScroll3.gif");});
             }
-            if (playerLevel == 4) { //Cube Spell
+            if (playerLevel == 4) { //Cube/Polymorph Spell
+              spellArray.push(8);
+              spellArray.sort();
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
               insertNextButton("Next", function() {dropScroll("./scrolls/cubeScroll.gif");});
@@ -1044,7 +1867,9 @@ function checkAnswer(answer, damage) {
               healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
               insertNextButton("Next", dungeonEntrance);
             }
-            if (playerLevel == 8) { //Star Spell
+            if (playerLevel == 8) { //Star/Nova Spell
+              spellArray.push(9);
+              spellArray.sort();
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               progressLevel();
               insertNextButton("Next", function() {dropScroll("./scrolls/starScroll.gif");});
@@ -1229,6 +2054,43 @@ function checkAnswer(answer, damage) {
         starSpells++;
         document.getElementById("starCount").innerHTML = starSpells;
       }
+    }
+  }
+
+  function checkMonster() {
+    switch(operator) {
+      case "+":
+        if (additionMonstersKilled.includes(monster.index)) {
+          break;
+        } else {
+          additionMonstersKilled.push(monster.index);
+          additionMonstersKilled.sort(function(a, b){return a - b});
+        }
+        break;
+      case "-":
+        if (subtractionMonstersKilled.includes(monster.index)) {
+          break;
+        } else {
+          subtractionMonstersKilled.push(monster.index);
+          subtractionMonstersKilled.sort(function(a, b){return a - b});
+        }
+        break;
+      case "*":
+        if (multiplicationMonstersKilled.includes(monster.index)) {
+          break;
+        } else {
+          multiplicationMonstersKilled.push(monster.index);
+          multiplicationMonstersKilled.sort(function(a, b){return a - b});
+        }
+        break;
+      case "/":
+        if (divisionMonstersKilled.includes(monster.index)) {
+          break;
+        } else {
+          divisionMonstersKilled.push(monster.index);
+          divisionMonstersKilled.sort(function(a, b){return a - b});
+        }
+        break;
     }
   }
 }
@@ -1489,7 +2351,7 @@ function newMonster(playerLevel) {
   //Level 10  11 HP  4 dmg
   this.hp = Math.ceil(((this.index + 1) / 3) + 1);
   this.maxHp = this.hp;
-  this.damage = Math.ceil(playerLevel / 3);
+  this.damage = Math.ceil((this.index + 1) / 9);
   switch (operator) {
     case "+":
       this.src = "./monsters/addition/" + additionMonsters[this.index];
@@ -1526,8 +2388,8 @@ function newBoss() {
   //Boss 4  Level 8   25 HP   4 dmg
   //Boss 5  Level 10  30 HP   5 dmg
 
-  //this.hp = (playerLevel * 2) + (playerLevel / 2) + 5;
-  this.hp = 1; //I only use this for testing and debugging
+  this.hp = (playerLevel * 2) + (playerLevel / 2) + 5;
+  //this.hp = 1; //I only use this for testing and debugging
   this.maxHp = this.hp;
   this.damage = (Math.floor(this.hp / 10) + 2);
   //
@@ -2028,6 +2890,9 @@ function castSquare() {
       playArea.classList.remove("playAreaBlue");
 
       playerHealth += heal;
+      if (playerHealth > maxHealth) {
+        playerHealth = maxHealth;
+      }
       var healthBarFront = document.getElementById("healthBarFront");
       healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
 
