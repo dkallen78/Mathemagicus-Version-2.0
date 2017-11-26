@@ -1501,7 +1501,7 @@ function battle() {
         algebraFlash--; //One less time to run the function
       }
     }
-  } else if (getRandomNumber(0, 0) <= monster.index) {
+  } else if (getRandomNumber(0, 100) <= monster.index) {
     problemDiv.innerHTML = "The " + monster.name + " used Sequence!";
     sequence = true;
     terms = getTerms("sequence");
