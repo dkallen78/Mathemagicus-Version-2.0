@@ -30,7 +30,7 @@ I found a few bugs in the Liber Mathemagicus functionality. Adding the monsters 
 
 The feature update I made had to do w/ how the terms of the problems are determined. Originally it had to do with the player's level. The higher the player's level, the more difficult a problem could be. Now the variable controlling the potential difficulty of the problems is based on the monster itself. So no matter what level you are, a level one monster is only ever going to produce level one problems.
 
-I also added a feature that changes the border of the <div> containing the monster image in the Liber Mathemagicus based on how many of that monster you have killed. I think I'm going to have to modify it though because the first border change happens after you defeat 10 of that type and at addition level 5 I have yet to defeat 10 of any one monster...
+I also added a feature that changes the border of the \<div\> containing the monster image in the Liber Mathemagicus based on how many of that monster you have killed. I think I'm going to have to modify it though because the first border change happens after you defeat 10 of that type and at addition level 5 I have yet to defeat 10 of any one monster...
 
 I've also begun marking code that could be "deredundified." I swear that's a word and I'm sticking to it.
 
