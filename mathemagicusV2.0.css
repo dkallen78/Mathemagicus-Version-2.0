@@ -506,16 +506,24 @@ Controls the text on the status page of
 the monster book*/
 #statusPage p {
   text-align: left;
-  font-size: 1.25em;
+  font-size: 1.125em;
+  font-weight: bold;
   margin-left: 10px;
+}
+
+#statusPage span {
+  display: inline-block;
+  margin-left: 20px;
+  font-size: .75em;
+  font-weight: normal;
 }
 /*
 These two selectors control the positioning and
 look of the save game button*/
 #saveGame {
   position: absolute;
-  left: 10px;
-  bottom: 110px;
+  left: 287px;
+  bottom: 200px;
   background-color: rgba(0,0,0,0.125);
   border-radius: 5px;
   border: 1px solid black;
@@ -838,7 +846,9 @@ that flashes when the player is hit*/
   margin: auto;
   z-index: 2;
 }
-
+/*
+Styles the little box that displays how much
+damage the player or a monster receives*/
 #damageDiv {
   position: absolute;
   z-index: 3;
@@ -873,7 +883,6 @@ learns a new spell*/
   z-index: 2;
   transition: filter 1000ms;
 }
-
 /*
 This handles the positioning and style of
 the button that shows up on the scrolls.

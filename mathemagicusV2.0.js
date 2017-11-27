@@ -36,6 +36,10 @@ var damagePlayer, damageMonster;
 //Variables for displaying the math problems
 var terms = [];
 var answer;
+var additionAverage = [0, 0];
+var subtractionAverage = [0, 0];
+var multiplicationAverage = [0, 0];
+var divisionAverage = [0, 0];
 var algebra = false;
 var sequence = false;
 
@@ -284,7 +288,7 @@ function newGame() {
   //This block displays the "Enter your name" prompt
   let enterNameDiv = document.createElement("div");
   enterNameDiv.id = "enterNameDiv";
-  enterNameDiv.id = "textBox";
+  enterNameDiv.className = "textBox";
   let enterName = document.createTextNode("Please enter your name:");
   enterNameDiv.appendChild(enterName);
   lineBreak = document.createElement("br");
@@ -294,7 +298,7 @@ function newGame() {
   let nameTextBox = document.createElement("input");
   nameTextBox.type = "text";
   nameTextBox.id = "nameTextBox";
-  nameTextBox.onkeypress = function() {if(event.keyCode==13) chooseCharacter()};
+  nameTextBox.setAttribute("onKeyDown", "if(event.keyCode==13) chooseCharacter()")
   enterNameDiv.appendChild(nameTextBox);
   lineBreak = document.createElement("br");
   enterNameDiv.appendChild(lineBreak);
@@ -792,6 +796,7 @@ function dungeonEntrance() {
     underline.appendChild(strong);
     p.appendChild(underline);
     p.style.fontSize = "1.5em";
+    p.style.marginBottom = "10px";
     status.appendChild(p);
     //
     //This displays the max health and damage of the player
@@ -811,7 +816,53 @@ function dungeonEntrance() {
     status.appendChild(p);
     //
     //This long chunk displays the different levels of the player
+
     p = document.createElement("p");
+    let node = document.createTextNode("Addition Level: " + additionLevel);
+    p.appendChild(node);
+    br = document.createElement("br");
+    p.appendChild(br);
+    let averageInfo = appendAverageInfo(additionAverage);
+    p.appendChild(averageInfo);
+    br = document.createElement("br");
+    p.appendChild(br)
+
+    node = document.createTextNode("Subtraction Level: " + subtractionLevel);
+    p.appendChild(node);
+    br = document.createElement("br");
+    p.appendChild(br)
+    averageInfo = appendAverageInfo(subtractionAverage);
+    p.appendChild(averageInfo);
+    br = document.createElement("br");
+    p.appendChild(br);
+
+
+    node = document.createTextNode("Multiplication Level: " + multiplicationLevel);
+    p.appendChild(node);
+    br = document.createElement("br");
+    p.appendChild(br)
+    averageInfo = appendAverageInfo(multiplicationAverage);
+    p.appendChild(averageInfo);
+    br = document.createElement("br");
+    p.appendChild(br);
+
+    node = document.createTextNode("Division Level: " + divisionLevel);
+    p.appendChild(node);
+    br = document.createElement("br");
+    p.appendChild(br)
+    averageInfo = appendAverageInfo(divisionAverage);
+    p.appendChild(averageInfo);
+
+    status.appendChild(p);
+
+    /*let span = document.createElement("span");
+    node = document.createTextNode = ("Average Answer Time: " + additionAverage[0]);
+    span.appendChild(node);
+    span.appendChild(br);
+    node = document.createTextNode = ("Questions Answered: " + additionAverage[1]);
+    span.appendChild(node);
+    p.appendChild(span);
+
     node1 = document.createTextNode("Addition Level: " + additionLevel);
     node2 = document.createTextNode("Subtraction Level: " + subtractionLevel);
     let node3 = document.createTextNode("Multiplication Level: " + multiplicationLevel);
@@ -827,8 +878,7 @@ function dungeonEntrance() {
     p.appendChild(br);
     p.appendChild(node4);
     br = document.createElement("br");
-    p.appendChild(br);
-    status.appendChild(p);
+    p.appendChild(br);*/
 
     let saveGame = document.createElement("input");
     saveGame.id = "saveGame";
@@ -838,6 +888,17 @@ function dungeonEntrance() {
     status.appendChild(saveGame);
 
     return status;
+
+    function appendAverageInfo(array) {
+      let span = document.createElement("span");
+      let node = document.createTextNode("Average Answer Time: " + array[0].toFixed(2));
+      span.appendChild(node);
+      let br = document.createElement("br");
+      span.appendChild(br);
+      node = document.createTextNode("Questions Answered: " + array[1]);
+      span.appendChild(node);
+      return span;
+    }
   }
   //
   //This function makes the layout of the spells
@@ -1751,7 +1812,23 @@ function checkAnswer(answer, damage) {
       damageMonster = setInterval(monsterDamage, 100);
       requestAnimationFrame(function() {damageDiv.style.bottom = "100%";});
       requestAnimationFrame(function() {damageDiv.style.filter = "opacity(0%)";});
-
+      if (answer != "spell") {
+        var newNumber = Number(document.getElementById("countdownTimer").innerHTML)
+        switch (operator) {
+          case "+":
+            additionAverage = getAverage(additionAverage, newNumber);
+            break;
+          case "-":
+            subtractionAverage = getAverage(subtractionAverage, newNumber);
+            break;
+          case "*":
+            multiplicationAverage = getAverage(multiplicationAverage, newNumber);
+            break;
+          case "/":
+            divisionAverage = getAverage(divisionAverage, newNumber);
+            break;
+        }
+      }
     }
 
     //
@@ -1802,6 +1879,12 @@ function checkAnswer(answer, damage) {
       problemDiv.innerHTML = "The answer was " + Math.abs(answer) + "<br /><br />";
       insertNextButton("Next Problem", battle);
     }
+  }
+
+  function getAverage(averageTime, newNumber) {
+    averageTime[0] = ((averageTime[0] * averageTime[1]) + newNumber) / (averageTime[1] + 1);
+    averageTime[1]++;
+    return averageTime;
   }
   //
   //This function handles the animation for monster damage
@@ -1909,10 +1992,10 @@ function checkAnswer(answer, damage) {
               problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
               maxHealth += 2;
               playerHealth += 2;
-              var healthBarFront = document.getElementById("./scrolls/healthBarFront");
+              var healthBarFront = document.getElementById("healthBarFront");
               healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
               progressLevel();
-              insertNextButton("Next", function() {dropScroll("squareScroll.gif");});
+              insertNextButton("Next", function() {dropScroll("./scrolls/squareScroll.gif");});
             }
             if (playerLevel == 8) { //Pyramid/Time Spell
               spellArray.push(5);
@@ -2166,7 +2249,7 @@ function checkAnswer(answer, damage) {
     //
     //Checks for Fibonacci Numbers
     if ((additionLevel > 2) && (fibonacciNumbers.includes(answer))) {
-      if (fibonacciSpells < 100) {
+      if (fibonacciSpells < 99) {
         fibonacciSpells++;
         document.getElementById("fibonacciCount").innerHTML = fibonacciSpells;
       }
@@ -2174,7 +2257,7 @@ function checkAnswer(answer, damage) {
     //
     //Checks for Triangle Numbers
     if ((subtractionLevel > 2) && (triangleNumbers.includes(answer))) {
-      if (triangleSpells < 100) {
+      if (triangleSpells < 99) {
         triangleSpells++;
         document.getElementById("triangleCount").innerHTML = triangleSpells;
       }
@@ -2182,7 +2265,7 @@ function checkAnswer(answer, damage) {
     //
     //Checks for Square Numbers
     if ((additionLevel > 6) && (squareNumbers.includes(answer))) {
-      if (squareSpells < 100) {
+      if (squareSpells < 99) {
         squareSpells++;
         document.getElementById("triangleCount").innerHTML = triangleSpells;
       }
@@ -2190,7 +2273,7 @@ function checkAnswer(answer, damage) {
     //
     //Checks for Pentagon Numbers
     if ((subtractionLevel > 8) && (pentagonNumbers.includes(answer))) {
-      if (pentagonSpells < 100) {
+      if (pentagonSpells < 99) {
         pentagonSpells++;
         document.getElementById("pentagonCount").innerHTML = pentagonSpells;
       }
@@ -2198,7 +2281,7 @@ function checkAnswer(answer, damage) {
     //
     //Checks for Hexagon Numbers
     if ((multiplicationLevel > 8) && (hexagonNumbers.includes(answer))) {
-      if (hexagonSpells < 100) {
+      if (hexagonSpells < 99) {
         hexagonSpells++;
         document.getElementById("hexagonCount").innerHTML = hexagonSpells;
       }
@@ -2206,7 +2289,7 @@ function checkAnswer(answer, damage) {
     //
     //Checks for Pyramid Numbers
     if ((additionLevel > 8) && (pyramidNumbers.includes(answer))) {
-      if (pyramidSpells < 100) {
+      if (pyramidSpells < 99) {
         pyramidSpells++;
         document.getElementById("pyramidCount").innerHTML = pyramidSpells;
       }
@@ -2214,7 +2297,7 @@ function checkAnswer(answer, damage) {
     //
     //Checks for Cube Numbers
     if ((divisionLevel > 2) && (cubeNumbers.includes(answer))) {
-      if (cubeSpells < 100) {
+      if (cubeSpells < 99) {
         cubeSpells++;
         document.getElementById("cubeCount").innerHTML = cubeSpells;
       }
@@ -2222,7 +2305,7 @@ function checkAnswer(answer, damage) {
     //
     //Checks for Star Numbers
     if ((divisionLevel > 8) && (starNumbers.includes(answer))) {
-      if (starSpells < 100) {
+      if (starSpells < 99) {
         starSpells++;
         document.getElementById("starCount").innerHTML = starSpells;
       }
@@ -2753,7 +2836,6 @@ function castFibonacci() {
   //I will probably update it with better hints as I develop
   //subtraction problems and hints.
   if (algebra) {
-    algebra = false;
     //
     //Determines what the hint will be based on what
     //the current operator is
@@ -2790,7 +2872,6 @@ function castFibonacci() {
   //If the problem is a number sequence, this logic
   //runs to display a sequence hint
   if (sequence) {
-    sequence = false;
     if ((operator == "+") || (operator == "*")) {
       hintString += terms[1] + " - " + terms[0] + " = ?<br />";
       hintString += terms[2] + " - " + terms[1] + " = ?";
@@ -3390,9 +3471,13 @@ function saveValues() {
   localStorage.setItem("divisionLevel", divisionLevel);
   localStorage.setItem("spellArray", JSON.stringify(spellArray));
   localStorage.setItem("additionMonstersKilled", JSON.stringify(additionMonstersKilled));
+  localStorage.setItem("additionAverage", JSON.stringify(additionAverage));
   localStorage.setItem("subtractionMonstersKilled", JSON.stringify(subtractionMonstersKilled));
+  localStorage.setItem("subtractionAverage", JSON.stringify(subtractionAverage));
   localStorage.setItem("multiplicationMonstersKilled", JSON.stringify(multiplicationMonstersKilled));
+  localStorage.setItem("multiplicationAverage", JSON.stringify(multiplicationAverage));
   localStorage.setItem("divisionMonstersKilled", JSON.stringify(divisionMonstersKilled));
+  localStorage.setItem("divisionAverage", JSON.stringify(divisionAverage));
   localStorage.setItem("fibonacciSpells", fibonacciSpells);
   localStorage.setItem("triangleSpells", triangleSpells);
   localStorage.setItem("squareSpells", squareSpells);
@@ -3429,9 +3514,13 @@ function retrieveValues() {
   divisionLevel = parseInt(localStorage.getItem("divisionLevel"));
   spellArray = JSON.parse(localStorage.getItem("spellArray"));
   additionMonstersKilled = JSON.parse(localStorage.getItem("additionMonstersKilled"));
+  additionAverage = JSON.parse(localStorage.getItem("additionAverage"));
   subtractionMonstersKilled = JSON.parse(localStorage.getItem("subtractionMonstersKilled"));
+  subtractionAverage = JSON.parse(localStorage.getItem("subtractionAverage"));
   multiplicationMonstersKilled = JSON.parse(localStorage.getItem("multiplicationMonstersKilled"));
+  multiplicationAverage = JSON.parse(localStorage.getItem("multiplicationAverage"));
   divisionMonstersKilled = JSON.parse(localStorage.getItem("divisionMonstersKilled"));
+  divisionAverage = JSON.parse(localStorage.getItem("divisionAverage"));
   fibonacciSpells = parseInt(localStorage.getItem("fibonacciSpells"));
   triangleSpells = parseInt(localStorage.getItem("triangleSpells"));
   squareSpells = parseInt(localStorage.getItem("squareSpells"));
@@ -3459,9 +3548,13 @@ function deleteValues() {
   localStorage.removeItem("divisionLevel");
   localStorage.removeItem("spellArray");
   localStorage.removeItem("additionMonstersKilled");
+  localStorage.removeItem("additionAverage");
   localStorage.removeItem("subtractionMonstersKilled");
+  localStorage.removeItem("subtractionAverage");
   localStorage.removeItem("multiplicationMonstersKilled");
+  localStorage.removeItem("multiplicationAverage");
   localStorage.removeItem("divisionMonstersKilled");
+  localStorage.removeItem("divisionAverage");
   localStorage.removeItem("fibonacciSpells");
   localStorage.removeItem("triangleSpells");
   localStorage.removeItem("squareSpells");
