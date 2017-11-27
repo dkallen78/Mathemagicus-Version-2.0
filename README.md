@@ -18,6 +18,12 @@ People like achievements. I'm coming up with a list of achievements and looking 
 
 ## 11/27/17
 
+### Update 2
+
+I found a big bug I introduced yesterday by changing some of the setAttribute() calls. I fixed that...
+
+I introduced an average time function that keeps track of the average answer time for questions of each type. Since I was doing that, I could also keep track of the total number of questions answered. Then I put all of that onto the Status Page of the Liber Mathemagicus. I still need to work out some style quirks but for the most part I like it. 
+
 ### Update
 
 I found a few bugs in the Liber Mathemagicus functionality. Adding the monsters killed counter in the way I did introduced all kinds of weirdness and it's made some of my code hard to read, especially in the book section. One of the easy fixes I made had to do w/ calculating the correct hitpoints of the boss monsters. Somehow I got that wrong, but it's fixed now.
