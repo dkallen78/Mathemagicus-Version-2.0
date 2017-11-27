@@ -16,6 +16,14 @@ I've also got a lot of code redundancy that I can likely remove. Some of my code
 
 ## 11/26/17
 
+### Update 3
+
+I undertook a bigger challenge than I expected... I wanted to add in a counter to keep track of how many of each monster the player had killed. I thought it would be smart to just keep it in an array w/ the array of monsters that had been killed. I didn't count on that breaking .includes() and .indexOf()... In the end I kept my "clever" idea of keeping the values in the same place as the list of monsters by rewriting my own versions of those functions to search a specific index of the arrays in my array. THEN I had to update my monster page variable calls in my monster book section which was another huge issue.
+
+I also added a cool effect where the damage done to the monster is shown in red on top of his image before slowly fading away while sliding up. I also did the same thing for player damage. Pretty cool looking.
+
+I also got rid of all the .setAttribute calls and replaced them w/ simpler DOM notation like .id = and .className =
+
 ### Update 2
 
 I put in the sequence hints functionality. One thing I've noticed about sequences, finding the next number in an incremental sequence is a pain. I'm keeping it for now, but it's tricky; I need to use my stop time functionality to get it in 10 seconds!
