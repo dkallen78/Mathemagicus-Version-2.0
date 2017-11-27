@@ -447,6 +447,7 @@ Styles the title of the monster book*/
   font-size: 3.5em;
   font-weight: bold;
   line-height: 60px;
+  letter-spacing: 3px;
   color: #d2b30e;
   text-shadow: 2px 0px black,
                0px 2px black,

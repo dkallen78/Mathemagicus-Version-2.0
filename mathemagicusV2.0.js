@@ -643,7 +643,9 @@ function dungeonEntrance() {
     }, 850);
 
   }
-
+  //
+  //This function makes the cover of my book even
+  //though it is called title page
   function makeTitlePage() {
     titlePage = document.createElement("div");
     titlePage.className = "bookPage";
@@ -795,7 +797,7 @@ function dungeonEntrance() {
     //This displays the max health and damage of the player
     p = document.createElement("p");
     node1 = document.createTextNode("Max Health: " + maxHealth);
-    let node2 = document.createTextNode("Max Damage: " + playerDamage);
+    let node2 = document.createTextNode("Max Damage: " + playerBaseDamage);
     p.appendChild(node1);
     let br = document.createElement("br");
     p.appendChild(br);
@@ -934,7 +936,9 @@ function dungeonEntrance() {
 
     return spell;
   }
-
+  //
+  //This function makes the main monster page
+  //of my monster book
   function monstersPage() {
     let monsters = document.createElement("div");
     monsters.className = "bookPage";
@@ -1039,7 +1043,9 @@ function dungeonEntrance() {
 
     return monsters;
   }
-
+  //
+  //This function makes the base page for each
+  //type of monster (+, -, *, /)
   function monsterBasePage(monsterClass) {
     let monsterList = document.createElement("div");
     monsterList.className = "bookPage";
@@ -1142,7 +1148,9 @@ function dungeonEntrance() {
 
     return monsterList;
   }
-
+  //
+  //This function makes the individual monster pages
+  //in the monster book
   function monsterDetailPage(currentMonster) {
     //
     //currentMonster[0] = operation; indicates which set of arrays to use
@@ -1268,7 +1276,12 @@ function dungeonEntrance() {
     monsterDetail.appendChild(p);
 
     p = document.createElement("p");
-    node = document.createTextNode("Hit Points: " + Math.ceil(((currentMonster[1] + 1) / 3) + 1));
+    if (currentMonster[1] < 30) {
+      node = document.createTextNode("Hit Points: " + Math.ceil(((currentMonster[1] + 1) / 3) + 1));
+    } else {
+      var monsterLevel = (((currentMonster[1] % 30) * 2) + 2);
+      node = document.createTextNode("Hit Points: " + ((monsterLevel * 2) + (monsterLevel / 2) + 5));
+    }
     p.appendChild(node);
     monsterDetail.appendChild(p);
 
@@ -1278,7 +1291,7 @@ function dungeonEntrance() {
     monsterDetail.appendChild(p);
 
     p = document.createElement("p");
-    node = document.createTextNode("Number Killed: " + monsterArray[currentMonster[1]][1]);
+    node = document.createTextNode("Number Killed: " + monsterArray[findMonster(monsterArray, currentMonster[1])][1]);
     p.appendChild(node);
     monsterDetail.appendChild(p);
 
@@ -1294,6 +1307,15 @@ function dungeonEntrance() {
 
     let monsterDetailDiv = document.createElement("div");
     monsterDetailDiv.id = "monsterDetailDiv";
+    if (monsterArray[findMonster(monsterArray, currentMonster[1])][1] < 10) {
+      monsterDetailDiv.style.border = "3px solid black";
+    } else if (monsterArray[findMonster(monsterArray, currentMonster[1])][1] < 50) {
+      monsterDetailDiv.style.border = "3px solid #cd7f32";
+    } else if (monsterArray[findMonster(monsterArray, currentMonster[1])][1] < 100) {
+      monsterDetailDiv.style.border = "3px solid #c0c0c0";
+    } else {
+      monsterDetailDiv.style.border = "3px solid #d4af37";
+    }
     let monsterDetailImg = document.createElement("img");
     monsterDetailImg.id = "monsterImg";
     monsterDetailImg.src = imgSrcString + masterArray[currentMonster[1]];
@@ -1302,7 +1324,6 @@ function dungeonEntrance() {
 
     return monsterDetail;
   }
-
   //
   //This function makes the quick buttons that
   //go at the top of most book pages
@@ -1338,7 +1359,10 @@ function dungeonEntrance() {
 
     return quickButtonDiv;
   }
-
+  //
+  //This function creates and displays the two
+  //turn page buttons at the bottom corners of
+  //each of my pages
   function turnPageButtons(targetElement) {
     let pageTurnButtons = document.createElement("div");
     pageTurnButtons.id = "pageTurnButtons";
@@ -1582,26 +1606,31 @@ function timeDown() {
 //This function gets the terms for an arithmetic problem
 //based on which operation the player is solving for
 function getTerms(termType) {
+  if (monster.index < 30) {
+    var level = Math.ceil((monster.index + 1) / 3);
+  } else {
+    var level = (((monster.index % 30) * 2) + 2);
+  }
   if (termType == "sequence") {
     var sequenceTerms = [];
     switch (operator) {
       case "+": //Addition
-        var interval = getRandomNumber(2, (getLevel() + 1));
+        var interval = getRandomNumber(2, (level + 1));
         var range = interval * 5;
         var start = getRandomNumber(1, (100 - range));
         break;
       case "-": //Subtraction
-        var interval = getRandomNumber(2, (getLevel() + 1));
+        var interval = getRandomNumber(2, (level + 1));
         var range = interval * 5;
         var start = getRandomNumber((range + 1), 100);
         break;
       case "*": //Multiplication
-        var interval = getRandomNumber(1, (Math.ceil((getLevel() + 1) / 2)));
+        var interval = getRandomNumber(1, (Math.ceil((level + 1) / 2)));
         var range = interval * 10;
         var start = getRandomNumber(1, (100 - range));
         break;
       case "/": //Division
-        var interval = getRandomNumber(1, (Math.ceil((getLevel() + 1) / 2)));
+        var interval = getRandomNumber(1, (Math.ceil((level + 1) / 2)));
         var range = interval * 10;
         var start = getRandomNumber((range + 1), 100);
         break;
@@ -1630,8 +1659,8 @@ function getTerms(termType) {
   }
   switch (operator) {
     case "+": //Addition
-      var constant1 = getRandomNumber(0, (additionLevel * 10));
-      var constant2 = getRandomNumber(0, (additionLevel * 10));
+      var constant1 = getRandomNumber(0, (level * 10));
+      var constant2 = getRandomNumber(0, (level * 10));
       var answer = constant1 + constant2;
       break;
     case "-": //Subtraction
@@ -1640,10 +1669,10 @@ function getTerms(termType) {
       //generating the division terms here with
       //the subtraction terms to lose the while
       //loop...
-      var constant1 = getRandomNumber(1, (subtractionLevel * 10));
-      var constant2 = getRandomNumber(0, (subtractionLevel * 10));
+      var constant1 = getRandomNumber(1, (level * 10));
+      var constant2 = getRandomNumber(0, (level * 10));
       while (constant2 > constant1) {
-        constant2 = getRandomNumber(0, (subtractionLevel * 10));
+        constant2 = getRandomNumber(0, (level * 10));
       }
       var answer = constant1 - constant2;
       break;
@@ -1652,12 +1681,11 @@ function getTerms(termType) {
       //This variable declaration is just to shorten the name
       //temporarily to make the constant2 formula take up
       //less space
-      var lvl = multiplicationLevel;
-      var constant1 = getRandomNumber(1, (lvl + 5));
+      var constant1 = getRandomNumber(1, (level + 5));
       //
       //There might be a better formula for getting this
       //progression of products but this works for now
-      var constant2 = getRandomNumber(0, ((lvl + 5) - ((((lvl % 2) + lvl) / 2) - 1)));
+      var constant2 = getRandomNumber(0, ((level + 5) - ((((level % 2) + level) / 2) - 1)));
       var answer = constant1 * constant2;
       break;
     case "/": //Division
@@ -1671,12 +1699,11 @@ function getTerms(termType) {
       //This variable declaration is just to shorten the name
       //temporarily to make the answer formula take up
       //less space
-      var lvl = divisionLevel;
-      var constant2 = getRandomNumber(1, (lvl + 5));
+      var constant2 = getRandomNumber(1, (level + 5));
       //
       //There might be a better formula for getting this
       //progression of products but this works for now
-      var answer = getRandomNumber(0, ((lvl + 5) - ((((lvl % 2) + lvl) / 2) - 1)));
+      var answer = getRandomNumber(0, ((level + 5) - ((((level % 2) + level) / 2) - 1)));
       var constant1 = constant2 * answer;
       break;
   }
@@ -2132,7 +2159,7 @@ function checkAnswer(answer, damage) {
     setTimeout(function() {scrollDiv.style.filter = "opacity(100%)";}, 10);
     scrollNextButton.focus();
   }
-  //
+  //****************REDUNDANCY*********************
   //This function checks the correct answers to see if they
   //are in one of my sets of special numbers
   function checkForSpells() {
@@ -2201,7 +2228,13 @@ function checkAnswer(answer, damage) {
       }
     }
   }
-
+  //****************REDUNDANCY*********************
+  //This function checks the monster that was just killed
+  //to see if it is the array of monsters the player has
+  //already killed. If it is, it increments the counter
+  //keeping track of the number killed. If it isn't, it
+  //adds the monster to the array and sets its kill counter
+  //to 1
   function checkMonster() {
     switch(operator) {
       case "+":
@@ -2259,7 +2292,10 @@ function checkAnswer(answer, damage) {
     }
   }
 }
-
+//
+//This function is my version of the
+//array.includes() function, just customized
+//for my array of arrays
 function monsterSearch(array, index) {
   for (let i = 0; i < array.length; i++) {
     if (array[i][0] == index) {
@@ -2268,7 +2304,10 @@ function monsterSearch(array, index) {
   }
   return false;
 }
-
+//
+//This function is my version of the
+//array.indexOf() function, just customized
+//for my array of arrays
 function findMonster(array, index) {
   for (let i = 0; i < array.length; i++) {
     if (array[i][0] == index) {
@@ -3336,7 +3375,8 @@ function castStar() {
   starSpells--;
   document.getElementById("starCount").innerHTML = starSpells;
 }
-
+//
+//This saves all the important values into localStorage
 function saveValues() {
   localStorage.setItem("playerName", playerName);
   localStorage.setItem("playerHealth", playerHealth);
@@ -3362,7 +3402,9 @@ function saveValues() {
   localStorage.setItem("cubeSpells", cubeSpells);
   localStorage.setItem("starSpells", starSpells);
 }
-
+//
+//This function retrieves all the player data
+//from local storage when the player continues
 function retrieveValues() {
   playerName = localStorage.getItem("playerName");
   if (!playerName) {
@@ -3401,7 +3443,9 @@ function retrieveValues() {
 
   dungeonEntrance();
 }
-
+//
+//This function clears the local storage when
+//the player starts a new game
 function deleteValues() {
   localStorage.removeItem("playerName");
   localStorage.removeItem("playerHealth");
@@ -3427,7 +3471,8 @@ function deleteValues() {
   localStorage.removeItem("cubeSpells");
   localStorage.removeItem("starSpells");
 }
-
+//
+//This function gives the player all the good stuff
 function godMode() {
   playerHealth = 100;
   maxHealth = 100;
@@ -3449,7 +3494,10 @@ function godMode() {
   totalMonstersKilled = 0;
   monstersPerFight = 9;
 }
-
+//
+//I use this function for testing purposes
+//and it is only called from a debug button
+//that is normally inactive
 function developer() {
   playerHealth = 10;
   maxHealth = 10;
