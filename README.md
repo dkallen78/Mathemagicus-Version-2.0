@@ -8,11 +8,25 @@ My assets are almost entirely borrowed and if the game ever sees wide distributi
 
 Included in this project are the html, css, and js files. Also included is a .rar file with all the assets used in the game.
 
-### Up next: maybe number rounding, eliminating redundancy
+### Up next: maybe number rounding, eliminating redundancy, achievements
 
 I've got a program that does number rounding that I might put in if I find the right way to implement it. 
 
 I've also got a lot of code redundancy that I can likely remove. Some of my code is the way it is because it works, not because it's the most effecient way to do things. I want to go through the whole program at a later point and simplify things.
+
+People like achievements. I'm coming up with a list of achievements and looking for cool icons that might be suitable. I think I'm going to have 3 levels of each achievement: bronze, silver, and gold. The levels will be determined by how many times you've gotten that achievement.
+
+## 11/27/17
+
+### Update
+
+I found a few bugs in the Liber Mathemagicus functionality. Adding the monsters killed counter in the way I did introduced all kinds of weirdness and it's made some of my code hard to read, especially in the book section. One of the easy fixes I made had to do w/ calculating the correct hitpoints of the boss monsters. Somehow I got that wrong, but it's fixed now.
+
+The feature update I made had to do w/ how the terms of the problems are determined. Originally it had to do with the player's level. The higher the player's level, the more difficult a problem could be. Now the variable controlling the potential difficulty of the problems is based on the monster itself. So no matter what level you are, a level one monster is only ever going to produce level one problems.
+
+I also added a feature that changes the border of the <div> containing the monster image in the Liber Mathemagicus based on how many of that monster you have killed. I think I'm going to have to modify it though because the first border change happens after you defeat 10 of that type and at addition level 5 I have yet to defeat 10 of any one monster...
+
+I've also begun marking code that could be "deredundified." I swear that's a word and I'm sticking to it.
 
 ## 11/26/17
 
