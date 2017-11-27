@@ -837,6 +837,24 @@ that flashes when the player is hit*/
   margin: auto;
   z-index: 2;
 }
+
+#damageDiv {
+  position: absolute;
+  z-index: 3;
+  bottom: 30%;
+  left: 0;
+  right: 0;
+  color: red;
+  font-size: 1.5em;
+  font-weight: bold;
+  font-family: monospace;
+  text-align: center;
+  text-shadow: 2px 0px black,
+               0px 2px black,
+               -2px 0px black,
+               0px -2px black;
+  transition: bottom 2000ms, filter 2000ms;
+}
 /*
 This sets the size of the answerInput <input> box
 and makes sure the numbers are centered in the box*/

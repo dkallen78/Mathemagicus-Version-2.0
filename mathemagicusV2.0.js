@@ -242,9 +242,9 @@ function gameStart() {
   //These seven lines put the New Game button in the table
   //and define its attributes
   let newGameButton = document.createElement("input");
-  newGameButton.setAttribute("type", "button");
-  newGameButton.setAttribute("value", "New Game");
-  newGameButton.setAttribute("class", "startButtons");
+  newGameButton.type = "button";
+  newGameButton.value = "New Game";
+  newGameButton.className = "startButtons";
   newGameButton.onclick = function() {
     deleteValues();
     newGame();
@@ -255,9 +255,9 @@ function gameStart() {
   //These seven lines put the Continue button in the table
   //and define its attributes
   let continueButton = document.createElement("input");
-  continueButton.setAttribute("type", "button");
-  continueButton.setAttribute("value", "Continue");
-  continueButton.setAttribute("class", "startButtons");
+  continueButton.type = "button";
+  continueButton.value = "Continue";
+  continueButton.className = "startButtons";
   continueButton.onclick = retrieveValues;
   continueTD.appendChild(continueButton);
   tableRow.appendChild(continueTD);
@@ -283,8 +283,8 @@ function newGame() {
   //
   //This block displays the "Enter your name" prompt
   let enterNameDiv = document.createElement("div");
-  enterNameDiv.setAttribute("id", "enterNameDiv");
-  enterNameDiv.setAttribute("class", "textBox");
+  enterNameDiv.id = "enterNameDiv";
+  enterNameDiv.id = "textBox";
   let enterName = document.createTextNode("Please enter your name:");
   enterNameDiv.appendChild(enterName);
   lineBreak = document.createElement("br");
@@ -292,9 +292,9 @@ function newGame() {
   //
   //This block displays the text input box
   let nameTextBox = document.createElement("input");
-  nameTextBox.setAttribute("type", "text");
-  nameTextBox.setAttribute("id", "nameTextBox");
-  nameTextBox.setAttribute("onKeyDown", "if(event.keyCode==13) chooseCharacter()")
+  nameTextBox.type = "text";
+  nameTextBox.id = "nameTextBox";
+  nameTextBox.onkeypress = function() {if(event.keyCode==13) chooseCharacter()};
   enterNameDiv.appendChild(nameTextBox);
   lineBreak = document.createElement("br");
   enterNameDiv.appendChild(lineBreak);
@@ -321,59 +321,59 @@ function chooseCharacter() {
   let cameoDiv = document.createElement("div");
   let cameoImg = document.createElement("img");
   cameoImg.src = "Tellah.gif";
-  cameoImg.setAttribute("id", "cameoImg");
-  cameoDiv.setAttribute("id", "cameo");
+  cameoImg.id = "cameoImg";
+  cameoDiv.id = "cameo";
   cameoDiv.appendChild(cameoImg);
   playArea.appendChild(cameoDiv);
   //
   //This block puts the text box on the screen
   let introTextDiv = document.createElement("div");
-  introTextDiv.setAttribute("class", "textBox");
-  introTextDiv.setAttribute("id", "introTextDiv");
+  introTextDiv.className = "textBox";
+  introTextDiv.id = "introTextDiv";
   playArea.appendChild(introTextDiv);
   typeText("introTextDiv", introText, 0, showMages); //This function "types" the text into the box
   //
   //This block of code puts together all the pieces needed
   //for character selection
   var characterSelectText = document.createElement("div");
-  characterSelectText.setAttribute("id", "characterSelectText");
+  characterSelectText.id = "characterSelectText";
   characterSelectText.innerHTML = "Choose your mage:";
 
   var leftButton = document.createElement("input");
-  leftButton.setAttribute("id", "leftButton");
-  leftButton.setAttribute("class", "selectButtons");
-  leftButton.setAttribute("type", "button");
-  leftButton.setAttribute("value", "<");
+  leftButton.id = "leftButton";
+  leftButton.className = "selectButtons";
+  leftButton.type = "button";
+  leftButton.value = "<";
   leftButton.onclick = shiftRight;
 
   var rightButton = document.createElement("input");
-  rightButton.setAttribute("id", "rightButton");
-  rightButton.setAttribute("class", "selectButtons");
-  rightButton.setAttribute("type", "button");
-  rightButton.setAttribute("value", ">");
+  rightButton.id = "rightButton";
+  rightButton.className = "selectButtons";
+  rightButton.type = "button";
+  rightButton.value = ">";
   rightButton.onclick = shiftLeft;
 
   var characterDiv1 = document.createElement("div");
-  characterDiv1.setAttribute("id", "characterDiv1");
+  characterDiv1.id = "characterDiv1";
   var characterDiv2 = document.createElement("div");
-  characterDiv2.setAttribute("id", "characterDiv2");
+  characterDiv2.id = "characterDiv2";
 
   var characterDiv3 = document.createElement("div");
-  characterDiv3.setAttribute("id", "characterDiv3");
+  characterDiv3.id = "characterDiv3";
 
   var characterImg1 = document.createElement("img");
-  characterImg1.setAttribute("class", "characterImg");
+  characterImg1.className = "characterImg";
   characterDiv1.appendChild(characterImg1);
   characterImg1.src = "./mages/" + mages[6][0];
 
   var characterImg2 = document.createElement("img");
-  characterImg2.setAttribute("class", "characterImg");
+  characterImg2.className = "characterImg";
   characterDiv2.appendChild(characterImg2);
   characterImg2.src = "./mages/" + mages[0][0];
   characterImg2.onclick = townIntro;
 
   var characterImg3 = document.createElement("img");
-  characterImg3.setAttribute("class", "characterImg");
+  characterImg3.className = "characterImg";
   characterDiv3.appendChild(characterImg3);
   characterImg3.src = "./mages/" + mages[1][0];
   //
@@ -401,19 +401,19 @@ function chooseCharacter() {
     console.log("index is " + mageIndex);
     console.log("(index + 1) % " + mages.length + " is " + ((mageIndex + 1) % mages.length));*/
 
-    characterDiv2.setAttribute("id", "characterDiv1");
+    characterDiv2.id = "characterDiv1";
     characterDiv1 = characterDiv2;
 
-    characterDiv3.setAttribute("id", "characterDiv2");
+    characterDiv3.id = "characterDiv2";
     characterDiv2 = characterDiv3;
     characterImg2 = characterImg3;
     characterImg2.onclick = townIntro;
 
 
     characterDiv3 = document.createElement("div");
-    characterDiv3.setAttribute("id", "characterDiv3");
+    characterDiv3.id = "characterDiv3";
     characterImg3 = document.createElement("img");
-    characterImg3.setAttribute("class", "characterImg");
+    characterImg3.className = "characterImg";
     characterDiv3.appendChild(characterImg3);
     characterImg3.src = "./mages/" + mages[(mageIndex + 1) % mages.length][0];
     playArea.insertBefore(characterDiv3, rightButton);
@@ -431,18 +431,18 @@ function chooseCharacter() {
     console.log("index is " + mageIndex);
     console.log("(index + 6) % " + mages.length + " is " + ((mageIndex + 1) % 7));*/
 
-    characterDiv2.setAttribute("id", "characterDiv3")
+    characterDiv2.id = "characterDiv3";
     characterDiv3 = characterDiv2;
 
-    characterDiv1.setAttribute("id", "characterDiv2")
+    characterDiv1.id = "characterDiv2";
     characterDiv2 = characterDiv1;
     characterImg2 = characterImg1;
     characterImg2.onclick = townIntro;
 
     characterDiv1 = document.createElement("div");
-    characterDiv1.setAttribute("id", "characterDiv1");
+    characterDiv1.id = "characterDiv1";
     characterImg1 = document.createElement("img");
-    characterImg1.setAttribute("class", "characterImg");
+    characterImg1.className = "characterImg";
     characterDiv1.appendChild(characterImg1);
     characterImg1.src = "./mages/" + mages[(mageIndex + 6) % mages.length][0];
     playArea.insertBefore(characterDiv1, characterDiv2);
@@ -955,7 +955,7 @@ function dungeonEntrance() {
     } else {
       turnButton[0].onclick = function() {turnPageRight(monsters, spellsPage);}
     }
-    if ((additionMonstersKilled[0] + 1)) {
+    if (typeof(additionMonstersKilled[0]) == "object") {
       turnButton[1].onclick = function() {turnPageLeft(monsters, monsterBasePage, "+");}
     } else {
       turnButton[1].parentNode.removeChild(turnButton[1]);
@@ -979,7 +979,12 @@ function dungeonEntrance() {
     node = document.createTextNode("Addition Monsters");
     let node2 = document.createTextNode(": " + additionMonstersKilled.length);
     span.appendChild(node);
-    span.onclick = function() {turnPageLeft(monsters, monsterBasePage, "+");}
+    if (typeof(additionMonstersKilled[0]) == "object") {
+      span.onclick = function() {turnPageLeft(monsters, monsterBasePage, "+");}
+    } else {
+      span.onclick = "";
+    }
+
     monsters.appendChild(span);
     monsters.appendChild(node2);
     monsters.appendChild(br);
@@ -991,7 +996,11 @@ function dungeonEntrance() {
     node = document.createTextNode("Subtraction Monsters");
     node2 = document.createTextNode(": " + subtractionMonstersKilled.length);
     span.appendChild(node);
-    span.onclick = function() {turnPageLeft(monsters, monsterBasePage, "-");}
+    if (typeof(subtractionMonstersKilled[0]) == "object") {
+      span.onclick = function() {turnPageLeft(monsters, monsterBasePage, "-");}
+    } else {
+      span.onclick = "";
+    }
     monsters.appendChild(span);
     monsters.appendChild(node2);
     monsters.appendChild(br);
@@ -1003,7 +1012,11 @@ function dungeonEntrance() {
     node = document.createTextNode("Multiplication Monsters");
     node2 = document.createTextNode(": " + multiplicationMonstersKilled.length)
     span.appendChild(node);
-    span.onclick = function() {turnPageLeft(monsters, monsterBasePage, "*");}
+    if (typeof(multiplicationMonstersKilled[0]) == "object") {
+      span.onclick = function() {turnPageLeft(monsters, monsterBasePage, "*");}
+    } else {
+      span.onclick = "";
+    }
     monsters.appendChild(span);
     monsters.appendChild(node2);
     monsters.appendChild(br);
@@ -1015,7 +1028,11 @@ function dungeonEntrance() {
     node = document.createTextNode("Division Monsters");
     node2 = document.createTextNode(": " + divisionMonstersKilled.length);
     span.appendChild(node);
-    span.onclick = function() {turnPageLeft(monsters, monsterBasePage, "/");}
+    if (typeof(divisionMonstersKilled[0]) == "object") {
+      span.onclick = function() {turnPageLeft(monsters, monsterBasePage, "/");}
+    } else {
+      span.onclick = "";
+    }
     monsters.appendChild(span);
     monsters.appendChild(node2);
     monsters.appendChild(br);
@@ -1059,7 +1076,7 @@ function dungeonEntrance() {
         monsterNames = additionMonsterNames;
         node = document.createTextNode("Addition Monsters");
         turnButton[0].onclick = function() {turnPageRight(monsterList, monstersPage);}
-        turnButton[1].onclick = function() {turnPageLeft(monsterList, monsterDetailPage, ["+", additionMonstersKilled[0]]);}
+        turnButton[1].onclick = function() {turnPageLeft(monsterList, monsterDetailPage, ["+", additionMonstersKilled[0][0]]);}
         break;
       case "-":
         monsterArray = subtractionMonstersKilled;
@@ -1067,8 +1084,8 @@ function dungeonEntrance() {
         monsterNames = subtractionMonsterNames;
         node = document.createTextNode("Subtraction Monsters");
         last = (additionMonstersKilled.length - 1);
-        turnButton[0].onclick = function() {turnPageRight(monsterList, monsterDetailPage, ["+", additionMonstersKilled[last]]);}
-        turnButton[1].onclick = function() {turnPageLeft(monsterList, monsterDetailPage, ["-", subtractionMonstersKilled[0]]);}
+        turnButton[0].onclick = function() {turnPageRight(monsterList, monsterDetailPage, ["+", additionMonstersKilled[last][0]]);}
+        turnButton[1].onclick = function() {turnPageLeft(monsterList, monsterDetailPage, ["-", subtractionMonstersKilled[0][0]]);}
         break;
       case "*":
         monsterArray = multiplicationMonstersKilled;
@@ -1076,8 +1093,8 @@ function dungeonEntrance() {
         monsterNames = multiplicationMonsterNames;
         node = document.createTextNode("Multiplication Monsters");
         last = (subtractionMonstersKilled.length - 1);
-        turnButton[0].onclick = function() {turnPageRight(monsterList, monsterDetailPage, ["-", subtractionMonstersKilled[last]]);}
-        turnButton[1].onclick = function() {turnPageLeft(monsterList, monsterDetailPage, ["*", multiplicationMonstersKilled[0]]);}
+        turnButton[0].onclick = function() {turnPageRight(monsterList, monsterDetailPage, ["-", subtractionMonstersKilled[last][0]]);}
+        turnButton[1].onclick = function() {turnPageLeft(monsterList, monsterDetailPage, ["*", multiplicationMonstersKilled[0][0]]);}
         break;
       case "/":
         monsterArray = divisionMonstersKilled;
@@ -1085,8 +1102,8 @@ function dungeonEntrance() {
         monsterNames = divisionMonsterNames;
         node = document.createTextNode("Division Monsters");
         last = (multiplicationMonstersKilled.length - 1);
-        turnButton[0].onclick = function() {turnPageRight(monsterList, monsterDetailPage, ["*", multiplicationMonstersKilled[last]]);}
-        turnButton[1].onclick = function() {turnPageLeft(monsterList, monsterDetailPage, ["/", divisionMonstersKilled[0]]);}
+        turnButton[0].onclick = function() {turnPageRight(monsterList, monsterDetailPage, ["*", multiplicationMonstersKilled[last][0]]);}
+        turnButton[1].onclick = function() {turnPageLeft(monsterList, monsterDetailPage, ["/", divisionMonstersKilled[0][0]]);}
         break;
     }
 
@@ -1100,22 +1117,22 @@ function dungeonEntrance() {
     for (let i = 0; i < monsterArray.length; i += 3) {
       let tr = document.createElement("tr");
       let td1 = document.createElement("td");
-      let node1 = document.createTextNode(monsterArray[i] + ". " + monsterNames[monsterArray[i]]);
+      let node1 = document.createTextNode(monsterArray[i][0] + ". " + monsterNames[monsterArray[i][0]]);
       td1.appendChild(node1);
-      td1.onclick = function() {turnPageLeft(monsterList, monsterDetailPage, [monsterClass, monsterArray[i]]);}
+      td1.onclick = function() {turnPageLeft(monsterList, monsterDetailPage, [monsterClass, monsterArray[i][0]]);}
       tr.appendChild(td1);
-      if (monsterArray[i + 1]) {
+      if (typeof(monsterArray[i + 1]) == "object") {
         let td2 = document.createElement("td");
-        let node2 = document.createTextNode(monsterArray[i + 1] + ". " + monsterNames[monsterArray[i + 1]]);
+        let node2 = document.createTextNode(monsterArray[i + 1][0] + ". " + monsterNames[monsterArray[i + 1][0]]);
         td2.appendChild(node2);
-        td2.onclick = function() {turnPageLeft(monsterList, monsterDetailPage, [monsterClass, monsterArray[i + 1]]);}
+        td2.onclick = function() {turnPageLeft(monsterList, monsterDetailPage, [monsterClass, monsterArray[i + 1][0]]);}
         tr.appendChild(td2);
       }
-      if (monsterArray[i + 2]) {
+      if (typeof(monsterArray[i + 2]) == "object") {
         let td3 = document.createElement("td");
-        let node3 = document.createTextNode(monsterArray[i + 2] + ". " + monsterNames[monsterArray[i + 2]]);
+        let node3 = document.createTextNode(monsterArray[i + 2][0] + ". " + monsterNames[monsterArray[i + 2][0]]);
         td3.appendChild(node3);
-        td3.onclick = function() {turnPageLeft(monsterList, monsterDetailPage, [monsterClass, monsterArray[i + 2]]);}
+        td3.onclick = function() {turnPageLeft(monsterList, monsterDetailPage, [monsterClass, monsterArray[i + 2][0]]);}
         tr.appendChild(td3);
       }
       table.appendChild(tr);
@@ -1157,15 +1174,15 @@ function dungeonEntrance() {
         masterArray = additionMonsters;
         monsterNames = additionMonsterNames;
         imgSrcString = "./monsters/addition/";
-        if (monsterArray.indexOf(currentMonster[1]) == 0) {
+        if (findMonster(monsterArray, currentMonster[1]) == 0) {
           turnButton[0].onclick = function() {turnPageRight(monsterDetail, monsterBasePage, "+");}
         } else {
-          let next = (monsterArray.indexOf(currentMonster[1]) - 1);
-          turnButton[0].onclick = function() {turnPageRight(monsterDetail, monsterDetailPage, ["+", monsterArray[next]]);}
+          let next = (findMonster(monsterArray, currentMonster[1]) - 1);
+          turnButton[0].onclick = function() {turnPageRight(monsterDetail, monsterDetailPage, ["+", monsterArray[next][0]]);}
         }
-        if (monsterArray.indexOf(currentMonster[1]) < (monsterArray.length - 1)) {
-          let next = (monsterArray.indexOf(currentMonster[1]) + 1);
-          turnButton[1].onclick = function() {turnPageLeft(monsterDetail, monsterDetailPage, ["+", monsterArray[next]]);}
+        if (findMonster(monsterArray, currentMonster[1]) < (monsterArray.length - 1)) {
+          let next = (findMonster(monsterArray, currentMonster[1]) + 1);
+          turnButton[1].onclick = function() {turnPageLeft(monsterDetail, monsterDetailPage, ["+", monsterArray[next][0]]);}
         } else {
           if ((subtractionMonstersKilled[0] + 1)) {
             turnButton[1].onclick = function() {turnPageLeft(monsterDetail, monsterBasePage, "-");}
@@ -1179,15 +1196,15 @@ function dungeonEntrance() {
         masterArray = subtractionMonsters;
         monsterNames = subtractionMonsterNames;
         imgSrcString = "./monsters/subtraction/";
-        if (monsterArray.indexOf(currentMonster[1]) == 0) {
+        if (findMonster(monsterArray, currentMonster[1]) == 0) {
           turnButton[0].onclick = function() {turnPageRight(monsterDetail, monsterBasePage, "-");}
         } else {
-          let next = (monsterArray.indexOf(currentMonster[1]) - 1);
-          turnButton[0].onclick = function() {turnPageRight(monsterDetail, monsterDetailPage, ["-", monsterArray[next]]);}
+          let next = (findMonster(monsterArray, currentMonster[1]) - 1);
+          turnButton[0].onclick = function() {turnPageRight(monsterDetail, monsterDetailPage, ["-", monsterArray[next][0]]);}
         }
-        if (monsterArray.indexOf(currentMonster[1]) < (monsterArray.length - 1)) {
-          let next = (monsterArray.indexOf(currentMonster[1]) + 1);
-          turnButton[1].onclick = function() {turnPageLeft(monsterDetail, monsterDetailPage, ["-", monsterArray[next]]);}
+        if (findMonster(monsterArray, currentMonster[1]) < (monsterArray.length - 1)) {
+          let next = (findMonster(monsterArray, currentMonster[1]) + 1);
+          turnButton[1].onclick = function() {turnPageLeft(monsterDetail, monsterDetailPage, ["-", monsterArray[next][0]]);}
         } else {
           if ((multiplicationMonstersKilled[0] + 1)) {
             turnButton[1].onclick = function() {turnPageLeft(monsterDetail, monsterBasePage, "*");}
@@ -1201,15 +1218,15 @@ function dungeonEntrance() {
         masterArray = multiplicationMonsters;
         monsterNames = multiplicationMonsterNames;
         imgSrcString = "./monsters/multiplication/";
-        if (monsterArray.indexOf(currentMonster[1]) == 0) {
+        if (findMonster(monsterArray, currentMonster[1]) == 0) {
           turnButton[0].onclick = function() {turnPageRight(monsterDetail, monsterBasePage, "*");}
         } else {
-          let next = (monsterArray.indexOf(currentMonster[1]) - 1);
-          turnButton[0].onclick = function() {turnPageRight(monsterDetail, monsterDetailPage, ["*", monsterArray[next]]);}
+          let next = (findMonster(monsterArray, currentMonster[1]) - 1);
+          turnButton[0].onclick = function() {turnPageRight(monsterDetail, monsterDetailPage, ["*", monsterArray[next][0]]);}
         }
-        if (monsterArray.indexOf(currentMonster[1]) < (monsterArray.length - 1)) {
-          let next = (monsterArray.indexOf(currentMonster[1]) + 1);
-          turnButton[1].onclick = function() {turnPageLeft(monsterDetail, monsterDetailPage, ["*", monsterArray[next]]);}
+        if (findMonster(monsterArray, currentMonster[1]) < (monsterArray.length - 1)) {
+          let next = (findMonster(monsterArray, currentMonster[1]) + 1);
+          turnButton[1].onclick = function() {turnPageLeft(monsterDetail, monsterDetailPage, ["*", monsterArray[next][0]]);}
         } else {
           if ((divisionMonstersKilled[0] + 1)) {
             turnButton[1].onclick = function() {turnPageLeft(monsterDetail, monsterBasePage, "/");}
@@ -1223,15 +1240,15 @@ function dungeonEntrance() {
         masterArray = divisionMonsters;
         monsterNames = divisionMonsterNames;
         imgSrcString = "./monsters/division/";
-        if (monsterArray.indexOf(currentMonster[1]) == 0) {
+        if (findMonster(monsterArray, currentMonster[1]) == 0) {
           turnButton[0].onclick = function() {turnPageRight(monsterDetail, monsterBasePage, "/");}
         } else {
-          let next = (monsterArray.indexOf(currentMonster[1]) - 1);
-          turnButton[0].onclick = function() {turnPageRight(monsterDetail, monsterDetailPage, ["/", monsterArray[next]]);}
+          let next = (findMonster(monsterArray, currentMonster[1]) - 1);
+          turnButton[0].onclick = function() {turnPageRight(monsterDetail, monsterDetailPage, ["/", monsterArray[next][0]]);}
         }
-        if (monsterArray.indexOf(currentMonster[1]) < (monsterArray.length - 1)) {
-          let next = (monsterArray.indexOf(currentMonster[1]) + 1);
-          turnButton[1].onclick = function() {turnPageLeft(monsterDetail, monsterDetailPage, ["/", monsterArray[next]]);}
+        if (findMonster(monsterArray, currentMonster[1]) < (monsterArray.length - 1)) {
+          let next = (findMonster(monsterArray, currentMonster[1]) + 1);
+          turnButton[1].onclick = function() {turnPageLeft(monsterDetail, monsterDetailPage, ["/", monsterArray[next][0]]);}
         } else {
           turnButton[1].parentNode.removeChild(turnButton[1]);
         }
@@ -1257,6 +1274,11 @@ function dungeonEntrance() {
 
     p = document.createElement("p");
     node = document.createTextNode("Damage: " + Math.ceil((currentMonster[1] + 1) / 9));
+    p.appendChild(node);
+    monsterDetail.appendChild(p);
+
+    p = document.createElement("p");
+    node = document.createTextNode("Number Killed: " + monsterArray[currentMonster[1]][1]);
     p.appendChild(node);
     monsterDetail.appendChild(p);
 
@@ -1362,9 +1384,9 @@ function typeText(divID, textString, nextFunction, typingComplete) {
       setTimeout(typer, waitTime); //The recursion after a brief pause
     } else if (typeof nextFunction === "function") {    //If this function is present it will display
       let nextButton = document.createElement("input"); //a button to advance the text to the next string
-      nextButton.setAttribute("type", "button");        //or next function
-      nextButton.setAttribute("value", "Next");
-      nextButton.setAttribute("id", "nextButton");
+      nextButton.type = "button";                       //or next function
+      nextButton.value = "Next";
+      nextButton.id = "nextButton";
       nextButton.onclick = nextFunction;
       div.appendChild(nextButton);
       nextButton.focus();
@@ -1695,7 +1717,14 @@ function checkAnswer(answer, damage) {
 
     if (answer != "heal") {
       var damageFlash = 6;
+      var damageDiv = document.createElement("div");
+      damageDiv.id = "damageDiv";
+      damageDiv.innerHTML = (damage + damageBoost);
+      monsterDiv.appendChild(damageDiv);
       damageMonster = setInterval(monsterDamage, 100);
+      requestAnimationFrame(function() {damageDiv.style.bottom = "100%";});
+      requestAnimationFrame(function() {damageDiv.style.filter = "opacity(0%)";});
+
     }
 
     //
@@ -1729,8 +1758,15 @@ function checkAnswer(answer, damage) {
     var healthBarFront = document.getElementById("healthBarFront");
     healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
 
+    var damageDiv = document.createElement("div");
+    damageDiv.id = "damageDiv";
+    damageDiv.innerHTML = monster.damage;
+    playerDiv.appendChild(damageDiv);
+
     var damageFlash = 6;
     damagePlayer = setInterval(playerDamage, 100);
+    requestAnimationFrame(function() {damageDiv.style.bottom = "100%";});
+    requestAnimationFrame(function() {damageDiv.style.filter = "opacity(0%)";});
 
     if (playerHealth < 1) {
       problemDiv.innerHTML = "You have succumbed to the " + monster.name + "'s attack!<br /><br />";
@@ -1748,6 +1784,7 @@ function checkAnswer(answer, damage) {
     monsterImg.style.filter = "brightness(50%)";
 
     if (damageFlash <= 0) {
+      setTimeout(function() {monsterDiv.removeChild(damageDiv);}, 1400);
       playerImg.src = "./mages/" + mages[mageIndex][0];
       if (monster.hp > 0) {
         monsterImg.style.filter = "brightness(100%)";
@@ -1768,8 +1805,10 @@ function checkAnswer(answer, damage) {
   //This function handles the animation for player damage
   function playerDamage() {
     playerImg.src = "./mages/" + mages[mageIndex][2];
-
+    playerImg.style.filter = "brightness(50%)";
     if (damageFlash <= 0) {
+      setTimeout(function() {playerDiv.removeChild(damageDiv);}, 1400);
+      playerImg.style.filter = "brightness(100%)";
       if (playerHealth < 1) {
         playerImg.src = "./mages/" + mages[mageIndex][3];
       } else {
@@ -2066,20 +2105,20 @@ function checkAnswer(answer, damage) {
     //These three lines set up the container that
     //holds the scroll image
     let scrollDiv = document.createElement("div");
-    scrollDiv.setAttribute("id", "scrollDiv");
+    scrollDiv.id = "scrollDiv";
     scrollDiv.style.filter = "opacity(0%)";
     //
     //These three lines set up the scroll image
     let scrollImg = document.createElement("img");
-    scrollImg.setAttribute("id", "scrollImg");
+    scrollImg.id = "scrollImg";
     scrollImg.src = scrollGif;
     //
     //These five lines set up the next button that appears
     //at the bottom of the scroll
     let scrollNextButton = document.createElement("input");
-    scrollNextButton.setAttribute("type", "button");
-    scrollNextButton.setAttribute("value", "Next");
-    scrollNextButton.setAttribute("id", "scrollNextButton");
+    scrollNextButton.type = "button";
+    scrollNextButton.value = "Next";
+    scrollNextButton.id = "scrollNextButton";
     scrollNextButton.onclick = dungeonEntrance;
     //
     //These three lines put all of the previous elements that
@@ -2166,39 +2205,77 @@ function checkAnswer(answer, damage) {
   function checkMonster() {
     switch(operator) {
       case "+":
-        if (additionMonstersKilled.includes(monster.index)) {
+        if (monsterSearch(additionMonstersKilled, monster.index)) {
+          let monsterIndex = findMonster(additionMonstersKilled, monster.index);
+          additionMonstersKilled[monsterIndex][1]++;
+          break;
+        } else {
+          additionMonstersKilled.push([monster.index, 1]);
+          additionMonstersKilled.sort(function(a, b){return a[0] - b[0]});
+        }
+        /*if (additionMonstersKilled.includes(monster.index)) {
           break;
         } else {
           additionMonstersKilled.push(monster.index);
           additionMonstersKilled.sort(function(a, b){return a - b});
-        }
+        }*/
         break;
       case "-":
-        if (subtractionMonstersKilled.includes(monster.index)) {
+        if (monsterSearch(subtractionMonstersKilled, monster.index)) {
+          let monsterIndex = findMonster(subtractionMonstersKilled, monster.index);
+          subtractionMonstersKilled[monsterIndex][1]++;
+          break;
+        } else {
+          subtractionMonstersKilled.push([monster.index, 1]);
+          subtractionMonstersKilled.sort(function(a, b){return a[0] - b[0]});
+        }
+        /*if (subtractionMonstersKilled.includes(monster.index)) {
           break;
         } else {
           subtractionMonstersKilled.push(monster.index);
           subtractionMonstersKilled.sort(function(a, b){return a - b});
-        }
+        }*/
         break;
       case "*":
-        if (multiplicationMonstersKilled.includes(monster.index)) {
+        if (monsterSearch(multiplicationMonstersKilled, monster.index)) {
+          let monsterIndex = findMonster(multiplicationMonstersKilled, monster.index);
+          multiplicationMonstersKilled[monsterIndex][1]++;
           break;
         } else {
-          multiplicationMonstersKilled.push(monster.index);
-          multiplicationMonstersKilled.sort(function(a, b){return a - b});
+          multiplicationMonstersKilled.push([monster.index, 1]);
+          multiplicationMonstersKilled.sort(function(a, b){return a[0] - b[0]});
         }
         break;
       case "/":
-        if (divisionMonstersKilled.includes(monster.index)) {
+        if (monsterSearch(divisionMonstersKilled, monster.index)) {
+          let monsterIndex = findMonster(divisionMonstersKilled, monster.index);
+          divisionMonstersKilled[monsterIndex][1]++;
           break;
         } else {
-          divisionMonstersKilled.push(monster.index);
-          divisionMonstersKilled.sort(function(a, b){return a - b});
+          divisionMonstersKilled.push([monster.index, 1]);
+          divisionMonstersKilled.sort(function(a, b){return a[0] - b[0]});
         }
         break;
     }
   }
+}
+
+function monsterSearch(array, index) {
+  for (let i = 0; i < array.length; i++) {
+    if (array[i][0] == index) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function findMonster(array, index) {
+  for (let i = 0; i < array.length; i++) {
+    if (array[i][0] == index) {
+      return i;
+    }
+  }
+  return -1;
 }
 //
 //I use this function to assign the proper level
@@ -2230,7 +2307,7 @@ function makeDungeonScreen() {
   //This block creates the box that shows the
   //level at the top of the screen
   let levelDiv = document.createElement("div");
-  levelDiv.setAttribute("id", "levelDiv");
+  levelDiv.id = "levelDiv";
   let levelDisplay = document.createTextNode("Level " + playerLevel);
   levelDiv.appendChild(levelDisplay);
   playArea.appendChild(levelDiv);
@@ -2238,16 +2315,16 @@ function makeDungeonScreen() {
   //This block creates the box that the problem
   //will be displayed in
   let problemDiv = document.createElement("div");
-  problemDiv.setAttribute("id", "problemDiv");
-  problemDiv.setAttribute("class", "textBox");
+  problemDiv.id = "problemDiv";
+  problemDiv.className = "textBox";
   //problemDiv.innerHTML = "1 + 2 + 3 + 4 + 5 = ?"  //Sample text
   playArea.appendChild(problemDiv);
   //
   //This block creates the box that the hint
   //will be displayed in
   let hintDiv = document.createElement("div");
-  hintDiv.setAttribute("id", "hintDiv");
-  hintDiv.setAttribute("class", "textBox");
+  hintDiv.id = "hintDiv";
+  hintDiv.className = "textBox";
   //hintDiv.innerHTML = "I'll get you Black Dynamite, if it's the last thing I do!!!";  //Sample text
   playArea.appendChild(hintDiv);
   hintDiv.style.visibility = "hidden";
@@ -2255,11 +2332,11 @@ function makeDungeonScreen() {
   //This block creates the elements needed for the
   //countdown bar
   let countdownBarBack = document.createElement("div");
-  countdownBarBack.setAttribute("id", "countdownBarBack");
+  countdownBarBack.id = "countdownBarBack";
   let countdownBarFront = document.createElement("div");
-  countdownBarFront.setAttribute("id", "countdownBarFront");
+  countdownBarFront.id = "countdownBarFront";
   let countdownTimer = document.createElement("div");
-  countdownTimer.setAttribute("id", "countdownTimer");
+  countdownTimer.id = "countdownTimer";
   countdownBarBack.appendChild(countdownBarFront);
   countdownBarBack.appendChild(countdownTimer);
   playArea.appendChild(countdownBarBack);
@@ -2270,18 +2347,18 @@ function makeDungeonScreen() {
   //future as I come up with new spells for the
   //player to use
   let spellBar = document.createElement("div");
-  spellBar.setAttribute("id", "spellBar");
+  spellBar.id = "spellBar";
   //
   //This block creates everything needed for the
   //fibonacci spell
   let fibonacciDiv = document.createElement("div");
   let fibonacciImg = document.createElement("img");
   fibonacciImg.src = "./spellIcons/fibonacci.gif";
-  fibonacciImg.setAttribute("id", "fibonacciImg");
+  fibonacciImg.id = "fibonacciImg";
   fibonacciImg.style.filter = "opacity(10%)";
   fibonacciDiv.appendChild(fibonacciImg);
   let fibonacciCount = document.createElement("div");
-  fibonacciCount.setAttribute("id", "fibonacciCount");
+  fibonacciCount.id = "fibonacciCount";
   fibonacciCount.innerHTML = fibonacciSpells;
   fibonacciDiv.appendChild(fibonacciCount);
   spellBar.appendChild(fibonacciDiv);
@@ -2291,11 +2368,11 @@ function makeDungeonScreen() {
   let triangleDiv = document.createElement("div");
   let triangleImg = document.createElement("img");
   triangleImg.src = "./spellIcons/triangle.gif";
-  triangleImg.setAttribute("id", "triangleImg");
+  triangleImg.id = "triangleImg";
   triangleImg.style.filter = "opacity(10%)";
   triangleDiv.appendChild(triangleImg);
   let triangleCount = document.createElement("div");
-  triangleCount.setAttribute("id", "triangleCount");
+  triangleCount.id = "triangleCount";
   triangleCount.innerHTML = triangleSpells;
   triangleDiv.appendChild(triangleCount);
   spellBar.appendChild(triangleDiv);
@@ -2305,11 +2382,11 @@ function makeDungeonScreen() {
   let squareDiv = document.createElement("div");
   let squareImg = document.createElement("img");
   squareImg.src = "./spellIcons/square.gif";
-  squareImg.setAttribute("id", "squareImg");
+  squareImg.id = "squareImg";
   squareImg.style.filter = "opacity(10%)";
   squareDiv.appendChild(squareImg);
   let squareCount = document.createElement("div");
-  squareCount.setAttribute("id", "squareCount");
+  squareCount.id = "squareCount";
   squareCount.innerHTML = squareSpells;
   squareDiv.appendChild(squareCount);
   spellBar.appendChild(squareDiv);
@@ -2319,11 +2396,11 @@ function makeDungeonScreen() {
   let pentagonDiv = document.createElement("div");
   let pentagonImg = document.createElement("img");
   pentagonImg.src = "./spellIcons/pentagon.gif";
-  pentagonImg.setAttribute("id", "pentagonImg");
+  pentagonImg.id = "pentagonImg";
   pentagonImg.style.filter = "opacity(10%)";
   pentagonDiv.appendChild(pentagonImg);
   let pentagonCount = document.createElement("div");
-  pentagonCount.setAttribute("id", "pentagonCount");
+  pentagonCount.id = "pentagonCount";
   pentagonCount.innerHTML = pentagonSpells;
   pentagonDiv.appendChild(pentagonCount);
   spellBar.appendChild(pentagonDiv);
@@ -2333,11 +2410,11 @@ function makeDungeonScreen() {
   let hexagonDiv = document.createElement("div");
   let hexagonImg = document.createElement("img");
   hexagonImg.src = "./spellIcons/hexagon.gif";
-  hexagonImg.setAttribute("id", "hexagonImg");
+  hexagonImg.id = "hexagonImg";
   hexagonImg.style.filter = "opacity(10%)";
   hexagonDiv.appendChild(hexagonImg);
   let hexagonCount = document.createElement("div");
-  hexagonCount.setAttribute("id", "hexagonCount");
+  hexagonCount.id = "hexagonCount";
   hexagonCount.innerHTML = hexagonSpells;
   hexagonDiv.appendChild(hexagonCount);
   spellBar.appendChild(hexagonDiv);
@@ -2347,11 +2424,11 @@ function makeDungeonScreen() {
   let pyramidDiv = document.createElement("div");
   let pyramidImg = document.createElement("img");
   pyramidImg.src = "./spellIcons/pyramid.gif";
-  pyramidImg.setAttribute("id", "pyramidImg");
+  pyramidImg.id = "pyramidImg";
   pyramidImg.style.filter = "opacity(10%)";
   pyramidDiv.appendChild(pyramidImg);
   let pyramidCount = document.createElement("div");
-  pyramidCount.setAttribute("id", "pyramidCount");
+  pyramidCount.id = "pyramidCount";
   pyramidCount.innerHTML = pyramidSpells;
   pyramidDiv.appendChild(pyramidCount);
   spellBar.appendChild(pyramidDiv);
@@ -2361,11 +2438,11 @@ function makeDungeonScreen() {
   let cubeDiv = document.createElement("div");
   let cubeImg = document.createElement("img");
   cubeImg.src = "./spellIcons/cube.gif";
-  cubeImg.setAttribute("id", "cubeImg");
+  cubeImg.id = "cubeImg";
   cubeImg.style.filter = "opacity(10%)";
   cubeDiv.appendChild(cubeImg);
   let cubeCount = document.createElement("div");
-  cubeCount.setAttribute("id", "cubeCount");
+  cubeCount.id = "cubeCount";
   cubeCount.innerHTML = cubeSpells;
   cubeDiv.appendChild(cubeCount);
   spellBar.appendChild(cubeDiv);
@@ -2375,11 +2452,11 @@ function makeDungeonScreen() {
   let starDiv = document.createElement("div");
   let starImg = document.createElement("img");
   starImg.src = "./spellIcons/star.gif";
-  starImg.setAttribute("id", "starImg");
+  starImg.id = "starImg";
   starImg.style.filter = "opacity(10%)";
   starDiv.appendChild(starImg);
   let starCount = document.createElement("div");
-  starCount.setAttribute("id", "starCount");
+  starCount.id = "starCount";
   starCount.innerHTML = starSpells;
   starDiv.appendChild(starCount);
   spellBar.appendChild(starDiv);
@@ -2391,26 +2468,26 @@ function makeDungeonScreen() {
   //health bars as well as the images for the
   //player and monster
   let combatDiv = document.createElement("div");
-  combatDiv.setAttribute("id", "combatDiv");
+  combatDiv.id = "combatDiv";
   //
   //The player health bar
   let healthBarBack = document.createElement("div");
-  healthBarBack.setAttribute("id", "healthBarBack");
+  healthBarBack.id = "healthBarBack";
   let healthBarFront = document.createElement("div");
-  healthBarFront.setAttribute("id", "healthBarFront");
+  healthBarFront.id = "healthBarFront";
   healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
   healthBarBack.appendChild(healthBarFront);
   combatDiv.appendChild(healthBarBack);
   //
   //The player's image
   let playerDiv = document.createElement("div");
-  playerDiv.setAttribute("id", "playerDiv");
+  playerDiv.id = "playerDiv";
   let playerImg = document.createElement("img");
-  playerImg.setAttribute("id", "playerImg");
+  playerImg.id = "playerImg";
   playerImg.src = "./mages/" + mages[mageIndex][0];
   playerDiv.appendChild(playerImg);
   let slash = document.createElement("img");
-  slash.setAttribute("id", "slash");
+  slash.id = "slash";
   slash.src = "slash.gif";
   slash.style.visibility = "hidden";
   playerDiv.appendChild(slash);
@@ -2418,12 +2495,12 @@ function makeDungeonScreen() {
   //
   //The monster's image
   let monsterDiv = document.createElement("div");
-  monsterDiv.setAttribute("id", "monsterDiv");
+  monsterDiv.id = "monsterDiv";
   let monsterImg = document.createElement("img");
-  monsterImg.setAttribute("id", "monsterImg");
+  monsterImg.id = "monsterImg";
   monsterDiv.appendChild(monsterImg);
   let blast = document.createElement("img");
-  blast.setAttribute("id", "blast");
+  blast.id = "blast";
   blast.src = "blast.gif";
   blast.style.visibility = "hidden";
   monsterDiv.appendChild(blast);
@@ -2431,9 +2508,9 @@ function makeDungeonScreen() {
   //
   //The monster health bar
   let monsterHealthBarBack = document.createElement("div");
-  monsterHealthBarBack.setAttribute("id", "monsterHealthBarBack");
+  monsterHealthBarBack.id = "monsterHealthBarBack";
   let monsterHealthBarFront = document.createElement("div");
-  monsterHealthBarFront.setAttribute("id", "monsterHealthBarFront");
+  monsterHealthBarFront.id = "monsterHealthBarFront";
   monsterHealthBarBack.appendChild(monsterHealthBarFront);
   combatDiv.appendChild(monsterHealthBarBack);
   playArea.appendChild(combatDiv);
