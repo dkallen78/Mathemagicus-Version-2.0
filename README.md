@@ -8,13 +8,25 @@ My assets are almost entirely borrowed and if the game ever sees wide distributi
 
 Included in this project are the html, css, and js files. Also included is a .rar file with all the assets used in the game.
 
-### Up next: maybe number rounding, eliminating redundancy, achievements
+### Up next: quick average fix, maybe number rounding or comparisons(\<, \>), eliminating redundancy, achievements, more spell animations
 
-I've got a program that does number rounding that I might put in if I find the right way to implement it. 
+I noticed that there is a problem with the way I handle my average question answer time. I'm averaging the time remaining and I need to be averaging the time it takes to answer. Quick fix for tomorrow (it's bed time): 10 - valueI'mCurrentlyUsing. 
+
+I've got a program that does number rounding that I might put in if I find the right way to implement it. The same thing goes for comparisons, but they're a bit trickier. 
 
 I've also got a lot of code redundancy that I can likely remove. Some of my code is the way it is because it works, not because it's the most effecient way to do things. I want to go through the whole program at a later point and simplify things.
 
 People like achievements. I'm coming up with a list of achievements and looking for cool icons that might be suitable. I think I'm going to have 3 levels of each achievement: bronze, silver, and gold. The levels will be determined by how many times you've gotten that achievement.
+
+I want more spell animations like J. Jonah Jameson wants Spiderman pictures.
+
+## 11/28/17
+
+### Update
+
+I've been playing around with \<canvas\> because I wanted cooler animations for my spells other than just flashing screens. I'll grant that the transparent, colored, flashing overlays are pretty cool, but I wanted something better; so I made it.
+
+I added a \<canvas\> based animation for Euclid's Fireball. The animation draws out the basic construction of an equilateral triangle based on Euclid's famous method. Then I used a hatchet (@keyframes and defining each frame of the animation) to animate a semi-transparent radial gradient on an ::after pseudo-element. Then the screen flashes red like normal. I need to sync up the timing of the gradient and the screen flashes better.
 
 ## 11/27/17
 
