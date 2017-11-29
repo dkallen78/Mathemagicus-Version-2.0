@@ -3132,6 +3132,9 @@ function castTriangle() {
   }
   clearInterval(timer);
 
+  var animationDone = false;
+  var spellCast;
+  fireballAnimation();
   let damage = 1;
   let i = 0;
   let totalLevels = additionLevel + subtractionLevel + multiplicationLevel + divisionLevel;
@@ -3144,12 +3147,19 @@ function castTriangle() {
   hintDiv.style.visibility = "visible";
   let spellFlash = 10;
   //playArea.classList.add("playAreaRed");
-  let spellCast = setInterval(castSpell, 75);
+  let z = setInterval(function() {
+    if (animationDone) {
+      spellCast = setInterval(castSpell, 75);
+      clearInterval(z);
+    }
+  }, 10);
 
   function castSpell() {
     if (spellFlash < 1) {
       clearInterval(spellCast);
       playArea.classList.remove("playAreaRed");
+      var canvas = document.getElementById("euclidCanvas");
+      playArea.removeChild(canvas);
       checkAnswer("spell", damage);
     } else {
       if ((spellFlash % 2) == 0) {
@@ -3163,6 +3173,152 @@ function castTriangle() {
 
   triangleSpells--;
   document.getElementById("triangleCount").innerHTML = triangleSpells;
+
+  function fireballAnimation() {
+    var canvas = document.createElement("canvas");
+    canvas.id = "euclidCanvas";
+    let levelDiv = document.getElementById("levelDiv");
+    playArea.insertBefore(canvas, levelDiv);
+
+    var context = canvas.getContext("2d");
+    context.canvas.width = 450;
+    context.canvas.height = 450;
+    var lineWidth = 5;
+    var baseColor = "rgba(255, 0, 0, 1)"
+    var baseShadow = "rgba(255, 0, 0, 1)"
+
+    var lineX1 = 225;
+    var lineX2 = 226;
+    var lineXinterval = 10;
+    var lineY = 250;
+
+    var circleStart1 = 0;
+    var circleAngle1 = .05;
+    var circleInterval1 = .05;
+
+    var circleStart2 = 1;
+    var circleAngle2 = .95;
+    var circleInterval2 = .05;
+    var roundTwo = false;
+
+    var startX = 150;
+    var startY = 250;
+
+
+    var lineDraw = setInterval(function() {
+      requestAnimationFrame(function() {
+        drawLine1();
+      })
+    }, 30);
+
+    var circleDraw1 = setInterval(function() {
+      requestAnimationFrame(function() {
+        drawCircle1();
+      })
+    }, 20);
+
+    var circleDraw2 = setInterval(function() {
+      requestAnimationFrame(function() {
+        drawCircle2();
+      })
+    }, 20);
+
+    function drawLine1() {
+      context.beginPath();
+      context.moveTo(lineX1, 250);
+      lineX1 -= lineXinterval;
+      context.lineTo(lineX1, 250);
+      context.moveTo(lineX2, 250);
+      lineX2 += lineXinterval;
+      context.lineTo(lineX2, 250);
+      context.lineWidth = lineWidth;
+      context.strokeStyle = baseColor;
+      context.stroke();
+
+      if (lineX2 > 450) {
+        clearInterval(lineDraw);
+      }
+      context.shadowBlur = 5;
+      context.shadowColor = baseShadow;
+    }
+
+    function drawCircle1() {
+      context.beginPath();
+      context.arc(150, 250, 150, (circleStart1 * Math.PI), (circleAngle1 * Math.PI));
+      circleStart1 = circleAngle1;
+      circleAngle1 += circleInterval1;
+      context.lineWidth = lineWidth;
+      context.strokeStyle = baseColor;
+      context.stroke();
+      if (circleAngle1 > 2) {
+        context.beginPath();
+        context.arc(150, 250, 150, (circleStart1 * Math.PI), (2 * Math.PI));
+        context.lineWidth = lineWidth;
+        context.strokeStyle = baseColor;
+        context.stroke();
+        clearInterval(circleDraw1);
+      }
+      context.shadowBlur = 5;
+      context.shadowColor = baseShadow;
+    }
+
+    function drawCircle2() {
+      context.beginPath()
+      context.arc(300, 250, 150, (circleStart2 * Math.PI), (circleAngle2 * Math.PI), true);
+      circleStart2 = circleAngle2;
+      circleAngle2 -= circleInterval2;
+      context.lineWidth = lineWidth;
+      context.strokeStyle = baseColor;
+      context.stroke();
+      if (circleAngle2 < 0) {
+        roundTwo = true;
+        circleAngle2 = 2
+      }
+      if ((roundTwo) && (circleAngle2 < 1)) {
+        context.beginPath();
+        context.arc(300, 250, 150, (circleStart2 * Math.PI), (1 * Math.PI), true);
+        context.lineWidth = lineWidth;
+        context.strokeStyle = baseColor;
+        context.stroke();
+        clearInterval(circleDraw2);
+        drawTriangle1();
+      }
+      context.shadowBlur = 5;
+      context.shadowColor = baseShadow;
+    }
+
+    function drawTriangle1() {
+      context.beginPath();
+      context.moveTo(150, 250);
+      context.lineTo(225, 120);
+      context.lineTo(300, 250);
+      context.lineTo(150, 250);
+      context.closePath();
+      context.lineJoin = "round";
+      context.lineWidth = lineWidth + 10;
+      context.strokeStyle = "rgba(255, 255, 0, .75)";
+      context.stroke();
+
+      context.beginPath();
+      context.moveTo(150, 250);
+      context.lineTo(225, 120);
+      context.lineTo(300, 250);
+      context.lineTo(150, 250);
+      context.closePath();
+      context.lineWidth = lineWidth;
+      context.strokeStyle = "#ff0000";
+      context.stroke();
+
+      playArea.classList.add("playAreaRedFlash");
+      setTimeout(function() {
+        requestAnimationFrame(function() {
+          playArea.classList.remove("playAreaRedFlash");
+        });
+      }, 250);
+      animationDone = true;
+    }
+
+  }
 }
 //
 //This function handles my square/healing spell
