@@ -8,9 +8,7 @@ My assets are almost entirely borrowed and if the game ever sees wide distributi
 
 Included in this project are the html, css, and js files. Also included is a .rar file with all the assets used in the game.
 
-### Up next: quick average fix, maybe number rounding or comparisons(\<, \>), eliminating redundancy, achievements, more spell animations
-
-I noticed that there is a problem with the way I handle my average question answer time. I'm averaging the time remaining and I need to be averaging the time it takes to answer. Quick fix for tomorrow (it's bed time): 10 - valueI'mCurrentlyUsing. 
+### Up next: maybe number rounding or comparisons(\<, \>), eliminating redundancy, achievements, more spell animations
 
 I've got a program that does number rounding that I might put in if I find the right way to implement it. The same thing goes for comparisons, but they're a bit trickier. 
 
@@ -19,6 +17,16 @@ I've also got a lot of code redundancy that I can likely remove. Some of my code
 People like achievements. I'm coming up with a list of achievements and looking for cool icons that might be suitable. I think I'm going to have 3 levels of each achievement: bronze, silver, and gold. The levels will be determined by how many times you've gotten that achievement.
 
 I want more spell animations like J. Jonah Jameson wants Spiderman pictures.
+
+## 11/29/17
+
+### Update
+
+I've fixed the minor issue with averaging the time to answer a question.
+
+I found a bug with the individual spell pages of the book that I fixed. The issue had to do w/ passing the wrong value to a function so that the spell book would show more spells than the player had learned. Working with arrays can get confusing...
+
+I did some work w/ \<canvas\> and animating a Fibonacci spiral for my Fibonacci Spell but it didn't turn out as cool as the Triangle/Fireball Spell so I don't think I'm going to pursue that. Working with \<canvas\> isn't as intuitive as some other programming stuff and I need to play w/ it some more. 
 
 ## 11/28/17
 
