@@ -615,7 +615,9 @@ function dungeonEntrance() {
     currentPage.style.transformOrigin = "0 200px 0px";
     requestAnimationFrame(function() {currentPage.style.transform = "perspective(2000px) rotateY(-90deg)";});
     setTimeout(function() {
-      requestAnimationFrame(function() {monsterBook.removeChild(currentPage);});
+      requestAnimationFrame(function() {
+        monsterBook.removeChild(currentPage);
+      });
     }, 750);
   }
   //
@@ -961,8 +963,6 @@ function dungeonEntrance() {
   //
   //This function handles the individual spell pages
   function spellDetailPage(index) {
-    console.log(index);
-    console.log(spellArray);
     let spell = document.createElement("div");
     spell.className = "bookPage";
     spell.id = "spellsDetailPage";
@@ -1186,20 +1186,20 @@ function dungeonEntrance() {
     for (let i = 0; i < monsterArray.length; i += 3) {
       let tr = document.createElement("tr");
       let td1 = document.createElement("td");
-      let node1 = document.createTextNode(monsterArray[i][0] + ". " + monsterNames[monsterArray[i][0]]);
+      let node1 = document.createTextNode((monsterArray[i][0] + 1) + ". " + monsterNames[monsterArray[i][0]]);
       td1.appendChild(node1);
       td1.onclick = function() {turnPageLeft(monsterList, monsterDetailPage, [monsterClass, monsterArray[i][0]]);}
       tr.appendChild(td1);
       if (typeof(monsterArray[i + 1]) == "object") {
         let td2 = document.createElement("td");
-        let node2 = document.createTextNode(monsterArray[i + 1][0] + ". " + monsterNames[monsterArray[i + 1][0]]);
+        let node2 = document.createTextNode((monsterArray[i + 1][0] + 1) + ". " + monsterNames[monsterArray[i + 1][0]]);
         td2.appendChild(node2);
         td2.onclick = function() {turnPageLeft(monsterList, monsterDetailPage, [monsterClass, monsterArray[i + 1][0]]);}
         tr.appendChild(td2);
       }
       if (typeof(monsterArray[i + 2]) == "object") {
         let td3 = document.createElement("td");
-        let node3 = document.createTextNode(monsterArray[i + 2][0] + ". " + monsterNames[monsterArray[i + 2][0]]);
+        let node3 = document.createTextNode((monsterArray[i + 2][0] + 1) + ". " + monsterNames[monsterArray[i + 2][0]]);
         td3.appendChild(node3);
         td3.onclick = function() {turnPageLeft(monsterList, monsterDetailPage, [monsterClass, monsterArray[i + 2][0]]);}
         tr.appendChild(td3);
@@ -1332,7 +1332,7 @@ function dungeonEntrance() {
     p.style.fontSize = "1.5em";
     //p.style.margin = "10px";
     p.style.textAlign = "center";
-    var node = document.createTextNode(currentMonster[1] + ". " + monsterNames[currentMonster[1]]);
+    var node = document.createTextNode((currentMonster[1] + 1) + ". " + monsterNames[currentMonster[1]]);
     let br = document.createElement("br");
 
     p.appendChild(node);
