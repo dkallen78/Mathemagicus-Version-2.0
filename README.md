@@ -22,6 +22,12 @@ I want more spell animations like J. Jonah Jameson wants Spiderman pictures.
 
 ### Update
 
+I made a minor change to the way the monsters are displayed in the monster book. Instead of starting at 0, they now start at 1. I thought that starting at 0 would look weird to a player.
+
+## 11/29/17
+
+### Update
+
 I've fixed the minor issue with averaging the time to answer a question.
 
 I found a bug with the individual spell pages of the book that I fixed. The issue had to do w/ passing the wrong value to a function so that the spell book would show more spells than the player had learned. Working with arrays can get confusing...
