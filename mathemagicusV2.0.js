@@ -961,6 +961,8 @@ function dungeonEntrance() {
   //
   //This function handles the individual spell pages
   function spellDetailPage(index) {
+    console.log(index);
+    console.log(spellArray);
     let spell = document.createElement("div");
     spell.className = "bookPage";
     spell.id = "spellsDetailPage";
@@ -981,7 +983,7 @@ function dungeonEntrance() {
     } else {
       turnButton[0].onclick = function() {turnPageRight(spell, spellDetailPage, (index - 1));}
     }
-    if ((spellArray.indexOf(index)) < (spellArray.length - 1)) {
+    if (index < (spellArray.length - 1)) {
       turnButton[1].onclick = function() {turnPageLeft(spell, spellDetailPage, (index + 1));}
     } else {
       turnButton[1].onclick = function() {turnPageLeft(spell, monstersPage);}
@@ -990,7 +992,7 @@ function dungeonEntrance() {
     var spellDiv = document.createElement("div");
     spellDiv.id = "spellDetailDiv";
     var spellImg = document.createElement("img");
-    spellImg.src = "./scrolls/" + spellBookContent[index][1];
+    spellImg.src = "./scrolls/" + spellBookContent[spellArray[index]][1];
     spellImg.style.height = "330px";
     spellDiv.appendChild(spellImg);
     spell.appendChild(spellDiv);
@@ -1016,7 +1018,7 @@ function dungeonEntrance() {
     let pageTurnButtons = turnPageButtons(monsters);
     let turnButton = pageTurnButtons.getElementsByClassName("turnPageButtons");
     if (spellArray[0] >= 0) {
-      turnButton[0].onclick = function() {turnPageRight(monsters, spellDetailPage, (spellArray[spellArray.length - 1]));}
+      turnButton[0].onclick = function() {turnPageRight(monsters, spellDetailPage, (spellArray.length - 1));}
     } else {
       turnButton[0].onclick = function() {turnPageRight(monsters, spellsPage);}
     }
@@ -1813,7 +1815,7 @@ function checkAnswer(answer, damage) {
       requestAnimationFrame(function() {damageDiv.style.bottom = "100%";});
       requestAnimationFrame(function() {damageDiv.style.filter = "opacity(0%)";});
       if (answer != "spell") {
-        var newNumber = Number(document.getElementById("countdownTimer").innerHTML)
+        var newNumber = (10 - Number(document.getElementById("countdownTimer").innerHTML))
         switch (operator) {
           case "+":
             additionAverage = getAverage(additionAverage, newNumber);
@@ -3145,7 +3147,7 @@ function castTriangle() {
 
   hintDiv.innerHTML = "You cast Euclid's Fireball!";
   hintDiv.style.visibility = "visible";
-  let spellFlash = 10;
+  let spellFlash = 9;
   //playArea.classList.add("playAreaRed");
   let z = setInterval(function() {
     if (animationDone) {
