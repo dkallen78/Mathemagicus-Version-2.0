@@ -8,15 +8,23 @@ My assets are almost entirely borrowed and if the game ever sees wide distributi
 
 Included in this project are the html, css, and js files. Also included is a .rar file with all the assets used in the game.
 
-### Up next: maybe number rounding or comparisons(\<, \>), eliminating redundancy, achievements, more spell animations
+### Up next: maybe number rounding or comparisons(\<, \>), eliminating redundancy, three more achievements, more spell animations
 
 I've got a program that does number rounding that I might put in if I find the right way to implement it. The same thing goes for comparisons, but they're a bit trickier. 
 
 I've also got a lot of code redundancy that I can likely remove. Some of my code is the way it is because it works, not because it's the most effecient way to do things. I want to go through the whole program at a later point and simplify things.
 
-People like achievements. I'm coming up with a list of achievements and looking for cool icons that might be suitable. I think I'm going to have 3 levels of each achievement: bronze, silver, and gold. The levels will be determined by how many times you've gotten that achievement.
+I want three more achievements!
 
 I want more spell animations like J. Jonah Jameson wants Spiderman pictures.
+
+## 12/09/17
+
+### Update
+
+I've put in achievements! Currently I only have nine but I want to bump that up to 12, I just need to think of three more...
+
+The achievements are visible in the Liber Mathemagicus and most have three levels: bronze, silver, and gold. Once the player has earned the achievement, they will be able to see what they did to earn it.
 
 ## 11/29/17
 
