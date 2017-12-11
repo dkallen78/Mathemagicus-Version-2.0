@@ -781,6 +781,19 @@ function dungeonEntrance() {
     p.appendChild(node2);
     tableOfContents.appendChild(p);
 
+    p = document.createElement("p");
+    br = document.createElement("br");
+    span = document.createElement("span");
+    span.onclick = function() {turnPageLeft(tableOfContents, achievementsPage);}
+    node1 = document.createTextNode("Achievements");
+    node2 = document.createTextNode("A list of the achievements " + playerName + " has earned.");
+
+    span.appendChild(node1);
+    p.appendChild(span);
+    p.appendChild(br);
+    p.appendChild(node2);
+    tableOfContents.appendChild(p);
+
 
     return tableOfContents;
   }
@@ -1007,7 +1020,6 @@ function dungeonEntrance() {
   //This function handles the individual spell pages
   //index is the index of the spellArray
   function spellDetailPage(index) {
-    console.log("attempting to acces index " + index);
     let spell = document.createElement("div");
     spell.className = "bookPage";
     spell.id = "spellsDetailPage";
@@ -1564,7 +1576,11 @@ function dungeonEntrance() {
     img.className = "achievementImg";
     if (flashCount > 0) {
       img.style.filter = "opacity(100%)";
-      img.title = flashCount + " questions answered in less than 1 second.";
+      if (flashCount == 1) {
+        img.title = flashCount + " question answered in less than 1 second.";
+      } else {
+        img.title = flashCount + " questions answered in less than 1 second.";
+      }
       if (flashCount > 49) {
         div.style.backgroundColor = "#d4af37";
       } else if (flashCount > 9) {
@@ -1586,7 +1602,11 @@ function dungeonEntrance() {
     img.className = "achievementImg";
     if (lastSecondCount > 0) {
       img.style.filter = "opacity(100%)";
-      img.title = lastSecondCount + " questions answered with less than 1 second remaining.";
+      if (lastSecondCount == 1) {
+        img.title = lastSecondCount + " question answered with less than 1 second remaining.";
+      } else {
+        img.title = lastSecondCount + " questions answered with less than 1 second remaining.";
+      }
       if (lastSecondCount > 49) {
         div.style.backgroundColor = "#d4af37";
       } else if (lastSecondCount > 9) {
@@ -1611,7 +1631,11 @@ function dungeonEntrance() {
     img.className = "achievementImg";
     if (fortyTwoCount > 0) {
       img.style.filter = "opacity(100%)";
-      img.title = fortyTwoCount + " answers equal to 42.";
+      if (fortyTwoCount == 1) {
+        img.title = fortyTwoCount + " answer equal to 42.";
+      } else {
+        img.title = fortyTwoCount + " answers equal to 42.";
+      }
       if (fortyTwoCount > 49) {
         div.style.backgroundColor = "#d4af37";
       } else if (fortyTwoCount > 9) {
@@ -1633,7 +1657,11 @@ function dungeonEntrance() {
     img.className = "achievementImg";
     if (primeCount > 0) {
       img.style.filter = "opacity(100%)";
-      img.title = primeCount + " answers equal to a prime number.";
+      if (primeCount == 1) {
+        img.title = primeCount + " answer equal to a prime number.";
+      } else {
+        img.title = primeCount + " answers equal to a prime number.";
+      }
       if (primeCount > 49) {
         div.style.backgroundColor = "#d4af37";
       } else if (primeCount > 9) {
@@ -1657,6 +1685,9 @@ function dungeonEntrance() {
       img.style.filter = "opacity(100%)";
       img.title = "Defeated one of every monster in the Addition Dungeon.";
       div.style.backgroundColor = "#d4af37";
+    } else if (additionLevel > 10) {
+      div.style.backgroundColor = "#c0c0c0";
+      img.title = "Completed the Addition Dungeon."
     } else {
       img.style.filter = "opacity(30%)";
     }
@@ -1676,6 +1707,9 @@ function dungeonEntrance() {
       img.style.filter = "opacity(100%)";
       img.title = "Defeated one of every monster in the Subtraction Dungeon.";
       div.style.backgroundColor = "#d4af37";
+    } else if (subtractionLevel > 10) {
+      div.style.backgroundColor = "#c0c0c0";
+      img.title = "Completed the Subtraction Dungeon."
     } else {
       img.style.filter = "opacity(30%)";
     }
@@ -1692,6 +1726,9 @@ function dungeonEntrance() {
       img.style.filter = "opacity(100%)";
       img.title = "Defeated one of every monster in the Multiplication Dungeon.";
       div.style.backgroundColor = "#d4af37";
+    } else if (multiplicationLevel > 10) {
+      div.style.backgroundColor = "#c0c0c0";
+      img.title = "Completed the Multiplication Dungeon."
     } else {
       img.style.filter = "opacity(30%)";
     }
@@ -1708,6 +1745,9 @@ function dungeonEntrance() {
       img.style.filter = "opacity(100%)";
       img.title = "Defeated one of every monster in the Division Dungeon.";
       div.style.backgroundColor = "#d4af37";
+    } else if (divisionLevel > 10) {
+      div.style.backgroundColor = "#c0c0c0";
+      img.title = "Completed the Division Dungeon."
     } else {
       img.style.filter = "opacity(30%)";
     }
@@ -3207,6 +3247,8 @@ function spellsOff() {
 //This is my long and complicated-looking hint spell: Fibonacci.
 //It determines whether the player has enough spells to cast and
 //what form the problem is in: algebraic or not.
+//I have an animation for this, but I'm not totally happy with it.
+//I want something a little more flashy...
 function castFibonacci() {
   fibonacciImg = document.getElementById("fibonacciImg");
   fibonacciImg.onclick = "";
@@ -3219,6 +3261,46 @@ function castFibonacci() {
     hintDiv.style.visibility = "visible"; //This displays the hint area
     return;
   }
+  let spellFlash = 6;
+  let spellCast = setInterval(castSpell, 500);
+  clearInterval(timer);
+  function castSpell() {
+    if (spellFlash < 1) {
+      clearInterval(spellCast);
+      timer = setInterval(timeDown, 10);
+      playArea.removeChild(castSpell.div);
+    } else {
+      if ((spellFlash % 2) == 0) {
+        if (spellFlash < 6) {
+          playArea.removeChild(castSpell.div);
+        }
+        castSpell.div = document.createElement("div");
+        castSpell.div.id = "fibonacciMagic";
+        switch (spellFlash) {
+          case 6:
+            var node = document.createTextNode("a * (b + c) = (a * b) + (a * c)");
+            break;
+          case 4:
+            var node = document.createTextNode("a + (b + c) = (a + b) + c");
+            break;
+          case 2:
+            var node = document.createTextNode("a + b = b + a");
+            break;
+        }
+        castSpell.div.appendChild(node);
+        requestAnimationFrame(function() {playArea.appendChild(castSpell.div);});
+        setTimeout(function() {
+          requestAnimationFrame(function() {
+            castSpell.div.style.transform = "rotate(360deg)";
+            castSpell.div.style.filter = "opacity(0%)";
+            castSpell.div.style.fontSize = "0em";
+          });
+        }, 25);
+      }
+    }
+    spellFlash--;
+  }
+
   //
   //This holds the string that will become the hint
   var hintString = "";
@@ -3571,6 +3653,42 @@ function castTriangle() {
     let levelDiv = document.getElementById("levelDiv");
     playArea.insertBefore(canvas, levelDiv);
 
+    var sparkCanvas1 = document.createElement("canvas");
+    sparkCanvas1.height = 21;
+    sparkCanvas1.width = 21;
+    sparkCanvas1.className = "sparkCanvas";
+    var sparkContext1 = sparkCanvas1.getContext("2d");
+    playArea.appendChild(sparkCanvas1);
+    var sparkTop1;
+    var sparkLeft1;
+
+    var sparkCanvas2 = document.createElement("canvas");
+    sparkCanvas2.height = 21;
+    sparkCanvas2.width = 21;
+    sparkCanvas2.className = "sparkCanvas";
+    var sparkContext2 = sparkCanvas2.getContext("2d");
+    playArea.appendChild(sparkCanvas2);
+    var sparkTop2;
+    var sparkLeft2;
+
+    var sparkCanvas3 = document.createElement("canvas");
+    sparkCanvas3.height = 21;
+    sparkCanvas3.width = 21;
+    sparkCanvas3.className = "sparkCanvas";
+    var sparkContext3 = sparkCanvas3.getContext("2d");
+    playArea.appendChild(sparkCanvas3);
+    var sparkTop3;
+    var sparkLeft3;
+
+    var sparkCanvas4 = document.createElement("canvas");
+    sparkCanvas4.height = 21;
+    sparkCanvas4.width = 21;
+    sparkCanvas4.className = "sparkCanvas";
+    var sparkContext4 = sparkCanvas4.getContext("2d");
+    playArea.appendChild(sparkCanvas4);
+    var sparkTop4;
+    var sparkLeft4;
+
     var context = canvas.getContext("2d");
     context.canvas.width = 450;
     context.canvas.height = 450;
@@ -3616,18 +3734,25 @@ function castTriangle() {
 
     function drawLine1() {
       context.beginPath();
+
       context.moveTo(lineX1, 250);
       lineX1 -= lineXinterval;
       context.lineTo(lineX1, 250);
+      drawSpark((lineX1 - 10), 240, sparkCanvas1, sparkContext1);
+
       context.moveTo(lineX2, 250);
       lineX2 += lineXinterval;
       context.lineTo(lineX2, 250);
+      drawSpark(lineX2, 240, sparkCanvas2, sparkContext2);
+
       context.lineWidth = lineWidth;
       context.strokeStyle = baseColor;
       context.stroke();
 
       if (lineX2 > 450) {
         clearInterval(lineDraw);
+        playArea.removeChild(sparkCanvas1);
+        playArea.removeChild(sparkCanvas2);
       }
       context.shadowBlur = 5;
       context.shadowColor = baseShadow;
@@ -3636,11 +3761,17 @@ function castTriangle() {
     function drawCircle1() {
       context.beginPath();
       context.arc(150, 250, 150, (circleStart1 * Math.PI), (circleAngle1 * Math.PI));
-      circleStart1 = circleAngle1;
-      circleAngle1 += circleInterval1;
       context.lineWidth = lineWidth;
       context.strokeStyle = baseColor;
       context.stroke();
+      circleStart1 = circleAngle1;
+      circleAngle1 += circleInterval1;
+
+      let xPos = (150 + (150 * Math.cos(circleStart1 * Math.PI)));
+      let yPos = (250 + (150 * Math.sin(circleStart1 * Math.PI)));
+
+      drawSpark(xPos, yPos, sparkCanvas3, sparkContext3);
+
       if (circleAngle1 > 2) {
         context.beginPath();
         context.arc(150, 250, 150, (circleStart1 * Math.PI), (2 * Math.PI));
@@ -3648,6 +3779,7 @@ function castTriangle() {
         context.strokeStyle = baseColor;
         context.stroke();
         clearInterval(circleDraw1);
+        playArea.removeChild(sparkCanvas3);
       }
       context.shadowBlur = 5;
       context.shadowColor = baseShadow;
@@ -3656,11 +3788,18 @@ function castTriangle() {
     function drawCircle2() {
       context.beginPath()
       context.arc(300, 250, 150, (circleStart2 * Math.PI), (circleAngle2 * Math.PI), true);
-      circleStart2 = circleAngle2;
-      circleAngle2 -= circleInterval2;
       context.lineWidth = lineWidth;
       context.strokeStyle = baseColor;
       context.stroke();
+      circleStart2 = circleAngle2;
+      circleAngle2 -= circleInterval2;
+
+
+      let xPos = (300 + (150 * Math.cos(circleStart2 * Math.PI)));
+      let yPos = (250 + (150 * Math.sin(circleStart2 * Math.PI)));
+
+      drawSpark(xPos, yPos, sparkCanvas4, sparkContext4);
+
       if (circleAngle2 < 0) {
         roundTwo = true;
         circleAngle2 = 2
@@ -3672,6 +3811,7 @@ function castTriangle() {
         context.strokeStyle = baseColor;
         context.stroke();
         clearInterval(circleDraw2);
+        playArea.removeChild(sparkCanvas4);
         drawTriangle1();
       }
       context.shadowBlur = 5;
@@ -3709,6 +3849,31 @@ function castTriangle() {
       animationDone = true;
     }
 
+    function drawSpark(x, y, sparkCanvas, sparkContext) {
+      sparkContext.clearRect(0, 0, 21, 21);
+      sparkContext.stroke();
+
+      var spark1 = getRandomNumber(0, 21);
+      var spark2 = getRandomNumber(0, 21);
+      var spark3 = getRandomNumber(0, 21);
+      var spark4 = getRandomNumber(0, 21);
+
+      sparkCanvas.style.top = y;
+      sparkCanvas.style.left = x;
+
+      sparkContext.beginPath();
+      sparkContext.moveTo(10, 10);
+      sparkContext.lineTo(21, spark1);
+      sparkContext.moveTo(10, 10);
+      sparkContext.lineTo(spark2, 21);
+      sparkContext.moveTo(10, 10);
+      sparkContext.lineTo(0, spark3);
+      sparkContext.moveTo(10, 10);
+      sparkContext.lineTo(spark4, 0);
+      sparkContext.closePath();
+      sparkContext.strokeStyle = "yellow";
+      sparkContext.stroke();
+    }
   }
 }
 //
@@ -3751,7 +3916,7 @@ function castSquare() {
   hintDiv.style.visibility = "visible";
   let spellFlash = 10;
   let spellCast = setInterval(castSpell, 75);
-
+  var playerDiv = document.getElementById("playerDiv");
   function castSpell() {
     if (spellFlash < 1) {
       clearInterval(spellCast);
@@ -3763,11 +3928,23 @@ function castSquare() {
       }
       var healthBarFront = document.getElementById("healthBarFront");
       healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
-
-      checkAnswer("heal", 0);
+      timer = setInterval(timeDown, 10);
     } else {
       if ((spellFlash % 2) == 0) {
         playArea.classList.remove("playAreaBlue");
+        var squareSpellAnimation = document.createElement("div");
+        squareSpellAnimation.id = "squareSpellAnimation";
+        squareSpellAnimation.innerHTML = "+";
+        squareSpellAnimation.style.left = (((spellFlash / 2) * (10 + (spellFlash / 2))) - 3) + "%";
+        playerDiv.appendChild(squareSpellAnimation);
+        setTimeout(function() {
+          squareSpellAnimation.style.bottom = "100%";
+          squareSpellAnimation.style.filter = "opacity(0%)";
+        }, 100);
+
+        setTimeout(function() {
+          playerDiv.removeChild(squareSpellAnimation);
+        }, 2100);
       } else {
         playArea.classList.add("playAreaBlue");
       }
@@ -3858,15 +4035,29 @@ function castHexagon() {
   hintDiv.innerHTML = "You cast Hercules' Strength!";
   hintDiv.style.visibility = "visible";
   let spellFlash = 10;
-  let spellCast = setInterval(castSpell, 75);
+  let spellCast = setInterval(castSpell, 100);
   damageBoost++;
-
+  var playerImg = document.getElementById("playerImg");
+  var playerImgHeight = 100;
+  clearInterval(timer);
   function castSpell() {
     if (spellFlash < 1) {
       clearInterval(spellCast);
       playArea.classList.remove("playAreaWhite");
+
+      setTimeout(function() {
+        requestAnimationFrame(function() {
+          playerImg.style.height = 100;
+          timer = setInterval(timeDown, 10);
+        });
+      }, 500);
+      setTimeout(function() {
+        playerImg.removeAttribute("style");
+      }, 500);
     } else {
       if ((spellFlash % 2) == 0) {
+        playerImgHeight += 25;
+        playerImg.style.height = playerImgHeight;
         playArea.classList.remove("playAreaWhite");
       } else {
         playArea.classList.add("playAreaWhite");
