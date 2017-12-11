@@ -16,7 +16,15 @@ I've also got a lot of code redundancy that I can likely remove. Some of my code
 
 I want three more achievements!
 
-I want more spell animations like J. Jonah Jameson wants Spiderman pictures.
+I want more spell animations like J. Jonah Jameson wants Spiderman pictures. I still have to make animations for penta/term reduction, cube/polymorph, pyramid/time, and star/nova. 
+
+## 12/11/17
+
+### Update
+
+I've added animations for hints, square/heal, and hex/strength. I'm not happy with the hint animation but I can work on it more later. It's essentially just a generic equation spinning and shrinking into the hint area. It can be better and it will but It's more than I had before. 
+
+I also added sparks to the triangle/fireball animation to make it look cooler. I haven't been able to line them up precisely on the circles but I'm getting there. The animation runs so quickly that I have a hard time discerning precisely where they line up...
 
 ## 12/09/17
 
