@@ -507,6 +507,9 @@ function townIntro() {
 }
 //
 //Sets up the dungeon entrance screen
+//At this point, the function is poorly named
+//since it also sets up the monster book and
+//will set up the competitive mode.
 function dungeonEntrance() {
   let additionDoor = "";
   let subtractionDoor = "";
@@ -3261,46 +3264,6 @@ function castFibonacci() {
     hintDiv.style.visibility = "visible"; //This displays the hint area
     return;
   }
-  let spellFlash = 6;
-  let spellCast = setInterval(castSpell, 500);
-  clearInterval(timer);
-  function castSpell() {
-    if (spellFlash < 1) {
-      clearInterval(spellCast);
-      timer = setInterval(timeDown, 10);
-      playArea.removeChild(castSpell.div);
-    } else {
-      if ((spellFlash % 2) == 0) {
-        if (spellFlash < 6) {
-          playArea.removeChild(castSpell.div);
-        }
-        castSpell.div = document.createElement("div");
-        castSpell.div.id = "fibonacciMagic";
-        switch (spellFlash) {
-          case 6:
-            var node = document.createTextNode("a * (b + c) = (a * b) + (a * c)");
-            break;
-          case 4:
-            var node = document.createTextNode("a + (b + c) = (a + b) + c");
-            break;
-          case 2:
-            var node = document.createTextNode("a + b = b + a");
-            break;
-        }
-        castSpell.div.appendChild(node);
-        requestAnimationFrame(function() {playArea.appendChild(castSpell.div);});
-        setTimeout(function() {
-          requestAnimationFrame(function() {
-            castSpell.div.style.transform = "rotate(360deg)";
-            castSpell.div.style.filter = "opacity(0%)";
-            castSpell.div.style.fontSize = "0em";
-          });
-        }, 25);
-      }
-    }
-    spellFlash--;
-  }
-
   //
   //This holds the string that will become the hint
   var hintString = "";
@@ -3332,11 +3295,8 @@ function castFibonacci() {
         divisionHint(terms[0], terms[2]);
         break;
     }
-    //
-    //These five lines display the final hint to the hintDiv,
-    //update the count of Fibonacci Spells, and end the function
-    hintDiv.innerHTML = hintString;
-    hintDiv.style.visibility = "visible";
+
+    fibonacciAnimation();
     fibonacciSpells--;
     fibonacciCount.innerHTML = fibonacciSpells;
     return;
@@ -3352,8 +3312,7 @@ function castFibonacci() {
       hintString += terms[0] + " - " + terms[1] + " = ?<br />";
       hintString += terms[1] + " - " + terms[2] + " = ?";
     }
-    hintDiv.innerHTML = hintString;
-    hintDiv.style.visibility = "visible";
+    fibonacciAnimation();
     fibonacciSpells--;
     fibonacciCount.innerHTML = fibonacciSpells;
     return;
@@ -3382,10 +3341,9 @@ function castFibonacci() {
       }
       break;
    }
-  //
-  //These last four lines display the final hint to the hintDiv
-  //and update the count of Fibonacci Spells
-  hintDiv.innerHTML = hintString;
+
+
+  fibonacciAnimation();
   hintDiv.style.visibility = "visible";
   fibonacciSpells--;
   fibonacciCount.innerHTML = fibonacciSpells;
@@ -3589,6 +3547,78 @@ function castFibonacci() {
     }
   }
 
+  function fibonacciAnimation() {
+    hintDiv.style.visibility = "visible";
+    var possible = "1234567890+-/*()";
+    var randomString = "";
+    let spellCount = 1;
+    var randomString = "";
+    if (hintString.includes("<span style=\"color:#ffbaba\">")) {
+      var shortener1 = hintString.match(/<span style="color:#ffbaba">/gi);
+    } else {
+      var shortener1 = [];
+    }
+    if (hintString.includes("</span>")) {
+      var shortener2 = hintString.match(/<\/span>/gi);
+    } else {
+      var shortener2 = [];
+    }
+    if (hintString.includes("<br />")) {
+      var shortener3 = hintString.match(/<br \/>/gi);
+    } else {
+      var shortener3 = [];
+    }
+    var shortener = (shortener1.length + shortener2.length + shortener3.length);
+    var charactersToPrint = (hintString.length - ((shortener1.length * 28) + (shortener2.length * 7) + (shortener3.length * 6)));
+    var span1 = 0;
+    var span2 = 0;
+    var br1 = 0;
+    var randomCount = 0;
+    let spellCast = setInterval(castSpell, 50);
+    clearInterval(timer);
+    function castSpell() {
+      randomString = "";
+      if (spellCount >= (charactersToPrint + shortener)) {
+        hintDiv.innerHTML = hintString;
+        var answerInput = document.getElementById("answerInput");
+        answerInput.focus();
+        clearInterval(spellCast);
+        if (!pyramidCast) {
+          timer = setInterval(timeDown, 10);
+        }
+      } else {
+        span1 = 0;
+        span2 = 0;
+        br1 = 0;
+        hintLoop:
+        for (var j = 0; j < spellCount; j++) {
+          var spanMod = ((span1 * 27) + (span2 * 6) + (br1 * 5))
+
+          if ((hintString.charAt(j + spanMod) == "<") && (hintString.charAt(j + 6 + spanMod) == ">")) {
+            randomString += "</span>";
+            span2++;
+          } else if ((hintString.charAt(j + spanMod) == "<") && (hintString.charAt(j + 5 + spanMod) == ">")) {
+            randomString += "<br />";
+            br1++;
+          } else if (hintString.charAt(j + spanMod) == "<") {
+            randomString += "<span style=\"color:#ffbaba\">";
+            span1++;
+          } else  {
+            randomString += hintString.charAt((j + spanMod));
+          }
+
+        }
+        for (let i = randomCount; i < ((charactersToPrint - 1) + shortener); i++) {
+
+          randomString += possible.charAt(getRandomNumber(0, (possible.length - 1)));
+
+        }
+        spellCount++;
+        randomCount++;
+        hintDiv.innerHTML = randomString;
+      }
+    }
+  }
 }
 //
 //This function handles my triangle/fireball spell
@@ -3718,7 +3748,7 @@ function castTriangle() {
       requestAnimationFrame(function() {
         drawLine1();
       })
-    }, 30);
+    }, 34);
 
     var circleDraw1 = setInterval(function() {
       requestAnimationFrame(function() {
@@ -3743,7 +3773,7 @@ function castTriangle() {
       context.moveTo(lineX2, 250);
       lineX2 += lineXinterval;
       context.lineTo(lineX2, 250);
-      drawSpark(lineX2, 240, sparkCanvas2, sparkContext2);
+      drawSpark((lineX2 - 10), 240, sparkCanvas2, sparkContext2);
 
       context.lineWidth = lineWidth;
       context.strokeStyle = baseColor;
@@ -3767,8 +3797,8 @@ function castTriangle() {
       circleStart1 = circleAngle1;
       circleAngle1 += circleInterval1;
 
-      let xPos = (150 + (150 * Math.cos(circleStart1 * Math.PI)));
-      let yPos = (250 + (150 * Math.sin(circleStart1 * Math.PI)));
+      let xPos = (140 + (150 * Math.cos(circleStart1 * Math.PI)));
+      let yPos = (240 + (150 * Math.sin(circleStart1 * Math.PI)));
 
       drawSpark(xPos, yPos, sparkCanvas3, sparkContext3);
 
@@ -3795,8 +3825,8 @@ function castTriangle() {
       circleAngle2 -= circleInterval2;
 
 
-      let xPos = (300 + (150 * Math.cos(circleStart2 * Math.PI)));
-      let yPos = (250 + (150 * Math.sin(circleStart2 * Math.PI)));
+      let xPos = (290 + (150 * Math.cos(circleStart2 * Math.PI)));
+      let yPos = (240 + (150 * Math.sin(circleStart2 * Math.PI)));
 
       drawSpark(xPos, yPos, sparkCanvas4, sparkContext4);
 
@@ -3914,6 +3944,7 @@ function castSquare() {
 
   hintDiv.innerHTML = "You cast Nightengale's Health!";
   hintDiv.style.visibility = "visible";
+  setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
   let spellFlash = 10;
   let spellCast = setInterval(castSpell, 75);
   var playerDiv = document.getElementById("playerDiv");
@@ -3928,7 +3959,9 @@ function castSquare() {
       }
       var healthBarFront = document.getElementById("healthBarFront");
       healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
-      timer = setInterval(timeDown, 10);
+      if (!pyramidCast) {
+        timer = setInterval(timeDown, 10);
+      }
     } else {
       if ((spellFlash % 2) == 0) {
         playArea.classList.remove("playAreaBlue");
@@ -3957,6 +3990,10 @@ function castSquare() {
 //
 //This function handles my pentagon/reduce terms spell
 function castPentagon() {
+  fibonacciCast = false;
+  fibonacciImg = document.getElementById("fibonacciImg");
+  fibonacciImg.style.filter = "opacity(100%)";
+  fibonacciImg.onclick = function(){castFibonacci();}
   hintDiv = document.getElementById("hintDiv");
   //
   //If the player has no magic, then no magic is cast
@@ -3966,10 +4003,12 @@ function castPentagon() {
     setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
     return;
   }
-
+  clearInterval(timer);
   hintDiv.innerHTML = "You cast Lovelace's Reduction!";
   hintDiv.style.visibility = "visible";
+  setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
   let spellFlash = 10;
+  var possible = "1234567890/*+-";
   let spellCast = setInterval(castSpell, 75);
 
   terms[0] = Math.ceil(terms[0] / 2);
@@ -3992,16 +4031,22 @@ function castPentagon() {
       break;
   }
 
-  let problemDiv = document.getElementById("problemDiv");
-  problemDiv.innerHTML = terms[0] + " " + operator + " <span style=\"color:#ffbaba\">" + terms[1] + "</span> =\
-    <input id=\"answerInput\" type=\"number\" onKeyPress=\"checkKeyPress(event, " + terms[2] + ")\"/>";
-  var answerInput = document.getElementById("answerInput");
-  answerInput.focus();
-
   function castSpell() {
+    var text = "";
+    for (let i = 0; i < 15; i++) {
+      text += possible.charAt(getRandomNumber(0, (possible.length - 1)));
+    }
+    problemDiv.innerHTML = text;
     if (spellFlash < 1) {
       clearInterval(spellCast);
+      if (!pyramidCast) {
+        timer = setInterval(timeDown, 10);
+      }
       playArea.classList.remove("playAreaOrange");
+      problemDiv.innerHTML = terms[0] + " " + operator + " <span style=\"color:#ffbaba\">" + terms[1] + "</span> =\
+        <input id=\"answerInput\" type=\"number\" onKeyPress=\"checkKeyPress(event, " + terms[2] + ")\"/>";
+      var answerInput = document.getElementById("answerInput");
+      answerInput.focus();
     } else {
       if ((spellFlash % 2) == 0) {
         playArea.classList.remove("playAreaOrange");
@@ -4034,6 +4079,7 @@ function castHexagon() {
 
   hintDiv.innerHTML = "You cast Hercules' Strength!";
   hintDiv.style.visibility = "visible";
+  setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
   let spellFlash = 10;
   let spellCast = setInterval(castSpell, 100);
   damageBoost++;
@@ -4048,7 +4094,9 @@ function castHexagon() {
       setTimeout(function() {
         requestAnimationFrame(function() {
           playerImg.style.height = 100;
-          timer = setInterval(timeDown, 10);
+          if (!pyramidCast) {
+            timer = setInterval(timeDown, 10);
+          }
         });
       }, 500);
       setTimeout(function() {
@@ -4125,7 +4173,7 @@ function castCube() {
   //
   //If the player is fighting one of the boss monsters
   //the spell won't work
-  if (monster.index > 29) {
+  if ((monster.index > 29) && (getLevel() < 10)) {
     hintDiv.innerHTML = "You can't polymorph the " + monster.name + "!";
     hintDiv.style.visibility = "visible"; //This displays the hint area
     setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
@@ -4137,18 +4185,27 @@ function castCube() {
   setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
   let spellFlash = 10;
   let spellCast = setInterval(castSpell, 75);
-
+  var monsterDiv = document.getElementById("monsterDiv");
   function castSpell() {
     if (spellFlash < 1) {
       clearInterval(spellCast);
       playArea.classList.remove("playAreaPurple");
       let newMonsterLevel = getRandomNumber(1, (Math.ceil(getLevel() / 2)));
+      monsterDiv.style.transform = "rotateY(-180deg)";
       monster = new newMonster(newMonsterLevel);
+      monsterDiv.style.transform = "rotateY(-360deg)";
       //battle();
-      timer = setInterval(timeDown, 10);
+      if (!pyramidCast) {
+        timer = setInterval(timeDown, 10);
+      }
     } else {
       if ((spellFlash % 2) == 0) {
         playArea.classList.remove("playAreaPurple");
+        if ((spellFlash % 4) == 0) {
+          requestAnimationFrame(function() {
+            monsterDiv.style.transform = "rotateY(-" + (spellFlash * 360) + "deg)";
+          });
+        }
       } else {
         playArea.classList.add("playAreaPurple");
       }
