@@ -16,7 +16,17 @@ I've also got a lot of code redundancy that I can likely remove. Some of my code
 
 I want three more achievements!
 
-I want more spell animations like J. Jonah Jameson wants Spiderman pictures. I still have to make animations for penta/term reduction, cube/polymorph, pyramid/time, and star/nova. 
+I want more spell animations like J. Jonah Jameson wants Spiderman pictures. I still have to make animations for pyramid/time and star/nova. For both of these, I plan on using the \<canvas\> element. The stop time will have a clock-type animation that will involve the Math.sin() and Math.cos() functions. I still have to work out the star/nova animation but it will involve a six-pointed star being drawn similar to the triangle/fireball spell.
+
+## 12/12/17
+
+### Update
+
+I created an animation for the pentagon/reduction magic and changed the animation for the fibonacci/hint magic.
+
+For the pentagon magic a string of random numbers and symbols flashes across the problemDiv before displaying the new terms. That wasn't too hard.
+
+For the hint magic animation I made a string of random characters resolve, one by one, into the needed hint. This was sooooo much harder than I thought it would be and it's still not perfect but it's pretty good. The real trouble came when trying to handle the html tags and not displaying those to the screen but displaying everything else. I had to learn a bit of RegExp to get this done and I learned a bit more about string functions in the process. 
 
 ## 12/11/17
 
