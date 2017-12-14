@@ -4228,16 +4228,26 @@ function castStar() {
     return;
   }
   clearInterval(timer);
+  var animationDone = false;
+  var spellCast;
+  novaAnimation();
 
   hintDiv.innerHTML = "You cast Brahe's Nova!";
   hintDiv.style.visibility = "visible";
-  let spellFlash = 10;
-  let spellCast = setInterval(castSpell, 75);
+  let spellFlash = 9;
+  let z = setInterval(function() {
+    if (animationDone) {
+      spellCast = setInterval(castSpell, 75);
+      clearInterval(z);
+    }
+  }, 10);
 
   function castSpell() {
     if (spellFlash < 1) {
       clearInterval(spellCast);
       playArea.classList.remove("playAreaYellow");
+      var canvas = document.getElementById("novaCanvas");
+      playArea.removeChild(canvas);
       checkAnswer("spell", 10);
     } else {
       if ((spellFlash % 2) == 0) {
@@ -4250,6 +4260,266 @@ function castStar() {
   }
   starSpells--;
   document.getElementById("starCount").innerHTML = starSpells;
+
+  function novaAnimation() {
+    var canvas = document.createElement("canvas");
+    canvas.id = "novaCanvas";
+    let levelDiv = document.getElementById("levelDiv");
+    playArea.insertBefore(canvas, levelDiv);
+
+    var context = canvas.getContext("2d");
+    context.canvas.width = 450;
+    context.canvas.height = 450;
+
+    var sparkBox = 81;
+    var sparkBoxCenter = 40;
+
+    var sparkCanvas1 = makeSparkCanvas()
+    var sparkContext1 = sparkCanvas1.getContext("2d");
+    playArea.appendChild(sparkCanvas1);
+
+    var sparkCanvas2 = makeSparkCanvas()
+    var sparkContext2 = sparkCanvas2.getContext("2d");
+    playArea.appendChild(sparkCanvas2);
+
+    var sparkCanvas3 = makeSparkCanvas()
+    var sparkContext3 = sparkCanvas3.getContext("2d");
+    playArea.appendChild(sparkCanvas3);
+
+    var sparkCanvas4 = makeSparkCanvas()
+    var sparkContext4 = sparkCanvas4.getContext("2d");
+    playArea.appendChild(sparkCanvas4);
+
+    var sparkCanvas5 = makeSparkCanvas()
+    var sparkContext5 = sparkCanvas5.getContext("2d");
+    playArea.appendChild(sparkCanvas5);
+
+    var sparkCanvas6 = makeSparkCanvas()
+    var sparkContext6 = sparkCanvas6.getContext("2d");
+    playArea.appendChild(sparkCanvas6);
+
+    var lineWidth = 10;
+    var baseColor = "rgba(233, 249, 0, 1)"
+    var baseShadow = "rgba(255, 0, 0, 1)"
+
+    var point1 = 1.5;
+    var point2 = 2.16666666;
+    var point3 = 2.83333333;
+    var point4 = 0.5;
+    var point5 = 1.16666666;
+    var point6 = 1.83333333;
+    var starRadius = 0;
+
+    var interval = 0.05;
+    var animationRate = 25;
+    var animationCounter = 0;
+
+    var starGrow = setInterval(function() {
+      context.clearRect(0, 0, 450, 450);
+      growStar();
+      starRadius += 7;
+      if (starRadius > 150) {
+        clearInterval(starGrow);
+        playArea.classList.add("playAreaYellowFlash");
+        setTimeout(function() {
+          requestAnimationFrame(function() {
+            playArea.classList.remove("playAreaYellowFlash");
+          });
+        }, 250);
+        var starTimer = setInterval(function() {
+          context.clearRect(0, 0, 450, 450);
+          drawStar();
+          drawSparks();
+
+          incrementStar();
+          animationCounter += animationRate;
+          if (animationCounter > 1000) {
+            interval = 0.075;
+          }
+          if (animationCounter > 2000) {
+            clearInterval(starTimer);
+            point1 = 1.5;
+            point2 = 2.16666666;
+            point3 = 2.83333333;
+            point4 = 0.5;
+            point5 = 1.16666666;
+            point6 = 1.83333333;
+            context.clearRect(0, 0, 450, 450);
+            playArea.removeChild(sparkCanvas1);
+            playArea.removeChild(sparkCanvas2);
+            playArea.removeChild(sparkCanvas3);
+            playArea.removeChild(sparkCanvas4);
+            playArea.removeChild(sparkCanvas5);
+            playArea.removeChild(sparkCanvas6);
+            drawStar();
+            playArea.classList.add("playAreaYellowFlash");
+            setTimeout(function() {
+              requestAnimationFrame(function() {
+                playArea.classList.remove("playAreaYellowFlash");
+              });
+            }, 250);
+            animationDone = true;
+          }
+        }, animationRate);
+      }
+    }, animationRate);
+
+    function incrementStar() {
+      point1 += interval;
+      point2 += interval;
+      point3 += interval;
+      point4 += interval;
+      point5 += interval;
+      point6 += interval;
+    }
+
+    function growStar() {
+      triangle1x1 = (225 + (starRadius * Math.cos(point1 * Math.PI)));
+      triangle1y1 = (225 + (starRadius * Math.sin(point1 * Math.PI)));
+
+      triangle1x2 = (225 + (starRadius * Math.cos(point2 * Math.PI)));
+      triangle1y2 = (225 + (starRadius * Math.sin(point2 * Math.PI)));
+
+      triangle1x3 = (225 + (starRadius * Math.cos(point3 * Math.PI)));
+      triangle1y3 = (225 + (starRadius * Math.sin(point3 * Math.PI)));
+
+      triangle2x1 = (225 + (starRadius * Math.cos(point4 * Math.PI)));
+      triangle2y1 = (225 + (starRadius * Math.sin(point4 * Math.PI)));
+
+      triangle2x2 = (225 + (starRadius * Math.cos(point5 * Math.PI)));
+      triangle2y2 = (225 + (starRadius * Math.sin(point5 * Math.PI)));
+
+      triangle2x3 = (225 + (starRadius * Math.cos(point6 * Math.PI)));
+      triangle2y3 = (225 + (starRadius * Math.sin(point6 * Math.PI)));
+
+      context.beginPath();
+
+      context.moveTo(triangle1x1, triangle1y1);
+      context.lineTo(triangle1x2, triangle1y2);
+      context.lineTo(triangle1x3, triangle1y3);
+      context.lineTo(triangle1x1, triangle1y1);
+      context.lineTo(triangle1x2, triangle1y2);
+
+      context.moveTo(triangle2x1, triangle2y1);
+      context.lineTo(triangle2x2, triangle2y2);
+      context.lineTo(triangle2x3, triangle2y3);
+      context.lineTo(triangle2x1, triangle2y1);
+      context.closePath();
+
+      context.shadowOffsetX = 5;
+      context.shadowOffsetY = 5;
+      context.shadowBlur = 5;
+      context.shadowColor = "black";
+      context.lineWidth = lineWidth;
+      context.strokeStyle = baseColor;
+      context.stroke();
+    }
+
+    function drawStar() {
+      triangle1x1 = getX(225, 150, point1);
+      triangle1y1 = getY(225, 150, point1);
+
+      triangle1x2 = getX(225, 150, point2);
+      triangle1y2 = getY(225, 150, point2);
+
+      triangle1x3 = getX(225, 150, point3);
+      triangle1y3 = getY(225, 150, point3);
+
+      triangle2x1 = getX(225, 150, point4);
+      triangle2y1 = getY(225, 150, point4);
+
+      triangle2x2 = getX(225, 150, point5);
+      triangle2y2 = getY(225, 150, point5);
+
+      triangle2x3 = getX(225, 150, point6);
+      triangle2y3 = getY(225, 150, point6);
+
+      context.beginPath();
+
+      context.moveTo(triangle1x1, triangle1y1);
+      context.lineTo(triangle1x2, triangle1y2);
+      context.lineTo(triangle1x3, triangle1y3);
+      context.lineTo(triangle1x1, triangle1y1);
+      context.lineTo(triangle1x2, triangle1y2);
+
+      context.moveTo(triangle2x1, triangle2y1);
+      context.lineTo(triangle2x2, triangle2y2);
+      context.lineTo(triangle2x3, triangle2y3);
+      context.lineTo(triangle2x1, triangle2y1);
+      context.closePath();
+
+      context.shadowOffsetX = 5;
+      context.shadowOffsetY = 5;
+      context.shadowBlur = 5;
+      context.shadowColor = "black";
+      context.lineWidth = lineWidth;
+      context.strokeStyle = baseColor;
+      context.stroke();
+    }
+
+    function drawSpark(sparkCanvas, sparkContext, angle) {
+      let x = getX(225, 157, angle);
+      let y = getY(225, 157, angle);
+
+      y -= sparkBoxCenter;
+      x -= sparkBoxCenter;
+
+      angle = ((angle * Math.PI) * (180 / Math.PI))
+
+      setTimeout(function() {
+        sparkContext.clearRect(0, 0, sparkBox, sparkBox);
+        sparkContext.stroke();
+      }, (animationRate * 3));
+
+      var spark1 = getRandomNumber((sparkBox / 4), ((sparkBox * 3) / 4));
+      var spark2 = getRandomNumber((sparkBox / 4), ((sparkBox * 3) / 4));
+      var spark3 = getRandomNumber((sparkBox / 4), ((sparkBox * 3) / 4));
+      var spark4 = getRandomNumber((sparkBox / 4), ((sparkBox * 3) / 4));
+
+      sparkCanvas.style.top = y;
+      sparkCanvas.style.left = x;
+      sparkCanvas.style.transform = "rotate(" + angle + "deg)";
+
+      sparkContext.beginPath();
+      sparkContext.moveTo(sparkBoxCenter, sparkBoxCenter);
+      sparkContext.lineTo(spark1, 0);
+      sparkContext.moveTo(sparkBoxCenter, sparkBoxCenter);
+      sparkContext.lineTo(spark2, 0);
+      sparkContext.moveTo(sparkBoxCenter, sparkBoxCenter);
+      sparkContext.lineTo(spark3, 0);
+      sparkContext.moveTo(sparkBoxCenter, sparkBoxCenter);
+      sparkContext.lineTo(spark4, 0);
+      sparkContext.closePath();
+      //sparkContext.lineWidth = 2;
+      sparkContext.strokeStyle = "orange";
+      sparkContext.stroke();
+    }
+
+    function drawSparks() {
+      drawSpark(sparkCanvas1, sparkContext1, point1);
+      drawSpark(sparkCanvas2, sparkContext2, point2);
+      drawSpark(sparkCanvas3, sparkContext3, point3);
+      drawSpark(sparkCanvas4, sparkContext4, point4);
+      drawSpark(sparkCanvas5, sparkContext5, point5);
+      drawSpark(sparkCanvas6, sparkContext6, point6);
+    }
+
+    function makeSparkCanvas() {
+      var sparkCanvas = document.createElement("canvas");
+      sparkCanvas.height = sparkBox;
+      sparkCanvas.width = sparkBox;
+      sparkCanvas.className = "sparkCanvas";
+      return sparkCanvas;
+    }
+
+    function getX(center, radius, angle) {
+      return (center + (radius * Math.cos(angle * Math.PI)));
+    }
+
+    function getY(center, radius, angle) {
+      return (center + (radius * Math.sin(angle * Math.PI)));
+    }
+  }
 }
 //
 //This saves all the important values into localStorage
