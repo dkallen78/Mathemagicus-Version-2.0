@@ -3979,7 +3979,9 @@ function castSquare() {
           playerDiv.removeChild(squareSpellAnimation);
         }, 2100);
       } else {
-        playArea.classList.add("playAreaBlue");
+        requestAnimationFrame(function() {
+          playArea.classList.add("playAreaBlue");
+        });
       }
     }
     spellFlash--;
@@ -4049,9 +4051,13 @@ function castPentagon() {
       answerInput.focus();
     } else {
       if ((spellFlash % 2) == 0) {
-        playArea.classList.remove("playAreaOrange");
+        requestAnimationFrame(function() {
+          playArea.classList.remove("playAreaOrange");
+        });
       } else {
-        playArea.classList.add("playAreaOrange");
+        requestAnimationFrame(function() {
+          playArea.classList.add("playAreaOrange");
+        });
       }
     }
     spellFlash--;
@@ -4105,10 +4111,14 @@ function castHexagon() {
     } else {
       if ((spellFlash % 2) == 0) {
         playerImgHeight += 25;
-        playerImg.style.height = playerImgHeight;
-        playArea.classList.remove("playAreaWhite");
+        requestAnimationFrame(function() {
+          playerImg.style.height = playerImgHeight;
+          playArea.classList.remove("playAreaWhite");
+        });
       } else {
-        playArea.classList.add("playAreaWhite");
+        requestAnimationFrame(function() {
+          playArea.classList.add("playAreaWhite");
+        });
       }
     }
     spellFlash--;
@@ -4130,21 +4140,38 @@ function castPyramid() {
     return;
   }
 
+  pyramidAnimation();
   hintDiv.innerHTML = "You cast Huygen's Stop Time!";
   hintDiv.style.visibility = "visible";
   setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
-  let spellFlash = 10;
-  let spellCast = setInterval(castSpell, 75);
+  let spellFlash = 9;
+  var animationDone = false;
+  let z = setInterval(function() {
+    if (animationDone) {
+      spellCast = setInterval(castSpell, 75);
+      clearInterval(z);
+    }
+  }, 10);
 
   function castSpell() {
     if (spellFlash < 1) {
       clearInterval(spellCast);
+      var canvas = document.getElementById("timeCanvas");
+      playArea.removeChild(canvas);
+      var handCanvas = document.getElementById("handCanvas");
+      playArea.removeChild(handCanvas);
       playArea.classList.remove("playAreaGreen");
+      var answerInput = document.getElementById("answerInput");
+      answerInput.focus();
     } else {
       if ((spellFlash % 2) == 0) {
-        playArea.classList.remove("playAreaGreen");
+        requestAnimationFrame(function() {
+          playArea.classList.remove("playAreaGreen");
+        });
       } else {
-        playArea.classList.add("playAreaGreen");
+        requestAnimationFrame(function() {
+          playArea.classList.add("playAreaGreen");
+        });
       }
     }
     spellFlash--;
@@ -4156,6 +4183,147 @@ function castPyramid() {
   pyramidImg = document.getElementById("pyramidImg");
   pyramidImg.style.filter = "opacity(30%)";
   pyramidImg.onclick = "";
+
+  function pyramidAnimation() {
+    var canvas = document.createElement("canvas");
+    canvas.id = "timeCanvas";
+    let levelDiv = document.getElementById("levelDiv");
+    playArea.insertBefore(canvas, levelDiv);
+
+    var context = canvas.getContext("2d");
+    context.canvas.width = 450;
+    context.canvas.height = 450;
+
+    var handCanvas = document.createElement("canvas");
+    handCanvas.id = "handCanvas";
+    playArea.insertBefore(handCanvas, canvas);
+
+    var handContext = handCanvas.getContext("2d");
+    handCanvas.width = 450;
+    handCanvas.height = 450;
+
+    var lineWidth = 5;
+    var baseColor = "rgba(0, 255, 0, 1)"
+    var baseShadow = "rgba(255, 0, 0, 1)"
+
+    context.beginPath();
+    context.arc(225, 225, 200, 0, (2 * Math.PI));
+
+    for (let i = 0; i < 2; i += .166666666) {
+      let xPos = (225 + (150 * Math.cos(i * Math.PI)));
+      let yPos = (225 + (150 * Math.sin(i * Math.PI)));
+
+      let xPos2 = (225 + (190 * Math.cos(i * Math.PI)));
+      let yPos2 = (225 + (190 * Math.sin(i * Math.PI)));
+
+      context.moveTo(xPos, yPos);
+      context.lineTo(xPos2, yPos2);
+    }
+
+    context.shadowOffsetX = 5;
+    context.shadowOffsetY = 5;
+    context.shadowBlur = 5;
+    context.shadowColor = "black";
+    context.lineWidth = lineWidth * 2;
+    context.strokeStyle = baseColor;
+
+    context.stroke();
+    context.closePath();
+
+    context.beginPath();
+    context.arc(225, 225, 10, 0, (2 * Math.PI));
+    context.fillStyle = baseColor;
+    context.fill();
+    context.shadowOffsetX = 5;
+    context.shadowOffsetY = 5;
+    context.shadowBlur = 5;
+    context.shadowColor = "black";
+    context.closePath();
+
+    var minuteAngle = 1.5;
+    var hourAngle = 0.5;
+    var timeIncrement = 0.125;
+
+    var flashing = false;
+
+
+    var pyramidTimer = setInterval(function() {
+      handContext.clearRect(0, 0, 450, 450);
+      if (hourAngle > 1.5) {
+        clearInterval(pyramidTimer);
+        minuteAngle = 1.5;
+        hourAngle = 1.5;
+        drawClock();
+        animationDone = true;
+      }
+      if (((Math.floor(minuteAngle + .5) % 2) == 0) && (!flashing)) {
+        flashing = true;
+        requestAnimationFrame(function() {
+          playArea.classList.add("playAreaGreenFlash");
+        });
+        setTimeout(function() {
+          requestAnimationFrame(function() {
+            playArea.classList.remove("playAreaGreenFlash");
+          });
+        }, 160);
+      }
+      if ((Math.floor(minuteAngle + .5) % 2) != 0) {
+        flashing = false;
+      }
+      if (hourAngle > 1.37) {
+        timeIncrement = 0.03333333;
+      } else if (hourAngle > 1.25) {
+        timeIncrement = 0.05555555;
+      }
+      drawClock();
+      incrementClock();
+    }, 10);
+
+    function drawClock() {
+      var minuteX1 = (225 + (20 * Math.cos(minuteAngle * Math.PI)));
+      var minuteY1 = (225 + (20 * Math.sin(minuteAngle * Math.PI)));
+
+      var minuteX2 = (225 + (180 * Math.cos(minuteAngle * Math.PI)));
+      var minuteY2 = (225 + (180 * Math.sin(minuteAngle * Math.PI)));
+
+      var hourX1 = (225 + (20 * Math.cos(hourAngle * Math.PI)));
+      var hourY1 = (225 + (20 * Math.sin(hourAngle * Math.PI)));
+
+      var hourX2 = (225 + (100 * Math.cos(hourAngle * Math.PI)));
+      var hourY2 = (225 + (100 * Math.sin(hourAngle * Math.PI)));
+
+      handContext.beginPath();
+      handContext.moveTo(minuteX1, minuteY1);
+      handContext.lineTo(minuteX2, minuteY2);
+      handContext.strokeStyle = baseColor;
+      handContext.lineWidth = 15;
+      handContext.shadowOffsetX = 5;
+      handContext.shadowOffsetY = 5;
+      handContext.shadowBlur = 5;
+      handContext.shadowColor = "black";
+      handContext.stroke();
+      handContext.closePath();
+
+      handContext.beginPath();
+      handContext.moveTo(hourX1, hourY1);
+      handContext.lineTo(hourX2, hourY2);
+      handContext.strokeStyle = baseColor;
+      handContext.lineWidth = 20;
+      handContext.shadowOffsetX = 5;
+      handContext.shadowOffsetY = 5;
+      handContext.shadowBlur = 5;
+      handContext.shadowColor = "black";
+      handContext.stroke();
+      handContext.closePath();
+    }
+
+    function incrementClock() {
+      minuteAngle += timeIncrement;
+      hourAngle += (timeIncrement / 12);
+    }
+
+
+  }
 }
 //
 //This function handles my cube/polymorph monster spell
@@ -4200,14 +4368,18 @@ function castCube() {
       }
     } else {
       if ((spellFlash % 2) == 0) {
-        playArea.classList.remove("playAreaPurple");
+        requestAnimationFrame(function() {
+          playArea.classList.remove("playAreaPurple");
+        });
         if ((spellFlash % 4) == 0) {
           requestAnimationFrame(function() {
             monsterDiv.style.transform = "rotateY(-" + (spellFlash * 360) + "deg)";
           });
         }
       } else {
-        playArea.classList.add("playAreaPurple");
+        requestAnimationFrame(function() {
+          playArea.classList.add("playAreaPurple");
+        });
       }
     }
     spellFlash--;
@@ -4251,9 +4423,13 @@ function castStar() {
       checkAnswer("spell", 10);
     } else {
       if ((spellFlash % 2) == 0) {
-        playArea.classList.remove("playAreaYellow");
+        requestAnimationFrame(function() {
+          playArea.classList.remove("playAreaYellow");
+        });
       } else {
-        playArea.classList.add("playAreaYellow");
+        requestAnimationFrame(function() {
+          playArea.classList.add("playAreaYellow");
+        });
       }
     }
     spellFlash--;
@@ -4320,12 +4496,14 @@ function castStar() {
       starRadius += 7;
       if (starRadius > 150) {
         clearInterval(starGrow);
-        playArea.classList.add("playAreaYellowFlash");
+        requestAnimationFrame(function() {
+          playArea.classList.add("playAreaYellowFlash");
+        });
         setTimeout(function() {
           requestAnimationFrame(function() {
             playArea.classList.remove("playAreaYellowFlash");
           });
-        }, 250);
+        }, 750);
         var starTimer = setInterval(function() {
           context.clearRect(0, 0, 450, 450);
           drawStar();
