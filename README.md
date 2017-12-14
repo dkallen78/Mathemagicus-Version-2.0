@@ -8,7 +8,7 @@ My assets are almost entirely borrowed and if the game ever sees wide distributi
 
 Included in this project are the html, css, and js files. Also included is a .rar file with all the assets used in the game.
 
-### Up next: maybe number rounding or comparisons(\<, \>), eliminating redundancy, three more achievements, more spell animations
+### Up next: maybe number rounding or comparisons(\<, \>), eliminating redundancy, three more achievements, one more spell animation
 
 I've got a program that does number rounding that I might put in if I find the right way to implement it. The same thing goes for comparisons, but they're a bit trickier. 
 
@@ -16,7 +16,15 @@ I've also got a lot of code redundancy that I can likely remove. Some of my code
 
 I want three more achievements!
 
-I want more spell animations like J. Jonah Jameson wants Spiderman pictures. I still have to make animations for pyramid/time and star/nova. For both of these, I plan on using the \<canvas\> element. The stop time will have a clock-type animation that will involve the Math.sin() and Math.cos() functions. I still have to work out the star/nova animation but it will involve a six-pointed star being drawn similar to the triangle/fireball spell.
+I want more spell animations like J. Jonah Jameson wants Spiderman pictures. I  have to make an animation for pyramid/time. I plan on using the \<canvas\> element. The stop time will have a clock-type animation that will involve the Math.sin() and Math.cos() functions. 
+
+## 12/14/17
+
+### Update
+
+I have added an animation for the star/nova magic! I've learned a lot more about math than I expected to with this animation. I will never forget that cosine and sine correspond to the x and y position of a point on a circle at a given angle. I also learned how to convert radians into degrees to rotate my spark canvas elements to do the spark effect properly.
+
+While this animation is similar to the triangle/fireball animation, I made some helper functions for this animation to make the code a bit cleaner. I plan on going back to the fireball animation at somepoint and applying those helper functions to it.
 
 ## 12/12/17
 
