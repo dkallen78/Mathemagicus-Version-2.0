@@ -8,7 +8,7 @@ My assets are almost entirely borrowed and if the game ever sees wide distributi
 
 Included in this project are the html, css, and js files. Also included is a .rar file with all the assets used in the game.
 
-### Up next: maybe number rounding or comparisons(\<, \>), eliminating redundancy, three more achievements, expanding keyboard controls
+### Up next: maybe number rounding or comparisons(\<, \>), eliminating redundancy, three more achievements, expanding keyboard controls, giving monster spells animations
 
 I've got a program that does number rounding that I might put in if I find the right way to implement it. The same thing goes for comparisons, but they're a bit trickier. 
 
@@ -16,7 +16,15 @@ I've also got a lot of code redundancy that I can likely remove. Some of my code
 
 I want three more achievements!
 
-I want the player to be able to use the arrow keys and the enter key to select which dungeon they will progress to next.
+I want the player to be able to use the arrow keys and the enter key to navigate the Liber Mathemagicus.
+
+I would like the monster magic to have its own animation instead of just flashing the screen.
+
+## 12/18/17
+
+### Update
+
+I've added keyboard functionality for the dungeon selection screen! I want to expand it to the book screen next but for now the player can use the arrow keys to choose which dungeon they want to explore!
 
 ## 12/17/17
 
