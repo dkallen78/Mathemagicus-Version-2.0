@@ -552,24 +552,28 @@ function dungeonEntrance() {
   //This block sets up the addition dungeon elements
   let additionDoorTD = document.createElement("td");
   let additionDoorImg = document.createElement("img");
+  additionDoorImg.tabIndex = "1";
   additionDoorTD.appendChild(additionDoorImg);
   firstRow.appendChild(additionDoorTD);
   //
   //This block sets up the subtraction dungeon elements
   let subtractionDoorTD = document.createElement("td");
   let subtractionDoorImg = document.createElement("img");
+  subtractionDoorImg.tabIndex = "2";
   subtractionDoorTD.appendChild(subtractionDoorImg);
   firstRow.appendChild(subtractionDoorTD);
   //
   //This block sets up the multiplication dungeon elements
   let multiplicationDoorTD = document.createElement("td");
   let multiplicationDoorImg = document.createElement("img");
+  multiplicationDoorImg.tabIndex = "3";
   multiplicationDoorTD.appendChild(multiplicationDoorImg);
   secondRow.appendChild(multiplicationDoorTD);
   //
   //This block sets up the division dungeon elements
   let divisionDoorTD = document.createElement("td");
   let divisionDoorImg = document.createElement("img");
+  divisionDoorImg.tabIndex = "4";
   divisionDoorTD.appendChild(divisionDoorImg);
   secondRow.appendChild(divisionDoorTD);
   //
@@ -627,6 +631,65 @@ function dungeonEntrance() {
   playArea.appendChild(dungeonTable);
   playArea.appendChild(nextScreen);
   playArea.appendChild(monsterBook);
+
+  //additionDoorImg.focus();
+
+  setTimeout(function() {
+    document.onkeydown = function(e) {
+      e = e || window.event;
+      checkArrowKeys(e.keyCode);
+    }
+  }, 100);
+
+  function checkArrowKeys(key) {
+    key = key || window.event;
+    switch (key) {
+      case 13:
+        if ((getLevel > 0) || (operator === "+")) {
+          document.onkeydown = "";
+          setTimeout(function() {
+            dungeon(operator);
+          }, 10);
+        }
+        break;
+      case 37: //Left
+        if (operator === "-") {
+          additionDoorImg.focus();
+          operator = "+";
+        } else if (operator === "/") {
+          multiplicationDoorImg.focus();
+          operator = "*";
+        }
+        break;
+      case 38: //Up
+        if (operator === "*") {
+          additionDoorImg.focus();
+          operator = "+";
+        } else if (operator === "/") {
+          subtractionDoorImg.focus();
+          operator = "-";
+        }
+        break;
+      case 39: //Right
+        if (operator === "+") {
+          subtractionDoorImg.focus();
+          operator = "-";
+        } else if (operator === "*") {
+          divisionDoorImg.focus();
+          operator = "/";
+        }
+        break;
+      case 40: //Down
+        if (operator === "+") {
+          multiplicationDoorImg.focus();
+          operator = "*";
+        } else if (operator === "-") {
+          divisionDoorImg.focus();
+          operator = "/";
+        }
+        break;
+    }
+  }
   //
   //This function shifts the screen to the book view
   function bookScreen() {
