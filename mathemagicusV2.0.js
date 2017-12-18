@@ -359,6 +359,13 @@ function chooseCharacter() {
   characterSelectText.id = "characterSelectText";
   characterSelectText.innerHTML = "Choose your mage:";
 
+  setTimeout(function() {
+    document.onkeydown = function(e) {
+      e = e || window.event;
+      checkArrowKeys(e.keyCode);
+    }
+  }, 100);
+
   var leftButton = document.createElement("input");
   leftButton.id = "leftButton";
   leftButton.className = "selectButtons";
@@ -390,8 +397,10 @@ function chooseCharacter() {
   characterImg2.className = "characterImg";
   characterDiv2.appendChild(characterImg2);
   characterImg2.src = "./mages/" + mages[0][0];
-  characterImg2.onclick = townIntro;
-
+  characterImg2.onclick = function() {
+    document.onkeypress = "";
+    townIntro();
+  }
   var characterImg3 = document.createElement("img");
   characterImg3.className = "characterImg";
   characterDiv3.appendChild(characterImg3);
@@ -466,6 +475,21 @@ function chooseCharacter() {
     characterDiv1.appendChild(characterImg1);
     characterImg1.src = "./mages/" + mages[(mageIndex + 6) % mages.length][0];
     playArea.insertBefore(characterDiv1, characterDiv2);
+  }
+
+  function checkArrowKeys(key) {
+    key = key || window.event;
+    switch (key) {
+      case 13:
+        townIntro();
+        break;
+      case 37:
+        shiftRight();
+        break;
+      case 39:
+        shiftLeft();
+        break;
+    }
   }
 }
 //
@@ -1853,17 +1877,30 @@ function dungeonEntrance() {
 function typeText(divID, textString, nextFunction, typingComplete) {
   let i = 0;
   let waitTime = 0;
+  let fillText = false;
   let div = document.getElementById(divID);
   div.innerHTML = ""; //Clears the innerHTML of the element to be typed in
+
+  setTimeout(function() {
+      document.onkeypress = function() {
+        fillText = true;
+        document.onkeypress = "";
+      }
+    }, 100);
   typer();
   //This is a recursive function that runs until the end of the text string
   function typer() {
-    if (i < textString.length) {
+    if (fillText) {
+      div.innerHTML = textString;
+      fillText = false;
+      i = textString.length;
+      typer();
+    } else if (i < textString.length) {
       div.innerHTML += textString.charAt(i);
       if (((textString.charAt(i) == ".") || (textString.charAt(i) == ",")) && ((i + 2) < textString.length)) {
-        waitTime = 300;  //This gives a brief pause for "." and "," as long as it's
+        waitTime = 150;  //This gives a brief pause for "." and "," as long as it's
       } else {           //not the end of the string
-        waitTime = 60;
+        waitTime = 30;
       }
       i++;
       setTimeout(typer, waitTime); //The recursion after a brief pause
@@ -1874,7 +1911,9 @@ function typeText(divID, textString, nextFunction, typingComplete) {
       nextButton.id = "nextButton";
       nextButton.onclick = nextFunction;
       div.appendChild(nextButton);
-      nextButton.focus();
+      setTimeout(function() {
+        nextButton.focus();
+      }, 100);
     } else if (typeof typingComplete === "function") {  //If this function is present it will only
       typingComplete();                                 //run once the typing has completed and there
     }                                                   //is no nextFunction()
@@ -4341,7 +4380,7 @@ function castCube() {
   //
   //If the player is fighting one of the boss monsters
   //the spell won't work
-  if ((monster.index > 29) && (getLevel() < 10)) {
+  if ((monster.index > 29) && (getLevel() < 9)) {
     hintDiv.innerHTML = "You can't polymorph the " + monster.name + "!";
     hintDiv.style.visibility = "visible"; //This displays the hint area
     setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
