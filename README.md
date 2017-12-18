@@ -8,13 +8,23 @@ My assets are almost entirely borrowed and if the game ever sees wide distributi
 
 Included in this project are the html, css, and js files. Also included is a .rar file with all the assets used in the game.
 
-### Up next: maybe number rounding or comparisons(\<, \>), eliminating redundancy, three more achievements
+### Up next: maybe number rounding or comparisons(\<, \>), eliminating redundancy, three more achievements, expanding keyboard controls
 
 I've got a program that does number rounding that I might put in if I find the right way to implement it. The same thing goes for comparisons, but they're a bit trickier. 
 
 I've also got a lot of code redundancy that I can likely remove. Some of my code is the way it is because it works, not because it's the most effecient way to do things. I want to go through the whole program at a later point and simplify things.
 
 I want three more achievements!
+
+I want the player to be able to use the arrow keys and the enter key to select which dungeon they will progress to next.
+
+## 12/17/17
+
+### Update
+
+I added the ability to go through the slow-type text faster by hitting any key. Instead of being forced to wait for the text to finish typing or skipping the intro entirely, the player can now hit any button to make that block of text appear immediately.
+
+I also added functionality to the character select page that allows the player to only use the keyboard to select their character. Instead of needing to use the mouse, they can now use the arrow keys to select the character, and press enter to move on once they have their selection.
 
 ## 12/14/17
 
