@@ -32,6 +32,9 @@ var mageIndex = 0;
 //
 //I don't know if these two need to be global...
 var damagePlayer, damageMonster;
+var damageReceived = 0;
+var damageDealt = 0;
+var healthRecovered = 0;
 //
 //Variables for displaying the math problems
 var terms = [];
@@ -50,6 +53,7 @@ var pageBackgrounds = [
   "page4.gif"
 ];
 
+var spellsCast = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 var spellArray = [];
 var spellBookContent = [
   ["Fibonacci's Associative Spell", "fibonacciSpellBook1.gif"],
@@ -539,6 +543,7 @@ function dungeonEntrance() {
   let subtractionDoor = "";
   let multiplicationDoor = "";
   let divisionDoor = "";
+  let turnPageEnabled = false;
   //
   //This block sets up the <table> elements for the dungeon screen
   playArea.innerHTML = "";
@@ -632,8 +637,6 @@ function dungeonEntrance() {
   playArea.appendChild(nextScreen);
   playArea.appendChild(monsterBook);
 
-  //additionDoorImg.focus();
-
   setTimeout(function() {
     document.onkeydown = function(e) {
       e = e || window.event;
@@ -642,50 +645,123 @@ function dungeonEntrance() {
   }, 100);
 
   function checkArrowKeys(key) {
-    key = key || window.event;
+    //key = key || window.event;
     switch (key) {
       case 13:
-        if ((getLevel > 0) || (operator === "+")) {
-          document.onkeydown = "";
-          setTimeout(function() {
-            dungeon(operator);
-          }, 10);
+        switch (operator) {
+          case "+":
+          case "-":
+          case "*":
+          case "/":
+            if (getLevel() > 0) {
+              document.onkeydown = "";
+              setTimeout(function() {
+                dungeon(operator);
+              }, 10);
+            }
+            break;
+          case "down":
+            operator = "up";
+            setTimeout(function() {
+              bookScreen();
+            }, 10);
+            break;
+          case "up":
+            operator = "down";
+            setTimeout(function() {
+              dungeonSelectScreen();
+            }, 10);
+            break;
         }
         break;
       case 37: //Left
-        if (operator === "-") {
-          additionDoorImg.focus();
-          operator = "+";
-        } else if (operator === "/") {
-          multiplicationDoorImg.focus();
-          operator = "*";
+        switch (operator) {
+          case "+":
+            additionDoorImg.focus()
+            break;
+          case "-":
+            additionDoorImg.focus();
+            operator = "+";
+            break;
+          case "/":
+            multiplicationDoorImg.focus();
+            operator = "*";
+            break;
         }
         break;
       case 38: //Up
-        if (operator === "*") {
-          additionDoorImg.focus();
-          operator = "+";
-        } else if (operator === "/") {
-          subtractionDoorImg.focus();
-          operator = "-";
+        switch (operator) {
+          case "+":
+            additionDoorImg.focus();
+            break;
+          case "*":
+            additionDoorImg.focus();
+            operator = "+";
+            break;
+          case "/":
+            subtractionDoorImg.focus();
+            operator = "-";
+            break;
+          case "down":
+            multiplicationDoorImg.focus();
+            operator = "*";
+            break;
+          case "up":
+            operator = "down";
+            setTimeout(function() {
+              dungeonSelectScreen();
+            }, 10);
+            break;
         }
         break;
       case 39: //Right
-        if (operator === "+") {
-          subtractionDoorImg.focus();
-          operator = "-";
-        } else if (operator === "*") {
-          divisionDoorImg.focus();
-          operator = "/";
+        switch (operator) {
+          case "+":
+            subtractionDoorImg.focus();
+            operator = "-";
+            break;
+          case "*":
+            divisionDoorImg.focus();
+            operator = "/";
+            break;
         }
         break;
       case 40: //Down
-        if (operator === "+") {
-          multiplicationDoorImg.focus();
-          operator = "*";
-        } else if (operator === "-") {
-          divisionDoorImg.focus();
-          operator = "/";
+        switch (operator) {
+          case "+":
+            multiplicationDoorImg.focus();
+            operator = "*";
+            break;
+          case "-":
+            divisionDoorImg.focus();
+            operator = "/";
+            break;
+          case "*":
+          case "/":
+            nextScreen.focus();
+            operator = "down";
+            break;
+          case "down":
+            operator = "up";
+            setTimeout(function() {
+              bookScreen();
+            }, 10);
+            break;
+          //
+          //How do I determine the correct arguments to call
+          //when I run the function????
+          /*case "up":
+            operator = "right";
+            let turnButton = document.getElementsByClassName("turnPageButtons");
+            if (typeof turnButton[1] === "object") {
+              turnButton[1].focus();
+            } else {
+              turnButton[0].focus();
+              console.log(turnButton[0].getAttribute("click"));
+            }
+            break;*/
+          case "right":
+
         }
         break;
     }
@@ -693,6 +769,8 @@ function dungeonEntrance() {
   //
   //This function shifts the screen to the book view
   function bookScreen() {
+    operator = "up";
+    turnPageEnabled = true;
     dungeonTable.style.top = "-450px";
     nextScreen.style.top = "10px";
     nextScreen.style.transform = "scale(1, 1)";
@@ -703,6 +781,8 @@ function dungeonEntrance() {
   //This function shifts the screen to the
   //dungeon select view
   function dungeonSelectScreen() {
+    operator = "down";
+    turnPageEnabled = false;
     monsterBook.style.top = "470px";
     nextScreen.style.top = "417px";
     nextScreen.style.transform = "scale(1, -1)";
@@ -782,6 +862,13 @@ function dungeonEntrance() {
     let turnButton = pageTurnButtons.getElementsByClassName("turnPageButtons");
     turnButton[1].onclick = function() {turnPageLeft(titlePage, contentsPage);}
     turnButton[0].parentNode.removeChild(turnButton[0]);
+    document.onkeypress = function(e) {
+      e = e || window.event;
+      if (e.keyCode === 39 && turnPageEnabled) {
+        document.onkeypress = "";
+        turnPageLeft(titlePage, contentsPage);
+      }
+    }
 
     var p = document.createElement("p");
     var br = document.createElement("br");
@@ -817,6 +904,16 @@ function dungeonEntrance() {
     let turnButton = pageTurnButtons.getElementsByClassName("turnPageButtons");
     turnButton[0].onclick = function() {turnPageRight(tableOfContents, makeTitlePage);}
     turnButton[1].onclick = function() {turnPageLeft(tableOfContents, statusPage);}
+    document.onkeypress = function(e) {
+      e = e || window.event;
+      if (e.keyCode === 37 && turnPageEnabled) {
+        document.onkeypress = "";
+        turnPageRight(tableOfContents, makeTitlePage);
+      } else if (e.keyCode === 39 && turnPageEnabled) {
+        document.onkeypress = "";
+        turnPageLeft(tableOfContents, statusPage);
+      }
+    }
 
     let p = document.createElement("p");
     p.style.textAlign = "center";
@@ -913,6 +1010,16 @@ function dungeonEntrance() {
     let turnButton = pageTurnButtons.getElementsByClassName("turnPageButtons");
     turnButton[0].onclick = function() {turnPageRight(status, contentsPage);}
     turnButton[1].onclick = function() {turnPageLeft(status, spellsPage);}
+    document.onkeypress = function(e) {
+      e = e || window.event;
+      if (e.keyCode === 37 && turnPageEnabled) {
+        document.onkeypress = "";
+        turnPageRight(status, contentsPage);
+      } else if (e.keyCode === 39 && turnPageEnabled) {
+        document.onkeypress = "";
+        turnPageLeft(status, spellsPage);
+      }
+    }
 
     //
     //This block makes and places the <div> and <image>
@@ -1062,7 +1169,6 @@ function dungeonEntrance() {
     quickButton[1].onclick = function() {turnPageRight(spells, statusPage);}
     quickButton[3].onclick = function() {turnPageLeft(spells, monstersPage);}
     quickButton[4].onclick = function() {turnPageLeft(spells, achievementsPage);}
-
     quickButton[2].parentNode.removeChild(quickButton[2]);
 
     let pageTurnButtons = turnPageButtons(spells);
@@ -1072,6 +1178,20 @@ function dungeonEntrance() {
       turnButton[1].onclick = function() {turnPageLeft(spells, spellDetailPage, spellArray[0]);}
     } else {
       turnButton[1].onclick = function() {turnPageLeft(spells, monstersPage);}
+    }
+    document.onkeypress = function(e) {
+      e = e || window.event;
+      if (e.keyCode === 37 && turnPageEnabled) {
+        document.onkeypress = "";
+        turnPageRight(spells, statusPage);
+      } else if (e.keyCode === 39 && turnPageEnabled) {
+        document.onkeypress = "";
+        if (spellArray[0] >= 0) {
+          turnPageLeft(spells, spellDetailPage, spellArray[0]);
+        } else {
+          turnPageLeft(spells, monstersPage);
+        }
+      }
     }
 
 
@@ -1136,6 +1256,24 @@ function dungeonEntrance() {
     } else {
       turnButton[1].onclick = function() {turnPageLeft(spell, monstersPage);}
     }
+    document.onkeypress = function(e) {
+      e = e || window.event;
+      if (e.keyCode === 37 && turnPageEnabled) {
+        document.onkeypress = "";
+        if (spellArray.indexOf(index) === 0) {
+          turnPageRight(spell, spellsPage);
+        } else {
+          turnPageRight(spell, spellDetailPage, (index - 1));
+        }
+      } else if (e.keyCode === 39 && turnPageEnabled) {
+        document.onkeypress = "";
+        if (index < (spellArray.length - 1)) {
+          turnPageLeft(spell, spellDetailPage, (index + 1));
+        } else {
+          turnPageLeft(spell, monstersPage);
+        }
+      }
+    }
 
     var spellDiv = document.createElement("div");
     spellDiv.id = "spellDetailDiv";
@@ -1175,6 +1313,24 @@ function dungeonEntrance() {
       turnButton[1].onclick = function() {turnPageLeft(monsters, monsterBasePage, "+");}
     } else {
       turnButton[1].onclick = function() {turnPageLeft(monsters, achievementsPage);}
+    }
+    document.onkeypress = function(e) {
+      e = e || window.event;
+      if (e.keyCode === 37 && turnPageEnabled) {
+        document.onkeypress = "";
+        if (spellArray[0] >= 0) {
+          turnPageRight(monsters, spellDetailPage, (spellArray.length - 1));
+        } else {
+          turnPageRight(monsters, spellsPage);
+        }
+      } else if (e.keyCode === 39 && turnPageEnabled) {
+        document.onkeypress = "";
+        if (typeof(additionMonstersKilled[0]) == "object") {
+          turnPageLeft(monsters, monsterBasePage, "+");
+        } else {
+          turnPageLeft(monsters, achievementsPage);
+        }
+      }
     }
 
     let p = document.createElement("p");
@@ -1298,6 +1454,16 @@ function dungeonEntrance() {
         node = document.createTextNode("Addition Monsters");
         turnButton[0].onclick = function() {turnPageRight(monsterList, monstersPage);}
         turnButton[1].onclick = function() {turnPageLeft(monsterList, monsterDetailPage, ["+", additionMonstersKilled[0][0]]);}
+        document.onkeypress = function(e) {
+          e = e || window.event;
+          if (e.keyCode === 37 && turnPageEnabled) {
+            document.onkeypress = "";
+            turnPageRight(monsterList, monstersPage);
+          } else if (e.keyCode === 39 && turnPageEnabled) {
+            document.onkeypress = "";
+            turnPageLeft(monsterList, monsterDetailPage, ["+", additionMonstersKilled[0][0]]);
+          }
+        }
         break;
       case "-":
         monsterArray = subtractionMonstersKilled;
@@ -1307,6 +1473,16 @@ function dungeonEntrance() {
         last = (additionMonstersKilled.length - 1);
         turnButton[0].onclick = function() {turnPageRight(monsterList, monsterDetailPage, ["+", additionMonstersKilled[last][0]]);}
         turnButton[1].onclick = function() {turnPageLeft(monsterList, monsterDetailPage, ["-", subtractionMonstersKilled[0][0]]);}
+        document.onkeypress = function(e) {
+          e = e || window.event;
+          if (e.keyCode === 37 && turnPageEnabled) {
+            document.onkeypress = "";
+            turnPageRight(monsterList, monsterDetailPage, ["+", additionMonstersKilled[last][0]]);
+          } else if (e.keyCode === 39 && turnPageEnabled) {
+            document.onkeypress = "";
+            turnPageLeft(monsterList, monsterDetailPage, ["-", subtractionMonstersKilled[0][0]]);
+          }
+        }
         break;
       case "*":
         monsterArray = multiplicationMonstersKilled;
@@ -1316,6 +1492,16 @@ function dungeonEntrance() {
         last = (subtractionMonstersKilled.length - 1);
         turnButton[0].onclick = function() {turnPageRight(monsterList, monsterDetailPage, ["-", subtractionMonstersKilled[last][0]]);}
         turnButton[1].onclick = function() {turnPageLeft(monsterList, monsterDetailPage, ["*", multiplicationMonstersKilled[0][0]]);}
+        document.onkeypress = function(e) {
+          e = e || window.event;
+          if (e.keyCode === 37 && turnPageEnabled) {
+            document.onkeypress = "";
+            turnPageRight(monsterList, monsterDetailPage, ["-", subtractionMonstersKilled[last][0]]);
+          } else if (e.keyCode === 39 && turnPageEnabled) {
+            document.onkeypress = "";
+            turnPageLeft(monsterList, monsterDetailPage, ["*", multiplicationMonstersKilled[0][0]]);
+          }
+        }
         break;
       case "/":
         monsterArray = divisionMonstersKilled;
@@ -1325,6 +1511,16 @@ function dungeonEntrance() {
         last = (multiplicationMonstersKilled.length - 1);
         turnButton[0].onclick = function() {turnPageRight(monsterList, monsterDetailPage, ["*", multiplicationMonstersKilled[last][0]]);}
         turnButton[1].onclick = function() {turnPageLeft(monsterList, monsterDetailPage, ["/", divisionMonstersKilled[0][0]]);}
+        document.onkeypress = function(e) {
+          e = e || window.event;
+          if (e.keyCode === 37 && turnPageEnabled) {
+            document.onkeypress = "";
+            turnPageRight(monsterList, monsterDetailPage, ["*", multiplicationMonstersKilled[last][0]]);
+          } else if (e.keyCode === 39 && turnPageEnabled) {
+            document.onkeypress = "";
+            turnPageLeft(monsterList, monsterDetailPage, ["/", divisionMonstersKilled[0][0]]);
+          }
+        }
         break;
     }
 
@@ -1415,6 +1611,30 @@ function dungeonEntrance() {
             turnButton[1].onclick = function() {turnPageLeft(monsterDetail, achievementsPage);}
           }
         }
+        document.onkeypress = function(e) {
+          e = e || window.event;
+          if (e.keyCode === 37 && turnPageEnabled) {
+            document.onkeypress = "";
+            if (findMonster(monsterArray, currentMonster[1]) == 0) {
+              turnPageRight(monsterDetail, monsterBasePage, "+");
+            } else {
+              let next = (findMonster(monsterArray, currentMonster[1]) - 1);
+              turnPageRight(monsterDetail, monsterDetailPage, ["+", monsterArray[next][0]]);
+            }
+          } else if (e.keyCode === 39 && turnPageEnabled) {
+            document.onkeypress = "";
+            if (findMonster(monsterArray, currentMonster[1]) < (monsterArray.length - 1)) {
+              let next = (findMonster(monsterArray, currentMonster[1]) + 1);
+              turnPageLeft(monsterDetail, monsterDetailPage, ["+", monsterArray[next][0]]);
+            } else {
+              if ((subtractionMonstersKilled[0] + 1)) {
+                turnPageLeft(monsterDetail, monsterBasePage, "-");
+              } else {
+                turnPageLeft(monsterDetail, achievementsPage);
+              }
+            }
+          }
+        }
         break;
       case "-":
         monsterArray = subtractionMonstersKilled;
@@ -1435,6 +1655,30 @@ function dungeonEntrance() {
             turnButton[1].onclick = function() {turnPageLeft(monsterDetail, monsterBasePage, "*");}
           } else {
             turnButton[1].onclick = function() {turnPageLeft(monsterDetail, achievementsPage);}
+          }
+        }
+        document.onkeypress = function(e) {
+          e = e || window.event;
+          if (e.keyCode === 37 && turnPageEnabled) {
+            document.onkeypress = "";
+            if (findMonster(monsterArray, currentMonster[1]) == 0) {
+              turnPageRight(monsterDetail, monsterBasePage, "-");
+            } else {
+              let next = (findMonster(monsterArray, currentMonster[1]) - 1);
+              turnPageRight(monsterDetail, monsterDetailPage, ["-", monsterArray[next][0]]);
+            }
+          } else if (e.keyCode === 39 && turnPageEnabled) {
+            document.onkeypress = "";
+            if (findMonster(monsterArray, currentMonster[1]) < (monsterArray.length - 1)) {
+              let next = (findMonster(monsterArray, currentMonster[1]) + 1);
+              turnPageLeft(monsterDetail, monsterDetailPage, ["-", monsterArray[next][0]]);
+            } else {
+              if ((multiplicationMonstersKilled[0] + 1)) {
+                turnPageLeft(monsterDetail, monsterBasePage, "*");
+              } else {
+                turnPageLeft(monsterDetail, achievementsPage);
+              }
+            }
           }
         }
         break;
@@ -1459,6 +1703,30 @@ function dungeonEntrance() {
             turnButton[1].onclick = function() {turnPageLeft(monsterDetail, achievementsPage);}
           }
         }
+        document.onkeypress = function(e) {
+          e = e || window.event;
+          if (e.keyCode === 37 && turnPageEnabled) {
+            document.onkeypress = "";
+            if (findMonster(monsterArray, currentMonster[1]) == 0) {
+              turnPageRight(monsterDetail, monsterBasePage, "*");
+            } else {
+              let next = (findMonster(monsterArray, currentMonster[1]) - 1);
+              turnPageRight(monsterDetail, monsterDetailPage, ["*", monsterArray[next][0]]);
+            }
+          } else if (e.keyCode === 39 && turnPageEnabled) {
+            document.onkeypress = "";
+            if (findMonster(monsterArray, currentMonster[1]) < (monsterArray.length - 1)) {
+              let next = (findMonster(monsterArray, currentMonster[1]) + 1);
+              turnPageLeft(monsterDetail, monsterDetailPage, ["*", monsterArray[next][0]]);
+            } else {
+              if ((divisionMonstersKilled[0] + 1)) {
+                turnPageLeft(monsterDetail, monsterBasePage, "/");
+              } else {
+                turnPageLeft(monsterDetail, achievementsPage);
+              }
+            }
+          }
+        }
         break;
       case "/":
         monsterArray = divisionMonstersKilled;
@@ -1476,6 +1744,26 @@ function dungeonEntrance() {
           turnButton[1].onclick = function() {turnPageLeft(monsterDetail, monsterDetailPage, ["/", monsterArray[next][0]]);}
         } else {
           turnButton[1].onclick = function() {turnPageLeft(monsterDetail, achievementsPage);}
+        }
+        document.onkeypress = function(e) {
+          e = e || window.event;
+          if (e.keyCode === 37 && turnPageEnabled) {
+            document.onkeypress = "";
+            if (findMonster(monsterArray, currentMonster[1]) == 0) {
+              turnPageRight(monsterDetail, monsterBasePage, "/");
+            } else {
+              let next = (findMonster(monsterArray, currentMonster[1]) - 1);
+              turnPageRight(monsterDetail, monsterDetailPage, ["/", monsterArray[next][0]]);
+            }
+          } else if (e.keyCode === 39 && turnPageEnabled) {
+            document.onkeypress = "";
+            if (findMonster(monsterArray, currentMonster[1]) < (monsterArray.length - 1)) {
+              let next = (findMonster(monsterArray, currentMonster[1]) + 1);
+              turnPageLeft(monsterDetail, monsterDetailPage, ["/", monsterArray[next][0]]);
+            } else {
+              turnPageLeft(monsterDetail, achievementsPage);
+            }
+          }
         }
         break;
     }
@@ -1617,6 +1905,27 @@ function dungeonEntrance() {
     } else {
       turnButton[0].onclick = function() {turnPageRight(achievementPage, monstersPage);}
     }
+    document.onkeypress = function(e) {
+      e = e || window.event;
+      if (e.keyCode === 37 && turnPageEnabled) {
+        document.onkeypress = "";
+        if (Array.isArray(divisionMonstersKilled[0])) {
+          let index = divisionMonstersKilled.length - 1;
+          turnPageRight(achievementPage, monsterDetailPage, ["/", divisionMonstersKilled[index][0]]);
+        } else if (Array.isArray(multiplicationMonstersKilled[0])) {
+          let index = multiplicationMonstersKilled.length - 1;
+          turnPageRight(achievementPage, monsterDetailPage, ["*", multiplicationMonstersKilled[index][0]]);
+        } else if (Array.isArray(subtractionMonstersKilled[0])) {
+          let index = subtractionMonstersKilled.length - 1;
+          turnPageRight(achievementPage, monsterDetailPage, ["-", subtractionMonstersKilled[index][0]]);
+        } else if (Array.isArray(additionMonstersKilled[0])) {
+          let index = additionMonstersKilled.length - 1;
+          turnPageRight(achievementPage, monsterDetailPage, ["+", additionMonstersKilled[index][0]]);
+        } else {
+          turnPageRight(achievementPage, monstersPage);
+        }
+      }
+    }
 
     turnButton[1].parentNode.removeChild(turnButton[1]);
 
@@ -1634,12 +1943,13 @@ function dungeonEntrance() {
 
     let table = document.createElement("table");
     table.id = "achievementTable"
+
     let tr = document.createElement("tr");
     let td = document.createElement("td");
     let img = document.createElement("img");
     let div = document.createElement("div");
     div.style.borderRadius = "5px";
-    img.src = "./icons/spell-book.png";
+    img.src = "./icons/graveyard.png";
     img.className = "achievementImg";
     if (totalMonstersKilled > 99) {
       img.style.filter = "opacity(100%)";
@@ -1658,6 +1968,7 @@ function dungeonEntrance() {
     div.appendChild(img);
     td.appendChild(div);
     tr.appendChild(td);
+
     td = document.createElement("td");
     img = document.createElement("img");
     div = document.createElement("div");
@@ -1684,6 +1995,7 @@ function dungeonEntrance() {
     div.appendChild(img);
     td.appendChild(div);
     tr.appendChild(td);
+
     td = document.createElement("td");
     img = document.createElement("img");
     div = document.createElement("div");
@@ -1710,9 +2022,7 @@ function dungeonEntrance() {
     div.appendChild(img);
     td.appendChild(div);
     tr.appendChild(td);
-    table.appendChild(tr);
 
-    tr = document.createElement("tr");
     td = document.createElement("td");
     img = document.createElement("img");
     div = document.createElement("div");
@@ -1739,6 +2049,7 @@ function dungeonEntrance() {
     div.appendChild(img);
     td.appendChild(div);
     tr.appendChild(td);
+
     td = document.createElement("td");
     img = document.createElement("img");
     div = document.createElement("div");
@@ -1765,6 +2076,153 @@ function dungeonEntrance() {
     div.appendChild(img);
     td.appendChild(div);
     tr.appendChild(td);
+    table.appendChild(tr);
+
+
+    tr = document.createElement("tr");
+    td = document.createElement("td");
+    img = document.createElement("img");
+    div = document.createElement("div");
+    div.style.borderRadius = "5px";
+    img.src = "./icons/bleeding-wound.png";
+    img.className = "achievementImg";
+    if (damageDealt > 49) {
+      img.style.filter = "opacity(100%)";
+      img.title = damageDealt + " damage inflicted on monsters.";
+      if (damageDealt > 199) {
+        div.style.backgroundColor = "#b70000";
+      } else if (damageDealt > 99) {
+        div.style.backgroundColor = "#ff5656";
+      } else {
+        div.style.backgroundColor = "#ff9393";
+      }
+    } else {
+      img.style.filter = "opacity(30%)";
+    }
+    div.appendChild(img);
+    td.appendChild(div);
+    tr.appendChild(td);
+
+    td = document.createElement("td");
+    img = document.createElement("img");
+    div = document.createElement("div");
+    div.style.borderRadius = "5px";
+    img.src = "./icons/heart-minus.png";
+    img.className = "achievementImg";
+    if (damageReceived > 9) {
+      img.style.filter = "opacity(100%)";
+      img.title = damageReceived + " damage inflicted on " + playerName + ".";
+      if (damageReceived > 49) {
+        div.style.backgroundColor = "#d4af37";
+      } else if (damageReceived > 19) {
+        div.style.backgroundColor = "#c0c0c0";
+      } else {
+        div.style.backgroundColor = "#cd7f32";
+      }
+    } else {
+      img.style.filter = "opacity(30%)";
+    }
+    div.appendChild(img);
+    td.appendChild(div);
+    tr.appendChild(td);
+
+    td = document.createElement("td");
+    img = document.createElement("img");
+    div = document.createElement("div");
+    div.style.borderRadius = "5px";
+    img.src = "./icons/medical-pack.png";
+    img.className = "achievementImg";
+    if (healthRecovered > 9) {
+      img.style.filter = "opacity(100%)";
+      img.title = healthRecovered + " health recovered by " + playerName + ".";
+      if (healthRecovered > 49) {
+        div.style.backgroundColor = "#d4af37";
+      } else if (healthRecovered > 19) {
+        div.style.backgroundColor = "#c0c0c0";
+      } else {
+        div.style.backgroundColor = "#cd7f32";
+      }
+    } else {
+      img.style.filter = "opacity(30%)";
+    }
+    div.appendChild(img);
+    td.appendChild(div);
+    tr.appendChild(td);
+
+    td = document.createElement("td");
+    img = document.createElement("img");
+    div = document.createElement("div");
+    div.style.borderRadius = "5px";
+    img.src = "./icons/fire-ray.png";
+    img.className = "achievementImg";
+    let attackSpells = (spellsCast[3] + spellsCast[9]);
+    if (attackSpells > 4) {
+      img.style.filter = "opacity(100%)";
+      img.title = attackSpells + " attack spells cast by " + playerName + ".";
+      if (attackSpells > 24) {
+        div.style.backgroundColor = "#d4af37";
+      } else if (attackSpells > 9) {
+        div.style.backgroundColor = "#c0c0c0";
+      } else {
+        div.style.backgroundColor = "#cd7f32";
+      }
+    } else {
+      img.style.filter = "opacity(30%)";
+    }
+    div.appendChild(img);
+    td.appendChild(div);
+    tr.appendChild(td);
+
+    td = document.createElement("td");
+    img = document.createElement("img");
+    div = document.createElement("div");
+    div.style.borderRadius = "5px";
+    img.src = "./icons/help.png";
+    img.className = "achievementImg";
+    let hintSpells = (spellsCast[0] + spellsCast[1] + spellsCast[2] + spellsCast[10] + spellsCast[11]);
+    if (hintSpells > 4) {
+      img.style.filter = "opacity(100%)";
+      img.title = hintSpells + " Fibonacci spells cast by " + playerName + ".";
+      if (hintSpells > 24) {
+        div.style.backgroundColor = "#d4af37";
+      } else if (hintSpells > 9) {
+        div.style.backgroundColor = "#c0c0c0";
+      } else {
+        div.style.backgroundColor = "#cd7f32";
+      }
+    } else {
+      img.style.filter = "opacity(30%)";
+    }
+    div.appendChild(img);
+    td.appendChild(div);
+    tr.appendChild(td);
+    table.appendChild(tr);
+
+    tr = document.createElement("tr");
+    td = document.createElement("td");
+    img = document.createElement("img");
+    div = document.createElement("div");
+    div.style.borderRadius = "5px";
+    img.src = "./icons/spell-book.png";
+    img.className = "achievementImg";
+    let totalSpellsCast = spellsCast.reduce(getSum);
+    if (totalSpellsCast > 10) {
+      img.style.filter = "opacity(100%)";
+      img.title = totalSpellsCast + " spells cast.";
+      if (totalSpellsCast > 99) {
+        div.style.backgroundColor = "#d4af37";
+      } else if (totalSpellsCast > 49) {
+        div.style.backgroundColor = "#c0c0c0";
+      } else {
+        div.style.backgroundColor = "#cd7f32";
+      }
+    } else {
+      img.style.filter = "opacity(30%)";
+    }
+    div.appendChild(img);
+    td.appendChild(div);
+    tr.appendChild(td);
+
     td = document.createElement("td");
     img = document.createElement("img");
     div = document.createElement("div");
@@ -1784,9 +2242,7 @@ function dungeonEntrance() {
     div.appendChild(img);
     td.appendChild(div);
     tr.appendChild(td);
-    table.appendChild(tr);
 
-    tr = document.createElement("tr");
     td = document.createElement("td");
     img = document.createElement("img");
     div = document.createElement("div");
@@ -1806,6 +2262,7 @@ function dungeonEntrance() {
     div.appendChild(img);
     td.appendChild(div);
     tr.appendChild(td);
+
     td = document.createElement("td");
     img = document.createElement("img");
     div = document.createElement("div");
@@ -1825,6 +2282,7 @@ function dungeonEntrance() {
     div.appendChild(img);
     td.appendChild(div);
     tr.appendChild(td);
+
     td = document.createElement("td");
     img = document.createElement("img");
     div = document.createElement("div");
@@ -1845,9 +2303,14 @@ function dungeonEntrance() {
     td.appendChild(div);
     tr.appendChild(td);
     table.appendChild(tr);
+
     achievementPage.appendChild(table);
 
     return achievementPage;
+
+    function getSum(total, num) {
+      return total + num;
+    }
 
 
 
@@ -2071,6 +2534,7 @@ function dungeon(operation) {
 //This is the function that I return to as the "base" of all
 //the combat/math
 function battle() {
+  document.onkeydown = "";
   terms = getTerms();
   algebra = false;
   sequence = false;
@@ -2308,6 +2772,7 @@ function checkAnswer(answer, damage) {
   //happens when an answer is correct
   if ((answerInput.value == answer) || (answer == "spell") || (answer == "heal")) {
     checkForSpells();
+    damageDealt += (damage + damageBoost);
     monster.hp -= (damage + damageBoost);
 
     if (monster.hp < 1) {
@@ -2379,6 +2844,7 @@ function checkAnswer(answer, damage) {
   //The second half of this if statement controls the stuff
   //that happens when an answer is wrong
   } else {
+    damageReceived += monster.damage;
     playerHealth -= monster.damage;
     if (playerHealth < 1) {
       playerHealth = 0;
@@ -2489,9 +2955,193 @@ function checkAnswer(answer, damage) {
   //up and then tosses the player out of the dungeon
   function levelUp() {
     playerLevel = getLevel();
+    if (monstersKilled > 10) {
+      problemDiv.innerHTML = "You've cleared the level!<br /><br />";
+    } else {
+      problemDiv.innerHTML = "You cleared level " + playerLevel + "!<br /><br />";
+    }
 
-    problemDiv.innerHTML = "You cleared level " + playerLevel + "!<br /><br />";
-    if (((playerLevel % 2)  == 0) && (monstersKilled == 10) && (playerLevel < 11)) {
+    if (((playerLevel % 2)  === 0) && (monstersKilled === 10) && (playerLevel < 11)) {
+      switch (operator) {
+        case "+":
+          if (playerLevel == 2) { //Fibonacci Spell
+            spellArray.push(0);
+            problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
+            progressLevel();
+            insertNextButton("Next", function() {dropScroll("./scrolls/fibonacciScroll.gif");});
+          }
+          if (playerLevel == 4) { //Subtraction Dungeon
+            problemDiv.innerHTML += "Something seems to be happening...<br /><br />";
+            subtractionLevel++;
+            progressLevel();
+            var shakeCount = 12;
+            var dungeonShake = setInterval(shakeDungeon, 100);
+            insertNextButton("Next", bossEncounter);
+          }
+          if (playerLevel == 6) { //Health Spell
+            spellArray.push(4);
+            spellArray.sort();
+            problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
+            maxHealth += 2;
+            playerHealth += 2;
+            var healthBarFront = document.getElementById("healthBarFront");
+            healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
+            progressLevel();
+            insertNextButton("Next", function() {dropScroll("./scrolls/squareScroll.gif");});
+          }
+          if (playerLevel == 8) { //Pyramid/Time Spell
+            spellArray.push(5);
+            spellArray.sort();
+            problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
+            progressLevel();
+            insertNextButton("Next", function() {dropScroll("./scrolls/pyramidScroll.gif");});
+          }
+          if (playerLevel == 10) {//Damage Boost
+            problemDiv.innerHTML += "You feel stronger than you did before...<br />Damage +1!<br /><br />";
+            playerBaseDamage++;
+            playerHealth = maxHealth;
+            progressLevel();
+            var healthBarFront = document.getElementById("healthBarFront");
+            healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
+            insertNextButton("Next", bossEncounter);
+          }
+          break;
+        case "-":
+          if (playerLevel == 2) { //Triangle/Fireball Spell
+            spellArray.push(3);
+            spellArray.sort();
+            problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
+            progressLevel();
+            insertNextButton("Next", function() {dropScroll("./scrolls/triangleScroll.gif");});
+          }
+          if (playerLevel == 4) { //Multiplication Dungeon
+            problemDiv.innerHTML += "Something seems to be happening...<br /><br />";
+            multiplicationLevel++;
+            progressLevel();
+            var shakeCount = 12;
+            var dungeonShake = setInterval(shakeDungeon, 100);
+            insertNextButton("Next", bossEncounter);
+          }
+          if (playerLevel == 6) { //Health Boost
+            problemDiv.innerHTML += "You feel healthier than you did before...<br />Max Health +2!<br /><br />";
+            maxHealth += 2;
+            playerHealth += 2;
+            progressLevel();
+            var healthBarFront = document.getElementById("healthBarFront");
+            healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
+            insertNextButton("Next", bossEncounter);
+          }
+          if (playerLevel == 8) { //Pentagon/Reduce Terms Spell
+            spellArray.push(6);
+            spellArray.sort();
+            problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
+            progressLevel();
+            insertNextButton("Next", function() {dropScroll("./scrolls/pentagonScroll.gif");});
+          }
+          if (playerLevel == 10) {//Damage Boost
+            problemDiv.innerHTML += "You feel stronger than you did before...<br />Damage +1!<br /><br />";
+            playerBaseDamage++;
+            playerHealth = maxHealth;
+            progressLevel();
+            var healthBarFront = document.getElementById("healthBarFront");
+            healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
+            insertNextButton("Next", bossEncounter);
+          }
+          break;
+        case "*":
+          if (playerLevel == 2) { //Upgraded Hints
+            spellArray.push(1);
+            spellArray.sort();
+            problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
+            progressLevel();
+            insertNextButton("Next", function() {dropScroll("./scrolls/fibonacciScroll2.gif");});
+          }
+          if (playerLevel == 4) { //Division Dungeon
+            problemDiv.innerHTML += "Something seems to be happening...<br /><br />";
+            divisionLevel++;
+            progressLevel();
+            var shakeCount = 12;
+            var dungeonShake = setInterval(shakeDungeon, 100);
+            insertNextButton("Next", bossEncounter);
+          }
+          if (playerLevel == 6) { //Health Boost
+            problemDiv.innerHTML += "You feel healthier than you did before...<br />Max Health +2!<br /><br />";
+            maxHealth += 2;
+            playerHealth += 2;
+            progressLevel();
+            var healthBarFront = document.getElementById("healthBarFront");
+            healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
+            insertNextButton("Next", bossEncounter);
+          }
+          if (playerLevel == 8) { //Hexagon/Strength Spell
+            spellArray.push(7);
+            spellArray.sort();
+            problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
+            progressLevel();
+            insertNextButton("Next", function() {dropScroll("./scrolls/hexagonScroll.gif");});
+          }
+          if (playerLevel == 10) {//Damage Boost
+            problemDiv.innerHTML += "You feel stronger than you did before...<br />Damage +1!<br /><br />";
+            playerBaseDamage++;
+            playerHealth = maxHealth;
+            progressLevel();
+            var healthBarFront = document.getElementById("healthBarFront");
+            healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
+            insertNextButton("Next", bossEncounter);
+          }
+          break;
+        case "/":
+          if (playerLevel == 2) { //Upgraded Hints
+            spellArray.push(2);
+            spellArray.sort();
+            problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
+            progressLevel();
+            insertNextButton("Next", function() {dropScroll("./scrolls/fibonacciScroll3.gif");});
+          }
+          if (playerLevel == 4) { //Cube/Polymorph Spell
+            spellArray.push(8);
+            spellArray.sort();
+            problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
+            progressLevel();
+            insertNextButton("Next", function() {dropScroll("./scrolls/cubeScroll.gif");});
+          }
+          if (playerLevel == 6) { //Health Boost
+            problemDiv.innerHTML += "You feel healthier than you did before...<br />Max Health +2!<br /><br />";
+            maxHealth += 2;
+            playerHealth += 2;
+            progressLevel();
+            var healthBarFront = document.getElementById("healthBarFront");
+            healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
+            insertNextButton("Next", bossEncounter);
+          }
+          if (playerLevel == 8) { //Star/Nova Spell
+            spellArray.push(9);
+            spellArray.sort();
+            problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
+            progressLevel();
+            insertNextButton("Next", function() {dropScroll("./scrolls/starScroll.gif");});
+          }
+          if (playerLevel == 10) {//Damage Boost
+            problemDiv.innerHTML += "You feel stronger than you did before...<br />Damage +1!<br /><br />";
+            playerBaseDamage++;
+            playerHealth = maxHealth;
+            progressLevel();
+            var healthBarFront = document.getElementById("healthBarFront");
+            healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
+            insertNextButton("Next", bossEncounter);
+          }
+          break;
+      }
+    } else {
+      if (monstersKilled < 11) {
+        progressLevel();
+      }
+      insertNextButton("Next", dungeonEntrance);
+      monstersKilled = monstersPerFight;
+    }
+
+
+    /*if (((playerLevel % 2)  == 0) && (monstersKilled == 10) && (playerLevel < 11)) {
       insertNextButton("Next", bossEncounter);
     } else {
       if (monstersKilled > 10) {
@@ -2681,10 +3331,21 @@ function checkAnswer(answer, damage) {
       } else {
         progressLevel();
         insertNextButton("Next", dungeonEntrance);
-      }
+      }*/
 
-      monstersKilled = monstersPerFight;
-    }
+
+    function shakeDungeon() {
+        if (shakeCount < 1) {
+          clearInterval(dungeonShake);
+        } else {
+          if ((shakeCount % 2) == 0) {
+            playArea.style.marginTop = "20px";
+          } else {
+            playArea.style.marginTop = "0px";
+          }
+        }
+        shakeCount--;
+      }
     //
     //This function progresses the players level.
     //I made it a function because there are two
@@ -2709,6 +3370,10 @@ function checkAnswer(answer, damage) {
   //
   //This function introduces the boss encounters
   function bossEncounter() {
+    let scrollDiv = document.getElementById("scrollDiv");
+    if (scrollDiv) {
+      scrollDiv.parentNode.removeChild(scrollDiv);
+    }
     let encounterFlash = 10;
     let encounterBoss = setInterval(bossEncounter, 100);
     function bossEncounter() {
@@ -2754,7 +3419,7 @@ function checkAnswer(answer, damage) {
     scrollNextButton.type = "button";
     scrollNextButton.value = "Next";
     scrollNextButton.id = "scrollNextButton";
-    scrollNextButton.onclick = dungeonEntrance;
+    scrollNextButton.onclick = bossEncounter;
     //
     //These three lines put all of the previous elements that
     //were set up into the play area
@@ -2764,7 +3429,9 @@ function checkAnswer(answer, damage) {
     //
     //The setTimeout function ensures that the scroll appears
     //on screen with the intended transition effect
-    setTimeout(function() {scrollDiv.style.filter = "opacity(100%)";}, 10);
+    setTimeout(function() {
+      scrollDiv.style.filter = "opacity(100%)";
+    }, 10);
     scrollNextButton.focus();
   }
   //****************REDUNDANCY*********************
@@ -3219,7 +3886,7 @@ function newMonster(playerLevel) {
 //
 //This function gets a new boss monster object and puts it on the screen
 function newBoss() {
-  playerLevel = getLevel();
+  playerLevel = (getLevel() - 1);
   damageBoost = 0;
   this.index = (playerLevel / 2) + 29;
   //
@@ -3270,45 +3937,69 @@ function newBoss() {
 //This function turns my spells "on" at the beginning of the battle
 function spellsOn() {
   if (additionLevel > 2) {        //Fibonacci Spell
-    fibonacciImg = document.getElementById("fibonacciImg");
+    let fibonacciImg = document.getElementById("fibonacciImg");
+    if ((spellsCast[0] === 0) && (spellsCast[10] === 0) && (spellsCast[11] === 0)) {
+      fibonacciImg.classList.add("highlightNewSpell");
+    }
     fibonacciImg.style.filter = "opacity(100%)";
     fibonacciImg.onclick = function(){castFibonacci();}
     fibonacciCast = false;
   }
   if (subtractionLevel > 2) {     //Triangle Spells
-    triangleImg = document.getElementById("triangleImg");
+    let triangleImg = document.getElementById("triangleImg");
+    if (spellsCast[3] === 0) {
+      triangleImg.classList.add("highlightNewSpell");
+    }
     triangleImg.style.filter = "opacity(100%)";
     triangleImg.onclick = function(){castTriangle();}
   }
   if (additionLevel > 6) {        //Square Spells
-    squareImg = document.getElementById("squareImg");
+    let squareImg = document.getElementById("squareImg");
+    if (spellsCast[4] === 0) {
+      squareImg.classList.add("highlightNewSpell");
+    }
     squareImg.style.filter = "opacity(100%)";
     squareImg.onclick = function(){castSquare();}
   }
   if (subtractionLevel > 8) {     //Pentagon Spells
-    pentagonImg = document.getElementById("pentagonImg");
+    let pentagonImg = document.getElementById("pentagonImg");
+    if (spellsCast[6] === 0) {
+      pentagonImg.classList.add("highlightNewSpell");
+    }
     pentagonImg.style.filter = "opacity(100%)";
     pentagonImg.onclick = function(){castPentagon();}
     pentagonCast = false;
   }
   if (multiplicationLevel > 8) {  //Hexagon Spells
-    hexagonImg = document.getElementById("hexagonImg");
+    let hexagonImg = document.getElementById("hexagonImg");
+    if (spellsCast[7] === 0) {
+      hexagonImg.classList.add("highlightNewSpell");
+    }
     hexagonImg.style.filter = "opacity(100%)";
     hexagonImg.onclick = function(){castHexagon();}
   }
   if (additionLevel > 8) {        //Pyramid Spells
-    pyramidImg = document.getElementById("pyramidImg");
+    let pyramidImg = document.getElementById("pyramidImg");
+    if (spellsCast[5] === 0) {
+      pyramidImg.classList.add("highlightNewSpell");
+    }
     pyramidImg.style.filter = "opacity(100%)";
     pyramidImg.onclick = function(){castPyramid();}
     pyramidCast = false;
   }
   if (divisionLevel > 2) {        //Cube Spells
-    cubeImg = document.getElementById("cubeImg");
+    let cubeImg = document.getElementById("cubeImg");
+    if (spellsCast[8] === 0) {
+      cubeImg.classList.add("highlightNewSpell");
+    }
     cubeImg.style.filter = "opacity(100%)";
     cubeImg.onclick = function(){castCube();}
   }
   if (divisionLevel > 8) {        //Star Spells
-    starImg = document.getElementById("starImg");
+    let starImg = document.getElementById("starImg");
+    if (spellsCast[9] === 0) {
+      starImg.classList.add("highlightNewSpell");
+    }
     starImg.style.filter = "opacity(100%)";
     starImg.onclick = function(){castStar();}
   }
@@ -3355,7 +4046,8 @@ function spellsOff() {
 //I have an animation for this, but I'm not totally happy with it.
 //I want something a little more flashy...
 function castFibonacci() {
-  fibonacciImg = document.getElementById("fibonacciImg");
+  let fibonacciImg = document.getElementById("fibonacciImg");
+  fibonacciImg.classList.remove("highlightNewSpell");
   fibonacciImg.onclick = "";
   hintDiv = document.getElementById("hintDiv");
   fibonacciCount = document.getElementById("fibonacciCount");
@@ -3399,6 +4091,7 @@ function castFibonacci() {
     }
 
     fibonacciAnimation();
+    spellsCast[10]++
     fibonacciSpells--;
     fibonacciCount.innerHTML = fibonacciSpells;
     return;
@@ -3415,6 +4108,7 @@ function castFibonacci() {
       hintString += terms[1] + " - " + terms[2] + " = ?";
     }
     fibonacciAnimation();
+    spellsCast[11]++;
     fibonacciSpells--;
     fibonacciCount.innerHTML = fibonacciSpells;
     return;
@@ -3424,9 +4118,11 @@ function castFibonacci() {
   switch (operator) {
     case "+":
       additionHint(terms[0], terms[1]);
+      spellsCast[0]++;
       break;
     case "-":
       subtractionHint(terms[0], terms[1]);
+      spellsCast[0]++;
       break;
     case "*":
       if (multiplicationLevel < 3) {
@@ -3434,6 +4130,7 @@ function castFibonacci() {
       } else {
         multiplicationHint(terms[0], terms[1]);
       }
+      spellsCast[1]++;
       break;
     case "/":
       if (divisionLevel < 3) {
@@ -3441,6 +4138,7 @@ function castFibonacci() {
       } else {
         divisionHint(terms[0], terms[1]);
       }
+      spellsCast[2]++;
       break;
    }
 
@@ -3726,7 +4424,9 @@ function castFibonacci() {
 //This function handles my triangle/fireball spell
 //I may want to play with the animation a bit...
 function castTriangle() {
-  hintDiv = document.getElementById("hintDiv");
+  let triangleImg = document.getElementById("triangleImg");
+  triangleImg.classList.remove("highlightNewSpell");
+  let hintDiv = document.getElementById("hintDiv");
   //
   //If the player has no magic, then no fireball is cast
   if (!triangleSpells) {
@@ -3776,6 +4476,7 @@ function castTriangle() {
     spellFlash--;
   }
 
+  spellsCast[3]++;
   triangleSpells--;
   document.getElementById("triangleCount").innerHTML = triangleSpells;
 
@@ -4011,7 +4712,9 @@ function castTriangle() {
 //
 //This function handles my square/healing spell
 function castSquare() {
-  hintDiv = document.getElementById("hintDiv");
+  let squareImg = document.getElementById("squareImg");
+  squareImg.classList.remove("highlightNewSpell");
+  let hintDiv = document.getElementById("hintDiv");
   //
   //If the player has no magic, then no magic is cast
   if (!squareSpells) {
@@ -4054,12 +4757,13 @@ function castSquare() {
     if (spellFlash < 1) {
       clearInterval(spellCast);
       playArea.classList.remove("playAreaBlue");
-
+      let answerInput = document.getElementById("answerInput");
+      answerInput.focus();
       playerHealth += heal;
       if (playerHealth > maxHealth) {
         playerHealth = maxHealth;
       }
-      var healthBarFront = document.getElementById("healthBarFront");
+      let healthBarFront = document.getElementById("healthBarFront");
       healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
       if (!pyramidCast) {
         timer = setInterval(timeDown, 10);
@@ -4088,17 +4792,21 @@ function castSquare() {
     }
     spellFlash--;
   }
+  healthRecovered += heal;
+  spellsCast[4]++;
   squareSpells--;
   document.getElementById("squareCount").innerHTML = squareSpells;
 }
 //
 //This function handles my pentagon/reduce terms spell
 function castPentagon() {
+  let pentagonImg = document.getElementById("pentagonImg");
+  pentagonImg.classList.remove("highlightNewSpell");
   fibonacciCast = false;
-  fibonacciImg = document.getElementById("fibonacciImg");
+  let fibonacciImg = document.getElementById("fibonacciImg");
   fibonacciImg.style.filter = "opacity(100%)";
   fibonacciImg.onclick = function(){castFibonacci();}
-  hintDiv = document.getElementById("hintDiv");
+  let hintDiv = document.getElementById("hintDiv");
   //
   //If the player has no magic, then no magic is cast
   if (!pentagonSpells) {
@@ -4164,6 +4872,7 @@ function castPentagon() {
     }
     spellFlash--;
   }
+  spellsCast[6]++;
   pentagonSpells--;
   document.getElementById("pentagonCount").innerHTML = pentagonSpells;
 
@@ -4175,7 +4884,9 @@ function castPentagon() {
 //
 //This function handles my hexagon/strength spell
 function castHexagon() {
-  hintDiv = document.getElementById("hintDiv");
+  let hexagonImg = document.getElementById("hexagonImg");
+  hexagonImg.classList.remove("highlightNewSpell");
+  let hintDiv = document.getElementById("hintDiv");
   //
   //If the player has no magic, then no magic is cast
   if (!hexagonSpells) {
@@ -4225,13 +4936,16 @@ function castHexagon() {
     }
     spellFlash--;
   }
+  spellsCast[7]++;
   hexagonSpells--;
   document.getElementById("hexagonCount").innerHTML = hexagonSpells;
 }
 //
 //This function handles my pyramid/time spell
 function castPyramid() {
-  hintDiv = document.getElementById("hintDiv");
+  let pyramidImg = document.getElementById("pyramidImg");
+  pyramidImg.classList.remove("highlightNewSpell");
+  let hintDiv = document.getElementById("hintDiv");
   clearInterval(timer);
   //
   //If the player has no magic, then no magic is cast
@@ -4263,7 +4977,7 @@ function castPyramid() {
       var handCanvas = document.getElementById("handCanvas");
       playArea.removeChild(handCanvas);
       playArea.classList.remove("playAreaGreen");
-      var answerInput = document.getElementById("answerInput");
+      let answerInput = document.getElementById("answerInput");
       answerInput.focus();
     } else {
       if ((spellFlash % 2) == 0) {
@@ -4278,6 +4992,7 @@ function castPyramid() {
     }
     spellFlash--;
   }
+  spellsCast[5]++;
   pyramidSpells--;
   document.getElementById("pyramidCount").innerHTML = pyramidSpells;
 
@@ -4430,7 +5145,9 @@ function castPyramid() {
 //
 //This function handles my cube/polymorph monster spell
 function castCube() {
-  hintDiv = document.getElementById("hintDiv");
+  let cubeImg = document.getElementById("cubeImg");
+  cubeImg.classList.remove("highlightNewSpell");
+  let hintDiv = document.getElementById("hintDiv");
   clearInterval(timer);
   //
   //If the player has no magic, then no magic is cast
@@ -4486,13 +5203,16 @@ function castCube() {
     }
     spellFlash--;
   }
+  spellsCast[8]++;
   cubeSpells--;
   document.getElementById("cubeCount").innerHTML = cubeSpells;
 }
 //
 //This function handles my star/nova spell
 function castStar() {
-  hintDiv = document.getElementById("hintDiv");
+  let starImg = document.getElementById("starImg");
+  starImg.classList.remove("highlightNewSpell");
+  let hintDiv = document.getElementById("hintDiv");
   //
   //If the player has no magic, then no fireball is cast
   if (!starSpells) {
@@ -4536,6 +5256,7 @@ function castStar() {
     }
     spellFlash--;
   }
+  spellsCast[9]++;
   starSpells--;
   document.getElementById("starCount").innerHTML = starSpells;
 
@@ -4818,6 +5539,10 @@ function saveValues() {
   localStorage.setItem("lastSecondCount", lastSecondCount);
   localStorage.setItem("flashCount", flashCount);
   localStorage.setItem("primeCount", primeCount);
+  localStorage.setItem("damageReceived", damageReceived);
+  localStorage.setItem("damageDealt", damageDealt);
+  localStorage.setItem("healthRecovered", healthRecovered);
+  localStorage.setItem("spellsCast", JSON.stringify(spellsCast));
   localStorage.setItem("spellArray", JSON.stringify(spellArray));
   localStorage.setItem("additionMonstersKilled", JSON.stringify(additionMonstersKilled));
   localStorage.setItem("additionAverage", JSON.stringify(additionAverage));
@@ -4852,19 +5577,23 @@ function retrieveValues() {
     }, 3000)
     return;
   }
-  playerHealth = parseInt(localStorage.getItem("playerHealth"));
-  maxHealth = parseInt(localStorage.getItem("maxHealth"));
-  playerBaseDamage = parseInt(localStorage.getItem("playerBaseDamage"));
-  mageIndex = parseInt(localStorage.getItem("mageIndex"));
-  totalMonstersKilled = parseInt(localStorage.getItem("totalMonstersKilled"));
-  additionLevel = parseInt(localStorage.getItem("additionLevel"));
-  subtractionLevel = parseInt(localStorage.getItem("subtractionLevel"));
-  multiplicationLevel = parseInt(localStorage.getItem("multiplicationLevel"));
-  divisionLevel = parseInt(localStorage.getItem("divisionLevel"));
-  fortyTwoCount = parseInt(localStorage.getItem("fortyTwoCount"));
-  lastSecondCount = parseInt(localStorage.getItem("lastSecondCount"));
-  flashCount = parseInt(localStorage.getItem("flashCount"));
-  primeCount = parseInt(localStorage.getItem("primeCount"));
+  playerHealth = parseInt(localStorage.getItem("playerHealth"), 10);
+  maxHealth = parseInt(localStorage.getItem("maxHealth"), 10);
+  playerBaseDamage = parseInt(localStorage.getItem("playerBaseDamage"), 10);
+  mageIndex = parseInt(localStorage.getItem("mageIndex"), 10);
+  totalMonstersKilled = parseInt(localStorage.getItem("totalMonstersKilled"), 10);
+  additionLevel = parseInt(localStorage.getItem("additionLevel"), 10);
+  subtractionLevel = parseInt(localStorage.getItem("subtractionLevel"), 10);
+  multiplicationLevel = parseInt(localStorage.getItem("multiplicationLevel"), 10);
+  divisionLevel = parseInt(localStorage.getItem("divisionLevel"), 10);
+  fortyTwoCount = parseInt(localStorage.getItem("fortyTwoCount"), 10);
+  lastSecondCount = parseInt(localStorage.getItem("lastSecondCount"), 10);
+  flashCount = parseInt(localStorage.getItem("flashCount"), 10);
+  primeCount = parseInt(localStorage.getItem("primeCount"), 10);
+  damageReceived = parseInt(localStorage.getItem("damageReceived"), 10);
+  damageDealt = parseInt(localStorage.getItem("damageDealt"), 10);
+  healthRecovered = parseInt(localStorage.getItem("healthRecovered"), 10);
+  spellsCast = JSON.parse(localStorage.getItem("spellsCast"));
   spellArray = JSON.parse(localStorage.getItem("spellArray"));
   additionMonstersKilled = JSON.parse(localStorage.getItem("additionMonstersKilled"));
   additionAverage = JSON.parse(localStorage.getItem("additionAverage"));
@@ -4874,14 +5603,14 @@ function retrieveValues() {
   multiplicationAverage = JSON.parse(localStorage.getItem("multiplicationAverage"));
   divisionMonstersKilled = JSON.parse(localStorage.getItem("divisionMonstersKilled"));
   divisionAverage = JSON.parse(localStorage.getItem("divisionAverage"));
-  fibonacciSpells = parseInt(localStorage.getItem("fibonacciSpells"));
-  triangleSpells = parseInt(localStorage.getItem("triangleSpells"));
-  squareSpells = parseInt(localStorage.getItem("squareSpells"));
-  pentagonSpells = parseInt(localStorage.getItem("pentagonSpells"));
-  hexagonSpells = parseInt(localStorage.getItem("hexagonSpells"));
-  pyramidSpells = parseInt(localStorage.getItem("pyramidSpells"));
-  cubeSpells = parseInt(localStorage.getItem("cubeSpells"));
-  starSpells = parseInt(localStorage.getItem("starSpells"));
+  fibonacciSpells = parseInt(localStorage.getItem("fibonacciSpells"), 10);
+  triangleSpells = parseInt(localStorage.getItem("triangleSpells"), 10);
+  squareSpells = parseInt(localStorage.getItem("squareSpells"), 10);
+  pentagonSpells = parseInt(localStorage.getItem("pentagonSpells"), 10);
+  hexagonSpells = parseInt(localStorage.getItem("hexagonSpells"), 10);
+  pyramidSpells = parseInt(localStorage.getItem("pyramidSpells"), 10);
+  cubeSpells = parseInt(localStorage.getItem("cubeSpells"), 10);
+  starSpells = parseInt(localStorage.getItem("starSpells"), 10);
 
   dungeonEntrance();
 }
@@ -4903,6 +5632,10 @@ function deleteValues() {
   localStorage.removeItem("lastSecondCount");
   localStorage.removeItem("flashCount");
   localStorage.removeItem("primeCount");
+  localStorage.removeItem("damageReceived");
+  localStorage.removeItem("damageDealt");
+  localStorage.removeItem("healthRecovered");
+  localStorage.removeItem("spellsCast");
   localStorage.removeItem("spellArray");
   localStorage.removeItem("additionMonstersKilled");
   localStorage.removeItem("additionAverage");
@@ -4932,14 +5665,14 @@ function godMode() {
   subtractionLevel = 1;
   multiplicationLevel = 1;
   divisionLevel = 1;
-  fibonacciSpells = 99;
-  triangleSpells = 99;
-  squareSpells = 99;
-  pentagonSpells = 99;
-  hexagonSpells = 99;
-  pyramidSpells = 99;
-  cubeSpells = 99;
-  starSpells = 99;
+  fibonacciSpells = 59;
+  triangleSpells = 59;
+  squareSpells = 59;
+  pentagonSpells = 59;
+  hexagonSpells = 59;
+  pyramidSpells = 59;
+  cubeSpells = 59;
+  starSpells = 59;
   monstersKilled = 9;
   totalMonstersKilled = 0;
   monstersPerFight = 9;

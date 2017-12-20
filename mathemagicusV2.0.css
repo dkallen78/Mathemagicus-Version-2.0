@@ -387,8 +387,16 @@ the book up and down*/
   transition: all 500ms;
 }
 
-#nextScreen:hover {
-  background-color: #bbbbbb;
+@keyframes nextScreenBlink {
+  from {background-color: #999999;}
+  to {background-color: #bbbbbb;}
+}
+
+#nextScreen:hover, #nextScreen:focus {
+  /*background-color: #bbbbbb;*/
+  animation-name: nextScreenBlink;
+  animation-duration: 500ms;
+  animation-iteration-count: infinite;
 }
 /*
 Controls the style of the containing <div> of
@@ -595,6 +603,11 @@ buttons are displayed and styled in the monster book*/
   border: 1px solid white;
   background-color: rgba(125,125,125,0.125);
 }
+
+#leftPageButton:focus, #rightPageButton:focus {
+  border: 1px solid white;
+  background-color: rgba(125,125,125,0.125);
+}
 /*
 The next four selectors control the style and display
 of the elements on the base monster page of the
@@ -676,8 +689,8 @@ monster book*/
 }
 
 .achievementImg {
-  height: 75px;
-  width: 75px;
+  height: 70px;
+  width: 70px;
   border: 3px solid white;
   border-radius: 5px;
 }
@@ -730,7 +743,6 @@ This styles the images for the spells*/
   margin: 2px;
   padding: 2px;
   width: 17px;
-  /*filter: opacity(10%);*/
 }
 /*
 This controls the behavior of the <div>s inside of the spellBar*/
@@ -745,6 +757,17 @@ This controls the behavior of the <div>s inside of the spellBar*/
 
 #spellBar div div {
   width: 15px;
+}
+
+@keyframes newSpell {
+  from {border: 1px solid black; filter: invert(0%);}
+  to {border: 1px solid red; filter: invert(100%);}
+}
+
+.highlightNewSpell {
+  animation-name: newSpell;
+  animation-duration: 500ms;
+  animation-iteration-count: infinite;
 }
 
 #euclidCanvas, #novaCanvas, #timeCanvas {
