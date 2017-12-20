@@ -8,17 +8,25 @@ My assets are almost entirely borrowed and if the game ever sees wide distributi
 
 Included in this project are the html, css, and js files. Also included is a .rar file with all the assets used in the game.
 
-### Up next: maybe number rounding or comparisons(\<, \>), eliminating redundancy, three more achievements, expanding keyboard controls, giving monster spells animations
+### Up next: maybe number rounding or comparisons(\<, \>), eliminating redundancy, expanding keyboard controls, giving monster spells animations
 
 I've got a program that does number rounding that I might put in if I find the right way to implement it. The same thing goes for comparisons, but they're a bit trickier. 
 
 I've also got a lot of code redundancy that I can likely remove. Some of my code is the way it is because it works, not because it's the most effecient way to do things. I want to go through the whole program at a later point and simplify things.
 
-I want three more achievements!
-
-I want the player to be able to use the arrow keys and the enter key to navigate the Liber Mathemagicus.
+I want the player to be able to use the arrow keys and the enter key to navigate the Liber Mathemagicus. I need the book controls to work in Chrome as well...
 
 I would like the monster magic to have its own animation instead of just flashing the screen.
+
+## 12/20/17
+
+### Update
+
+I added six more achievements! Damage inflicted, damage received, health recovered, spells cast, hint spells cast, attack spells cast. I fit them all into the achievements page w/out much trouble which makes me think that I missed a glaring bug...
+
+I also had the player find the spells before the boss encounter and made the spell icon flash if the spell hadn't been cast before. This was done based on a suggestion from someone at reddit. Placing the spell find before the boss encounter gives the player more incentive to use it right away, and making the icon flash before it's been used reminds the player that they have a new spell and they need to use it. 
+
+I also added partial keyboard controls for the book, but they only seem to work in firefox and they can't control the quick buttons at the top of the book. 
 
 ## 12/18/17
 
