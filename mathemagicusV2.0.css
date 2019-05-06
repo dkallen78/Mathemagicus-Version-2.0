@@ -701,6 +701,7 @@ This styles the box that tells the player what level of the dungeon they're on*/
   margin-top: 5px;
   /*padding: 5px;*/
   width: 80px;
+  height: 20px;
   color: white;
   background-color: #555555;
   border: 2px solid black;
@@ -714,6 +715,24 @@ This styles the box that tells the player what level of the dungeon they're on*/
                0px 2px black,
                -2px 0px black,
                0px -2px black;
+}
+/*
+Styles the level progress bar*/
+#levelProgressDiv {
+  position: absolute;
+  width: 80px;
+  height: 20px;
+  background-color: red;
+  border-radius: 5px;
+  transition: width 1s;
+  z-index: 0;
+}
+/*
+Styles the text withing the levelDiv*/
+#levelDisplay {
+  position: absolute;
+  z-index: 1;
+  width: 80px;
 }
 /*
 This adjusts the width of these <div>s from the class to which the belong: .textBox

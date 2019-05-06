@@ -150,7 +150,7 @@ var primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53,
 //The source of all the image files for the
 //monsters in the addition dungeon
 var additionMonsters = ["imp.gif", "Hornet.gif", "Wererat.gif", "Spider.gif", "Wolf.gif", "scorpion.gif", "cobra.gif",
-                       "pirate.gif", "bone.gif", "bomb.gif", "crawl.gif", "gator.gif", "gargoyle.gif", "KumKum.gif",
+                       "pirate.gif", "bone.gif", "Bomb.gif", "crawl.gif", "gator.gif", "gargoyle.gif", "KumKum.gif",
                        "Zombie.gif", "bigeye.gif", "badman.gif", "medusa.gif", "vampire.gif", "Pede.gif", "DarkGeneral.gif",
                        "Worm.gif", "ankylo.gif", "Drake.gif", "Garm.gif", "GoldKnight.gif", "Ogre.gif", "RedOgre.gif",
                        "Shadow.gif", "Wyvern.gif", "Soldier.gif", "Silenus.gif", "garland.gif", "Earth.gif", "Lich.gif"];
@@ -227,6 +227,8 @@ function resetStartVariables() {
   playerHealth = 10;
   maxHealth = 10;
   playerDamage = 1;
+  playerBaseDamage = 1;
+  damageBoost = 0;
   mageIndex = 0;
   additionLevel = 1;
   subtractionLevel = 0;
@@ -242,6 +244,23 @@ function resetStartVariables() {
   starSpells = 0;
   monstersKilled = 0;
   totalMonstersKilled = 0;
+  fortyTwoCount = 0;
+  lastSecondCount = 0;
+  flashCount = 0;
+  primeCount = 0;
+  additionMonstersKilled = [];
+  subtractionMonstersKilled = [];
+  multiplicationMonstersKilled = [];
+  divisionMonstersKilled = [];
+  spellsCast = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+  spellArray = [];
+  additionAverage = [0, 0];
+  subtractionAverage = [0, 0];
+  multiplicationAverage = [0, 0];
+  divisionAverage = [0, 0];
+  damageReceived = 0;
+  damageDealt = 0;
+  healthRecovered = 0;
 }
 //
 //Sets up the title screen
@@ -1780,26 +1799,13 @@ function dungeonEntrance() {
     p.appendChild(node);
     monsterDetail.appendChild(p);
 
-    p = document.createElement("p");
-    if (currentMonster[1] < 30) {
-      node = document.createTextNode("Hit Points: " + Math.ceil(((currentMonster[1] + 1) / 3) + 1));
-    } else {
-      var monsterLevel = (((currentMonster[1] % 30) * 2) + 2);
-      node = document.createTextNode("Hit Points: " + ((monsterLevel * 2) + (monsterLevel / 2) + 5));
-    }
-    p.appendChild(node);
-    monsterDetail.appendChild(p);
-
-    p = document.createElement("p");
-    node = document.createTextNode("Damage: " + Math.ceil((currentMonster[1] + 1) / 9));
-    p.appendChild(node);
-    monsterDetail.appendChild(p);
-
+    //Number of monsters killed
     p = document.createElement("p");
     node = document.createTextNode("Number Killed: " + monsterArray[findMonster(monsterArray, currentMonster[1])][1]);
     p.appendChild(node);
     monsterDetail.appendChild(p);
 
+    //Level of monster
     if (currentMonster[1] < 30) {
       var monsterLevel = Math.ceil((currentMonster[1] + 1) / 3);
     } else {
@@ -1810,7 +1816,29 @@ function dungeonEntrance() {
     p.appendChild(node);
     monsterDetail.appendChild(p);
 
+    //Hit points of monster
     if (monsterArray[findMonster(monsterArray, currentMonster[1])][1] > 4) {
+      p = document.createElement("p");
+      if (currentMonster[1] < 30) {
+        node = document.createTextNode("Hit Points: " + Math.ceil(((currentMonster[1] + 1) / 3) + 1));
+      } else {
+        var monsterLevel = (((currentMonster[1] % 30) * 2) + 2);
+        node = document.createTextNode("Hit Points: " + ((monsterLevel * 2) + (monsterLevel / 2) + 5));
+      }
+      p.appendChild(node);
+      monsterDetail.appendChild(p);
+    }
+
+    //Damage monster inflicts
+    if (monsterArray[findMonster(monsterArray, currentMonster[1])][1] > 9) {
+      p = document.createElement("p");
+      node = document.createTextNode("Damage: " + Math.ceil((currentMonster[1] + 1) / 9));
+      p.appendChild(node);
+      monsterDetail.appendChild(p);
+    }
+
+    //Range of problem difficulty for monster
+    if (monsterArray[findMonster(monsterArray, currentMonster[1])][1] > 19) {
       if (currentMonster[1] < 30) {
         var level = Math.ceil((currentMonster[1] + 1) / 3);
       } else {
@@ -1943,364 +1971,290 @@ function dungeonEntrance() {
 
     let table = document.createElement("table");
     table.id = "achievementTable"
-
     let tr = document.createElement("tr");
-    let td = document.createElement("td");
-    let img = document.createElement("img");
-    let div = document.createElement("div");
-    div.style.borderRadius = "5px";
-    img.src = "./icons/graveyard.png";
-    img.className = "achievementImg";
+    /*
+    This controls the achievement for total number of
+    monsters killed*/
+    let td = makeAchievementElement("graveyard.png");
     if (totalMonstersKilled > 99) {
-      img.style.filter = "opacity(100%)";
-      img.title = totalMonstersKilled + " monsters killed.";
+      td.lastChild.style.filter = "opacity(100%)";
+      td.lastChild.title = totalMonstersKilled + " monsters killed.";
       if (totalMonstersKilled > 499) {
-        div.style.backgroundColor = "#d4af37";
+        td.firstChild.style.backgroundColor = "#d4af37";
       } else if (totalMonstersKilled > 199) {
-        div.style.backgroundColor = "#c0c0c0";
+        td.firstChild.style.backgroundColor = "#c0c0c0";
       } else {
-        div.style.backgroundColor = "#cd7f32";
+        td.firstChild.style.backgroundColor = "#cd7f32";
       }
 
     } else {
-      img.style.filter = "opacity(30%)";
+      td.lastChild.style.filter = "opacity(30%)";
     }
-    div.appendChild(img);
-    td.appendChild(div);
     tr.appendChild(td);
-
-    td = document.createElement("td");
-    img = document.createElement("img");
-    div = document.createElement("div");
-    div.style.borderRadius = "5px";
-    img.src = "./icons/sprint.png";
-    img.className = "achievementImg";
+    /*
+    This controls the achievement for total questions
+    answered in less than 1 second*/
+    td = makeAchievementElement("sprint.png");
     if (flashCount > 0) {
-      img.style.filter = "opacity(100%)";
+      td.lastChild.style.filter = "opacity(100%)";
       if (flashCount == 1) {
-        img.title = flashCount + " question answered in less than 1 second.";
+        td.lastChild.title = flashCount + " question answered in less than 1 second.";
       } else {
-        img.title = flashCount + " questions answered in less than 1 second.";
+        td.lastChild.title = flashCount + " questions answered in less than 1 second.";
       }
       if (flashCount > 49) {
-        div.style.backgroundColor = "#d4af37";
+        td.firstChild.style.backgroundColor = "#d4af37";
       } else if (flashCount > 9) {
-        div.style.backgroundColor = "#c0c0c0";
+        td.firstChild.style.backgroundColor = "#c0c0c0";
       } else {
-        div.style.backgroundColor = "#cd7f32";
+        td.firstChild.style.backgroundColor = "#cd7f32";
       }
     } else {
-      img.style.filter = "opacity(30%)";
+      td.lastChild.style.filter = "opacity(30%)";
     }
-    div.appendChild(img);
-    td.appendChild(div);
     tr.appendChild(td);
-
-    td = document.createElement("td");
-    img = document.createElement("img");
-    div = document.createElement("div");
-    div.style.borderRadius = "5px";
-    img.src = "./icons/stopwatch.png";
-    img.className = "achievementImg";
+    /*
+    This controls the achievement for total number of
+    questions answered with less than 1 second remaining*/
+    td = makeAchievementElement("stopwatch.png");
     if (lastSecondCount > 0) {
-      img.style.filter = "opacity(100%)";
+      td.lastChild.style.filter = "opacity(100%)";
       if (lastSecondCount == 1) {
-        img.title = lastSecondCount + " question answered with less than 1 second remaining.";
+        td.lastChild.title = lastSecondCount + " question answered with less than 1 second remaining.";
       } else {
-        img.title = lastSecondCount + " questions answered with less than 1 second remaining.";
+        td.lastChild.title = lastSecondCount + " questions answered with less than 1 second remaining.";
       }
       if (lastSecondCount > 49) {
-        div.style.backgroundColor = "#d4af37";
+        td.firstChild.style.backgroundColor = "#d4af37";
       } else if (lastSecondCount > 9) {
-        div.style.backgroundColor = "#c0c0c0";
+        td.firstChild.style.backgroundColor = "#c0c0c0";
       } else {
-        div.style.backgroundColor = "#cd7f32";
+        td.firstChild.style.backgroundColor = "#cd7f32";
       }
     } else {
-      img.style.filter = "opacity(30%)";
+      td.lastChild.style.filter = "opacity(30%)";
     }
-    div.appendChild(img);
-    td.appendChild(div);
     tr.appendChild(td);
-
-    td = document.createElement("td");
-    img = document.createElement("img");
-    div = document.createElement("div");
-    div.style.borderRadius = "5px";
-    img.src = "./icons/dolphin.png";
-    img.className = "achievementImg";
+    /*
+    This controls the achievement for total number of
+    answers equal to 42*/
+    td = makeAchievementElement("dolphin.png");
     if (fortyTwoCount > 0) {
-      img.style.filter = "opacity(100%)";
-      if (fortyTwoCount == 1) {
-        img.title = fortyTwoCount + " answer equal to 42.";
+      td.lastChild.style.filter = "opacity(100%)";
+      if (fortyTwoCount === 1) {
+        td.lastChild.title = fortyTwoCount + " answer equal to 42.";
       } else {
-        img.title = fortyTwoCount + " answers equal to 42.";
+        td.lastChild.title = fortyTwoCount + " answers equal to 42.";
       }
-      if (fortyTwoCount > 49) {
-        div.style.backgroundColor = "#d4af37";
+      if (fortyTwoCount > 41) {
+        td.firstChild.style.backgroundColor = "#d4af37";
       } else if (fortyTwoCount > 9) {
-        div.style.backgroundColor = "#c0c0c0";
+        td.firstChild.style.backgroundColor = "#c0c0c0";
       } else {
-        div.style.backgroundColor = "#cd7f32";
+        td.firstChild.style.backgroundColor = "#cd7f32";
       }
     } else {
-      img.style.filter = "opacity(30%)";
+      td.lastChild.style.filter = "opacity(30%)";
     }
-    div.appendChild(img);
-    td.appendChild(div);
     tr.appendChild(td);
-
-    td = document.createElement("td");
-    img = document.createElement("img");
-    div = document.createElement("div");
-    div.style.borderRadius = "5px";
-    img.src = "./icons/prime.png";
-    img.className = "achievementImg";
+    /*
+    This controls the achievement for total number of
+    answers equal to a prime number*/
+    td = makeAchievementElement("prime.png");
     if (primeCount > 0) {
-      img.style.filter = "opacity(100%)";
+      td.lastChild.style.filter = "opacity(100%)";
       if (primeCount == 1) {
-        img.title = primeCount + " answer equal to a prime number.";
+        td.lastChild.title = primeCount + " answer equal to a prime number.";
       } else {
-        img.title = primeCount + " answers equal to a prime number.";
+        td.lastChild.title = primeCount + " answers equal to a prime number.";
       }
-      if (primeCount > 49) {
-        div.style.backgroundColor = "#d4af37";
-      } else if (primeCount > 9) {
-        div.style.backgroundColor = "#c0c0c0";
+      if (primeCount > 99) {
+        td.firstChild.style.backgroundColor = "#d4af37";
+      } else if (primeCount > 19) {
+        td.firstChild.style.backgroundColor = "#c0c0c0";
       } else {
-        div.style.backgroundColor = "#cd7f32";
+        td.firstChild.style.backgroundColor = "#cd7f32";
       }
     } else {
-      img.style.filter = "opacity(30%)";
+      td.lastChild.style.filter = "opacity(30%)";
     }
-    div.appendChild(img);
-    td.appendChild(div);
     tr.appendChild(td);
     table.appendChild(tr);
 
-
     tr = document.createElement("tr");
-    td = document.createElement("td");
-    img = document.createElement("img");
-    div = document.createElement("div");
-    div.style.borderRadius = "5px";
-    img.src = "./icons/bleeding-wound.png";
-    img.className = "achievementImg";
-    if (damageDealt > 49) {
-      img.style.filter = "opacity(100%)";
-      img.title = damageDealt + " damage inflicted on monsters.";
-      if (damageDealt > 199) {
-        div.style.backgroundColor = "#b70000";
-      } else if (damageDealt > 99) {
-        div.style.backgroundColor = "#ff5656";
+    /*
+    This controls the achievement that tracks the
+    total amount of damage done to enemies*/
+    td = makeAchievementElement("bleeding-wound.png");
+    if (damageDealt > 199) {
+      td.lastChild.style.filter = "opacity(100%)";
+      td.lastChild.title = damageDealt + " damage inflicted on monsters.";
+      if (damageDealt > 1499) {
+        td.firstChild.style.backgroundColor = "#b70000";
+      } else if (damageDealt > 999) {
+        td.firstChild.style.backgroundColor = "#ff5656";
       } else {
-        div.style.backgroundColor = "#ff9393";
+        td.firstChild.style.backgroundColor = "#ff9393";
       }
     } else {
-      img.style.filter = "opacity(30%)";
+      td.lastChild.style.filter = "opacity(30%)";
     }
-    div.appendChild(img);
-    td.appendChild(div);
     tr.appendChild(td);
-
-    td = document.createElement("td");
-    img = document.createElement("img");
-    div = document.createElement("div");
-    div.style.borderRadius = "5px";
-    img.src = "./icons/heart-minus.png";
-    img.className = "achievementImg";
+    /*
+    This controls the achievement for tracking how
+    much damage the player has received*/
+    td = makeAchievementElement("heart-minus.png");
     if (damageReceived > 9) {
-      img.style.filter = "opacity(100%)";
-      img.title = damageReceived + " damage inflicted on " + playerName + ".";
+      td.lastChild.style.filter = "opacity(100%)";
+      td.lastChild.title = damageReceived + " damage inflicted on " + playerName + ".";
       if (damageReceived > 49) {
-        div.style.backgroundColor = "#d4af37";
+        td.firstChild.style.backgroundColor = "#d4af37";
       } else if (damageReceived > 19) {
-        div.style.backgroundColor = "#c0c0c0";
+        td.firstChild.style.backgroundColor = "#c0c0c0";
       } else {
-        div.style.backgroundColor = "#cd7f32";
+        td.firstCild.style.backgroundColor = "#cd7f32";
       }
     } else {
-      img.style.filter = "opacity(30%)";
+      td.lastChild.style.filter = "opacity(30%)";
     }
-    div.appendChild(img);
-    td.appendChild(div);
     tr.appendChild(td);
-
-    td = document.createElement("td");
-    img = document.createElement("img");
-    div = document.createElement("div");
-    div.style.borderRadius = "5px";
-    img.src = "./icons/medical-pack.png";
-    img.className = "achievementImg";
+    /*
+    This controls the achievement for tracking how
+    much health the player has recovered*/
+    td = makeAchievementElement("medical-pack.png");
     if (healthRecovered > 9) {
-      img.style.filter = "opacity(100%)";
-      img.title = healthRecovered + " health recovered by " + playerName + ".";
+      td.lastChild.style.filter = "opacity(100%)";
+      td.lastChild.title = healthRecovered + " health recovered.";
       if (healthRecovered > 49) {
-        div.style.backgroundColor = "#d4af37";
+        td.firsthCild.style.backgroundColor = "#d4af37";
       } else if (healthRecovered > 19) {
-        div.style.backgroundColor = "#c0c0c0";
+        td.firstChild.style.backgroundColor = "#c0c0c0";
       } else {
-        div.style.backgroundColor = "#cd7f32";
+        td.firstChild.style.backgroundColor = "#cd7f32";
       }
     } else {
-      img.style.filter = "opacity(30%)";
+      td.lastChild.style.filter = "opacity(30%)";
     }
-    div.appendChild(img);
-    td.appendChild(div);
     tr.appendChild(td);
-
-    td = document.createElement("td");
-    img = document.createElement("img");
-    div = document.createElement("div");
-    div.style.borderRadius = "5px";
-    img.src = "./icons/fire-ray.png";
-    img.className = "achievementImg";
+    /*
+    This controls the achievement for how much damage
+    the player has inflicted with spells*/
+    td = makeAchievementElement("fire-ray.png");
     let attackSpells = (spellsCast[3] + spellsCast[9]);
     if (attackSpells > 4) {
-      img.style.filter = "opacity(100%)";
-      img.title = attackSpells + " attack spells cast by " + playerName + ".";
+      td.lastChild.style.filter = "opacity(100%)";
+      td.lastChild.title = attackSpells + " attack spells cast.";
       if (attackSpells > 24) {
-        div.style.backgroundColor = "#d4af37";
+        td.firstChild.style.backgroundColor = "#d4af37";
       } else if (attackSpells > 9) {
-        div.style.backgroundColor = "#c0c0c0";
+        td.firstChild.style.backgroundColor = "#c0c0c0";
       } else {
-        div.style.backgroundColor = "#cd7f32";
+        td.firstChild.style.backgroundColor = "#cd7f32";
       }
     } else {
-      img.style.filter = "opacity(30%)";
+      td.lastChild.style.filter = "opacity(30%)";
     }
-    div.appendChild(img);
-    td.appendChild(div);
     tr.appendChild(td);
-
-    td = document.createElement("td");
-    img = document.createElement("img");
-    div = document.createElement("div");
-    div.style.borderRadius = "5px";
-    img.src = "./icons/help.png";
-    img.className = "achievementImg";
+    /*
+    This controls the achievement for how many times the
+    player has used the fibonacci magic*/
+    td = makeAchievementElement("help.png");
     let hintSpells = (spellsCast[0] + spellsCast[1] + spellsCast[2] + spellsCast[10] + spellsCast[11]);
     if (hintSpells > 4) {
-      img.style.filter = "opacity(100%)";
-      img.title = hintSpells + " Fibonacci spells cast by " + playerName + ".";
+      td.lastChild.style.filter = "opacity(100%)";
+      td.lastChild.title = hintSpells + " Fibonacci spells cast.";
       if (hintSpells > 24) {
-        div.style.backgroundColor = "#d4af37";
+        td.firstChild.style.backgroundColor = "#d4af37";
       } else if (hintSpells > 9) {
-        div.style.backgroundColor = "#c0c0c0";
+        td.firstChild.style.backgroundColor = "#c0c0c0";
       } else {
-        div.style.backgroundColor = "#cd7f32";
+        td.firstChild.style.backgroundColor = "#cd7f32";
       }
     } else {
-      img.style.filter = "opacity(30%)";
+      td.lastChild.style.filter = "opacity(30%)";
     }
-    div.appendChild(img);
-    td.appendChild(div);
     tr.appendChild(td);
     table.appendChild(tr);
 
     tr = document.createElement("tr");
-    td = document.createElement("td");
-    img = document.createElement("img");
-    div = document.createElement("div");
-    div.style.borderRadius = "5px";
-    img.src = "./icons/spell-book.png";
-    img.className = "achievementImg";
+    /*
+    This controls the achievement for how many spells
+    the player has cast*/
+    td = makeAchievementElement("spell-book.png");
     let totalSpellsCast = spellsCast.reduce(getSum);
     if (totalSpellsCast > 10) {
-      img.style.filter = "opacity(100%)";
-      img.title = totalSpellsCast + " spells cast.";
+      td.lastChild.style.filter = "opacity(100%)";
+      td.lastChild.title = totalSpellsCast + " spells cast.";
       if (totalSpellsCast > 99) {
-        div.style.backgroundColor = "#d4af37";
+        td.firstChild.style.backgroundColor = "#d4af37";
       } else if (totalSpellsCast > 49) {
-        div.style.backgroundColor = "#c0c0c0";
+        td.firstChild.style.backgroundColor = "#c0c0c0";
       } else {
-        div.style.backgroundColor = "#cd7f32";
+        td.firstChild.style.backgroundColor = "#cd7f32";
       }
     } else {
-      img.style.filter = "opacity(30%)";
+      td.lastChild.style.filter = "opacity(30%)";
     }
-    div.appendChild(img);
-    td.appendChild(div);
     tr.appendChild(td);
-
-    td = document.createElement("td");
-    img = document.createElement("img");
-    div = document.createElement("div");
-    div.style.borderRadius = "5px";
-    img.src = "./icons/laurels-plus.png";
-    img.className = "achievementImg";
+    /*
+    This controls the achievement for the players progress
+    through the addition dungeon*/
+    td = makeAchievementElement("laurels-plus.png");
     if (additionMonstersKilled.length == 35) {
-      img.style.filter = "opacity(100%)";
-      img.title = "Defeated one of every monster in the Addition Dungeon.";
-      div.style.backgroundColor = "#d4af37";
+      td.lastChild.style.filter = "opacity(100%)";
+      td.lastChild.title = "Defeated one of every monster in the Addition Dungeon.";
+      td.firstChild.style.backgroundColor = "#d4af37";
     } else if (additionLevel > 10) {
-      div.style.backgroundColor = "#c0c0c0";
-      img.title = "Completed the Addition Dungeon."
+      td.firstChild.style.backgroundColor = "#c0c0c0";
+      td.lastChild.title = "Completed the Addition Dungeon."
     } else {
-      img.style.filter = "opacity(30%)";
+      td.lastChild.style.filter = "opacity(30%)";
     }
-    div.appendChild(img);
-    td.appendChild(div);
     tr.appendChild(td);
-
-    td = document.createElement("td");
-    img = document.createElement("img");
-    div = document.createElement("div");
-    div.style.borderRadius = "5px";
-    img.src = "./icons/laurels-minus.png";
-    img.className = "achievementImg";
+    /*
+    This controls the achievement for the players progress
+    through the subtraction dungeon*/
+    td = makeAchievementElement("laurels-minus.png");
     if (subtractionMonstersKilled.length == 35) {
-      img.style.filter = "opacity(100%)";
-      img.title = "Defeated one of every monster in the Subtraction Dungeon.";
-      div.style.backgroundColor = "#d4af37";
+      td.lastChild.style.filter = "opacity(100%)";
+      td.lastChild.title = "Defeated one of every monster in the Subtraction Dungeon.";
+      td.firstChild.style.backgroundColor = "#d4af37";
     } else if (subtractionLevel > 10) {
-      div.style.backgroundColor = "#c0c0c0";
-      img.title = "Completed the Subtraction Dungeon."
+      td.firstChild.style.backgroundColor = "#c0c0c0";
+      td.lastChild.title = "Completed the Subtraction Dungeon."
     } else {
-      img.style.filter = "opacity(30%)";
+      td.lastChild.style.filter = "opacity(30%)";
     }
-    div.appendChild(img);
-    td.appendChild(div);
     tr.appendChild(td);
-
-    td = document.createElement("td");
-    img = document.createElement("img");
-    div = document.createElement("div");
-    div.style.borderRadius = "5px";
-    img.src = "./icons/laurels-times.png";
-    img.className = "achievementImg";
+    /*
+    This controls the achievement for the players progress
+    through the multiplication dungeon*/
+    td = makeAchievementElement("laurels-times.png");
     if (multiplicationMonstersKilled.length == 35) {
-      img.style.filter = "opacity(100%)";
-      img.title = "Defeated one of every monster in the Multiplication Dungeon.";
-      div.style.backgroundColor = "#d4af37";
+      td.lastChild.style.filter = "opacity(100%)";
+      td.lastChild.title = "Defeated one of every monster in the Multiplication Dungeon.";
+      td.firstChild.style.backgroundColor = "#d4af37";
     } else if (multiplicationLevel > 10) {
-      div.style.backgroundColor = "#c0c0c0";
-      img.title = "Completed the Multiplication Dungeon."
+      td.firstChild.style.backgroundColor = "#c0c0c0";
+      td.lastChild.title = "Completed the Multiplication Dungeon."
     } else {
-      img.style.filter = "opacity(30%)";
+      td.lastChild.style.filter = "opacity(30%)";
     }
-    div.appendChild(img);
-    td.appendChild(div);
     tr.appendChild(td);
-
-    td = document.createElement("td");
-    img = document.createElement("img");
-    div = document.createElement("div");
-    div.style.borderRadius = "5px";
-    img.src = "./icons/laurels-divide.png";
-    img.className = "achievementImg";
+    /*
+    This controls the achievement for the players progress
+    through the division dungeon*/
+    td = makeAchievementElement("laurels-divide.png");
     if (divisionMonstersKilled.length == 35) {
-      img.style.filter = "opacity(100%)";
-      img.title = "Defeated one of every monster in the Division Dungeon.";
-      div.style.backgroundColor = "#d4af37";
+      td.lastChild.style.filter = "opacity(100%)";
+      td.lastChild.title = "Defeated one of every monster in the Division Dungeon.";
+      td.firstChild.style.backgroundColor = "#d4af37";
     } else if (divisionLevel > 10) {
-      div.style.backgroundColor = "#c0c0c0";
-      img.title = "Completed the Division Dungeon."
+      td.firstChild.style.backgroundColor = "#c0c0c0";
+      td.lastChild.title = "Completed the Division Dungeon."
     } else {
-      img.style.filter = "opacity(30%)";
+      td.lastChild.style.filter = "opacity(30%)";
     }
-    div.appendChild(img);
-    td.appendChild(div);
     tr.appendChild(td);
     table.appendChild(tr);
 
@@ -2312,8 +2266,18 @@ function dungeonEntrance() {
       return total + num;
     }
 
-
-
+    function makeAchievementElement(imgSource) {
+      let tr = document.createElement("tr");
+      let td = document.createElement("td");
+      let img = document.createElement("img");
+      let div = document.createElement("div");
+      div.style.borderRadius = "5px";
+      img.src = "./icons/" + imgSource;
+      img.className = "achievementImg";
+      div.appendChild(img);
+      td.appendChild(div);
+      return td;
+    }
   }
   //
   //This function makes the quick buttons that
@@ -2528,6 +2492,8 @@ function dungeon(operation) {
   makeDungeonScreen();
   var playerLevel = getLevel();
   monster = new newMonster(playerLevel);
+  var levelProgressDiv = document.getElementById("levelProgressDiv");
+  levelProgressDiv.style.width = "0px";
   battle();
 }
 //
@@ -2770,7 +2736,7 @@ function checkAnswer(answer, damage) {
   //
   //The first half of this if statement handles the stuff that
   //happens when an answer is correct
-  if ((answerInput.value == answer) || (answer == "spell") || (answer == "heal")) {
+  if ((answerInput.value == answer) || (answer === "spell") || (answer === "heal")) {
     checkForSpells();
     damageDealt += (damage + damageBoost);
     monster.hp -= (damage + damageBoost);
@@ -2798,7 +2764,7 @@ function checkAnswer(answer, damage) {
         if (newNumber >= 9) {
           lastSecondCount++;
         }
-        if (answer == 42) {
+        if (answer === 42) {
           fortyTwoCount++;
         }
         if (primes.includes(answer)) {
@@ -2826,6 +2792,14 @@ function checkAnswer(answer, damage) {
     if (monster.hp < 1) {
       monstersKilled++;
       totalMonstersKilled++;
+
+      /*
+      This progresses the level progress bar at the top of the screen*/
+      if (monstersKilled < 11) {
+        var levelProgressDiv = document.getElementById("levelProgressDiv");
+        levelProgressDiv.style.width = (monstersKilled * 8) + "px";
+      }
+
       checkMonster();
       problemDiv.innerHTML = "Great job, you defeated the " + monster.name + "!<br /><br />";
       //
@@ -2968,6 +2942,8 @@ function checkAnswer(answer, damage) {
             spellArray.push(0);
             problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
             progressLevel();
+            fibonacciSpells++;
+            document.getElementById("fibonacciCount").innerHTML = fibonacciSpells;
             insertNextButton("Next", function() {dropScroll("./scrolls/fibonacciScroll.gif");});
           }
           if (playerLevel == 4) { //Subtraction Dungeon
@@ -2987,6 +2963,8 @@ function checkAnswer(answer, damage) {
             var healthBarFront = document.getElementById("healthBarFront");
             healthBarFront.style.height = ((playerHealth / maxHealth) * 110) + "px";
             progressLevel();
+            squareSpells++;
+            document.getElementById("squareCount").innerHTML = squareSpells;
             insertNextButton("Next", function() {dropScroll("./scrolls/squareScroll.gif");});
           }
           if (playerLevel == 8) { //Pyramid/Time Spell
@@ -2994,6 +2972,8 @@ function checkAnswer(answer, damage) {
             spellArray.sort();
             problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
             progressLevel();
+            pyramidSpells++;
+            document.getElementById("pyramidCount").innerHTML = pyramidSpells;
             insertNextButton("Next", function() {dropScroll("./scrolls/pyramidScroll.gif");});
           }
           if (playerLevel == 10) {//Damage Boost
@@ -3012,6 +2992,8 @@ function checkAnswer(answer, damage) {
             spellArray.sort();
             problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
             progressLevel();
+            triangleSpells++;
+            document.getElementById("triangleCount").innerHTML = triangleSpells;
             insertNextButton("Next", function() {dropScroll("./scrolls/triangleScroll.gif");});
           }
           if (playerLevel == 4) { //Multiplication Dungeon
@@ -3036,6 +3018,8 @@ function checkAnswer(answer, damage) {
             spellArray.sort();
             problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
             progressLevel();
+            pentagonSpells++;
+            document.getElementById("pentagonCount").innerHTML = pentagonSpells;
             insertNextButton("Next", function() {dropScroll("./scrolls/pentagonScroll.gif");});
           }
           if (playerLevel == 10) {//Damage Boost
@@ -3078,6 +3062,8 @@ function checkAnswer(answer, damage) {
             spellArray.sort();
             problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
             progressLevel();
+            hexagonSpells++;
+            document.getElementById("hexagonCount").innerHTML = hexagonSpells;
             insertNextButton("Next", function() {dropScroll("./scrolls/hexagonScroll.gif");});
           }
           if (playerLevel == 10) {//Damage Boost
@@ -3103,6 +3089,8 @@ function checkAnswer(answer, damage) {
             spellArray.sort();
             problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
             progressLevel();
+            cubeSpells++;
+            document.getElementById("cubeCount").innerHTML = cubeSpells;
             insertNextButton("Next", function() {dropScroll("./scrolls/cubeScroll.gif");});
           }
           if (playerLevel == 6) { //Health Boost
@@ -3119,6 +3107,8 @@ function checkAnswer(answer, damage) {
             spellArray.sort();
             problemDiv.innerHTML += "The " + monster.name + " seems to have dropped something...<br /><br />";
             progressLevel();
+            starSpells++;
+            document.getElementById("starCount").innerHTML = starSpells;
             insertNextButton("Next", function() {dropScroll("./scrolls/starScroll.gif");});
           }
           if (playerLevel == 10) {//Damage Boost
@@ -3459,7 +3449,7 @@ function checkAnswer(answer, damage) {
     if ((additionLevel > 6) && (squareNumbers.includes(answer))) {
       if (squareSpells < 99) {
         squareSpells++;
-        document.getElementById("triangleCount").innerHTML = triangleSpells;
+        document.getElementById("squareCount").innerHTML = squareSpells;
       }
     }
     //
@@ -3627,7 +3617,12 @@ function makeDungeonScreen() {
   //level at the top of the screen
   let levelDiv = document.createElement("div");
   levelDiv.id = "levelDiv";
-  let levelDisplay = document.createTextNode("Level " + playerLevel);
+  let levelProgressDiv = document.createElement("div");
+  levelProgressDiv.id = "levelProgressDiv";
+  let levelDisplay = document.createElement("div");
+  levelDisplay.id = "levelDisplay";
+  levelDisplay.innerHTML = "Level " + playerLevel;
+  levelDiv.appendChild(levelProgressDiv);
   levelDiv.appendChild(levelDisplay);
   playArea.appendChild(levelDiv);
   //
@@ -3987,7 +3982,7 @@ function spellsOn() {
     pyramidImg.onclick = function(){castPyramid();}
     pyramidCast = false;
   }
-  if (divisionLevel > 2) {        //Cube Spells
+  if (divisionLevel > 4) {        //Cube Spells
     let cubeImg = document.getElementById("cubeImg");
     if (spellsCast[8] === 0) {
       cubeImg.classList.add("highlightNewSpell");
@@ -5149,12 +5144,14 @@ function castCube() {
   cubeImg.classList.remove("highlightNewSpell");
   let hintDiv = document.getElementById("hintDiv");
   clearInterval(timer);
+  spellsOff();
   //
   //If the player has no magic, then no magic is cast
   if (!cubeSpells) {
     hintDiv.innerHTML = "You don't have any Cube Magic!";
     hintDiv.style.visibility = "visible"; //This displays the hint area
     setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
+    timer = setInterval(timeDown, 10);
     return;
   }
   //
@@ -5164,6 +5161,7 @@ function castCube() {
     hintDiv.innerHTML = "You can't polymorph the " + monster.name + "!";
     hintDiv.style.visibility = "visible"; //This displays the hint area
     setTimeout(function() {hintDiv.innerHTML = ""; hintDiv.style.visibility = "hidden";}, 1500)
+    timer = setInterval(timeDown, 10);
     return;
   }
 
@@ -5611,7 +5609,6 @@ function retrieveValues() {
   pyramidSpells = parseInt(localStorage.getItem("pyramidSpells"), 10);
   cubeSpells = parseInt(localStorage.getItem("cubeSpells"), 10);
   starSpells = parseInt(localStorage.getItem("starSpells"), 10);
-
   dungeonEntrance();
 }
 //
