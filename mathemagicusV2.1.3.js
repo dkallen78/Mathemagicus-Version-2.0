@@ -2858,8 +2858,6 @@ function checkAnswer(answer, damage) {
   //
   //The second half of this if statement controls the stuff
   //that happens when an answer is wrong
-  //
-  //If the answer is incorrect then all this happens
   } else {
     //
     //Reduce player health and keep track of total damage
@@ -2891,7 +2889,7 @@ function checkAnswer(answer, damage) {
     //
     //If the player still has health left, do this
     } else {
-      problemDiv.innerHTML = "Oh no! " + answerInput.value + " didn't work!<br /><br />";
+      problemDiv.innerHTML += "<br />Oh no! " + answerInput.value + " didn't work!<br /><br />";
       let special = 0;
       if (algebra) {
         special = 2;
